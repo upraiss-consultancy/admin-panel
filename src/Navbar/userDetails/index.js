@@ -88,18 +88,18 @@ const UserManage = () => {
         }));
     };
 
-    const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
-        <div className='flex items-center'>
-            <input
-                value={value}
-                onClick={onClick}
-                ref={ref}
-                readOnly
-                className='border-2 rounded-md p-2 w-full bg-black text-white'
-            />
-            <FaCalendarAlt onClick={onClick} className='text-white ml-2 cursor-pointer' />
-        </div>
-    ));
+    // const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
+    //     <div className='flex items-center'>
+    //         <input
+    //             value={value}
+    //             onClick={onClick}
+    //             ref={ref}
+    //             readOnly
+    //             className='border-2 rounded-md p-2 w-full bg-black text-white'
+    //         />
+    //         <FaCalendarAlt onClick={onClick} className='text-white ml-2 cursor-pointer' />
+    //     </div>
+    // ));
     return (
         <>
             <content className='block p-5 w-screen min-h-screen'>
@@ -136,7 +136,7 @@ const UserManage = () => {
                                 dateFormat='dd/MM/yyyy'
                                 placeholderText='DD/MM/YYYY'
                                 className='border-2 rounded-md p-2 w-full bg-black text-white'
-                                customInput={<CustomDateInput />}
+                                // customInput={<CustomDateInput />}
                             />
                         </div>
                         <div>
@@ -147,7 +147,7 @@ const UserManage = () => {
                                 dateFormat='dd/MM/yyyy'
                                 placeholderText='DD/MM/YYYY'
                                 className='border-2 rounded-md p-2 w-full bg-black text-white'
-                                customInput={<CustomDateInput />}
+                                // customInput={<CustomDateInput />}
                             />
                         </div>
                     </div>
