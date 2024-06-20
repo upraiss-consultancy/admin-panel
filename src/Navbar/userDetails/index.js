@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaDownload, FaEye, FaCalendarAlt } from 'react-icons/fa';
+import { FaDownload, FaEye, FaCalendarAlt, FaCopy } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -72,6 +72,8 @@ const UserManage = () => {
     },
     ]
 
+
+
     const handleAllCheck = () => {
         const newCheckedItems = {};
         data.forEach(item => {
@@ -109,7 +111,12 @@ const UserManage = () => {
                     <div className='text-white flex items-center justify-end gap-2'>
                         <p>Row</p>
                         <div className='border border-black'>
-                            <p className='p-2'>20</p>
+                            <select className='border-2 rounded-md p-2 bg-black'>
+                                <option value='20'>20</option>
+                                <option value='40'>40</option>
+                                <option value='60'>60</option>
+                                <option value='80'>80</option>
+                            </select>
                         </div>
                     </div>
                 </header>
@@ -136,7 +143,7 @@ const UserManage = () => {
                                 dateFormat='dd/MM/yyyy'
                                 placeholderText='DD/MM/YYYY'
                                 className='border-2 rounded-md p-2 w-full bg-black text-white'
-                                // customInput={<CustomDateInput />}
+                            // customInput={<CustomDateInput />}
                             />
                         </div>
                         <div>
@@ -147,7 +154,7 @@ const UserManage = () => {
                                 dateFormat='dd/MM/yyyy'
                                 placeholderText='DD/MM/YYYY'
                                 className='border-2 rounded-md p-2 w-full bg-black text-white'
-                                // customInput={<CustomDateInput />}
+                            // customInput={<CustomDateInput />}
                             />
                         </div>
                     </div>
@@ -182,10 +189,10 @@ const UserManage = () => {
                             return (
                                 <tr className='text-center' key={items.No}>
                                     <td className='p-2 text-white'><input type='checkbox' className='me-3' checked={checkedItems[items.No] || false} onChange={() => handleCheck(items.No)}></input>{items.No}</td>
-                                    <td className='p-2 text-white'>{items.UserId}</td>
-                                    <td className='p-2 text-white'>{items.Nickname}</td>
-                                    <td className='p-2 text-white'>{items.Dummy}</td>
-                                    <td className='p-2 text-white'>{items.EmailId}</td>
+                                    <td className='p-2 text-white'><div className='flex items-center justify-center gap-2'>{items.UserId}<FaCopy className='cursor-pointer' /></div></td>
+                                    <td className='p-2 text-white'><div className='flex items-center justify-center gap-2'>{items.Nickname}<FaCopy className='cursor-pointer' /></div></td>
+                                    <td className='p-2 text-white'><div className='flex items-center justify-center gap-2'>{items.Dummy}<FaCopy className='cursor-pointer' /></div></td>
+                                    <td className='p-2 text-white'><div className='flex items-center justify-center gap-2'>{items.EmailId}<FaCopy className='cursor-pointer' /></div></td>
                                     <td className='p-2 text-white'>{items.Dummy1}</td>
                                     <td className='p-2 text-white'>{items.DateTime}</td>
                                     <td className='p-2 text-white'>{items.Status}</td>
