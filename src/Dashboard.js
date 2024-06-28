@@ -94,6 +94,7 @@ import UserManage from './Navbar/userDetails';
 import { MdSpaceDashboard } from "react-icons/md";
 import { MdLock } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
+import RideManagement from './components/ridemanagement/ridemanagement ';
 
 const DashboardPage = () => {
   return (
@@ -116,6 +117,11 @@ const Dashboard = () => {
     setIsActive(1);
   };
 
+  const handleRideMgmntClick = () => {
+    console.log("User details tab clicked!");
+    setIsActive(2);
+  };
+
   const tabs = ["Dashboard", "User details", "Ride Management", "Orders/Activity", "Plans/Events", "Support", "Change Pass.", "Admin Manage", "LOGOUT"];
 
   return (
@@ -135,6 +141,7 @@ const Dashboard = () => {
                   setIsActive(index);
                   if (data === "Dashboard") handleDashboardClick();
                   if (data === "User details") handleUserDetailsClick();
+                  if (data === "Ride Management") handleRideMgmntClick();
                 }}
               >
                 {data === "Dashboard" && <MdSpaceDashboard className="mr-2" />}
@@ -158,6 +165,7 @@ const Dashboard = () => {
 
         {isActive === 0 && <DashboardPage />}
         {isActive === 1 && <UserManage />}
+        {isActive === 2 && <RideManagement />}
       </nav>
     </>
   );
