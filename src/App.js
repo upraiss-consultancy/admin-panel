@@ -3,6 +3,11 @@ import './App.css';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import UserManage from './Navbar/userDetails';
+import Loginform from './Authentication/Loginform/Loginform';
+import Otp from './Authentication/OTP/otp';
+import Frontpage from './Authentication/frontpage/frontpage';
+// import Pagination from './components/pagination';
+import components from './components/pagination'
 
 function App() {
   return (
@@ -11,7 +16,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/data" element={<UserManage />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Loginform />} />
+          <Route path="/otp" element={<Otp />} />
+          <Route path="/frontpage" element={<Frontpage />} />
         </Routes>
       </BrowserRouter>
     </>
