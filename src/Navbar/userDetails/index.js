@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { FaDownload, FaEye, FaCalendarAlt, FaCopy } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { IoMdArrowDropdown } from 'react-icons/io';
+import { TbCalendarEvent } from 'react-icons/tb';
+import { FaArrowUpShortWide } from 'react-icons/fa6';
+import { RiFileCopyLine } from 'react-icons/ri';
+import Pagination from '../../components/pagination';
 
 const UserManage = () => {
   const [fromDate, setFromDate] = React.useState(null);
