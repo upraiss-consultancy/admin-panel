@@ -100,6 +100,7 @@ const DashboardPage = () => {
   return (
     <div className='h-[100vh]'>
       {/* <h1>Dashboard Page</h1> */}
+
     </div>
   );
 };
@@ -147,6 +148,10 @@ const Dashboard = () => {
     setIsActive(2);
   };
 
+  const handleclickCreateRide = () =>{
+    setIsActive(2);
+  }
+
   const tabs = ["Dashboard", "User details", "Ride Management", "Orders/Activity", "Plans/Events", "Support", "Change Pass.", "Admin Manage", "LOGOUT"];
 
   return (
@@ -167,6 +172,17 @@ const Dashboard = () => {
                   if (data === "Dashboard") handleDashboardClick();
                   if (data === "User details") handleUserDetailsClick();
                   if (data === "Ride Management") handleRideMgmntClick();
+                  // if (data === "Create Ride") handleCreateRideClick();
+                  
+                  // if (data===true) {
+                  //   //do 
+                  //   handleclickCreateRide();
+                  // } else {
+                  //   handleRideMgmntClick()
+                    
+                  // }
+                  
+
                 }}
               >
                 {data === "Dashboard" && <MdSpaceDashboard className="mr-2" />}

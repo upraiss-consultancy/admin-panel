@@ -8,6 +8,7 @@ import Otp from './Authentication/OTP/otp';
 import Frontpage from './Authentication/frontpage/frontpage';
 // import Pagination from './components/pagination';
 import components from './components/pagination'
+import BookingForm from './components/form/form';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Loginform />} />
           <Route path="/otp" element={<Otp />} />
           <Route path="/frontpage" element={<Frontpage />} />
+          <Route path="/createride" element={<BookingForm />} />
         </Routes>
       </BrowserRouter>
     </>
