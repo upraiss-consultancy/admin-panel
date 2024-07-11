@@ -14,7 +14,7 @@ const END_POINTS = {
     USER_INTEREST:"/v0/user/user_interest",
     USER_BOOKING_LIST:"/v0/user/user_booking_upcoming_list",
     CREATE_BOOKING: "/v0/user/user_booking_upcoming_list",
-    BOOKING_LIST: "/v0/booking/booking_list",
+    BOOKING_LIST: "v0/booking/booking_list",
     ASSIGN_RIDE:"/v0/booking/assing_ride",
     USER_INTERESTED_ASSIGN_RIDE:"/v0/booking/user_interested_assing_ride",
     ADMIN_DELETE_BOOKING:"/v0/admin/delete_booking",

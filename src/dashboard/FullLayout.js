@@ -18,7 +18,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Orders from './Orders';
+import { Outlet } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -124,6 +126,11 @@ export default function FullLayout() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            <IconButton color="inherit">
+
+              <AccountCircleIcon />
+
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -156,20 +163,15 @@ export default function FullLayout() {
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
+            // widows: "100%"
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {/* <Grid container spacing={3}>
-      
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid> */}
-            {/* <Copyright sx={{ pt: 4 }} /> */}
-          </Container>
+          {/* <Container  sx={{ mt: 4, mb: 4 , ml: 0, mr: 0 , width: '100%'}}> */}
+          <Box className=' py-10 px-10'>
+            <Outlet />
+          </Box>
+          {/* </Container> */}
         </Box>
       </Box>
     </ThemeProvider>
