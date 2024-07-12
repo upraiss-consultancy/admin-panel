@@ -4,11 +4,11 @@ import { Controller } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import EmailIcon from '@mui/icons-material/Email';
 import { CheckBox } from '@mui/icons-material';
-import { Navigate, NavLink, useNavigate } from 'react-router-dom';
-import { encryptData } from '../../utils/aesUtils';
+import {  NavLink, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { adminLogin } from '../../api/services/auth';
 import { AdminLoginSchema } from '../../validations/AuthValidation';
+import showToast from '../../utils/toast';
 import "./Loginform.css";
 
 function Loginform() {
@@ -25,6 +25,7 @@ function Loginform() {
         expiry.setDate(expiry.getDate() + 1); // Set expiry date to one day from now
         localStorage.setItem('token', token);
         localStorage.setItem('expiry', expiry)
+        showToast('User login successfully', 'success');
         // const userDetails = { ...response?.data?.responseData, expiry: expiry };
         // const encryptedUserDetails = encryptData(userDetails);
         // localStorage.setItem('userDetails', JSON.stringify(encryptedUserDetails))
