@@ -10,26 +10,32 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { FaUserCircle } from "react-icons/fa";
+import { NavLink } from 'react-router-dom';
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItemButton>
+    <NavLink to={'/dashboard'}>
+
+      <ListItemButton>
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </ListItemButton>
+    </NavLink>
     {/* <ListItemButton>
       <ListItemIcon>
         <FaUserCircle />
       </ListItemIcon>
       <ListItemText primary="User details" />
     </ListItemButton> */}
-    <ListItemButton>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Ride Management" />
-    </ListItemButton>
+    <NavLink to={'/rides'}>
+      <ListItemButton>
+        <ListItemIcon>
+          <PeopleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Ride Management" />
+      </ListItemButton>
+    </NavLink>
     <ListItemButton>
       <ListItemIcon>
         <BarChartIcon />

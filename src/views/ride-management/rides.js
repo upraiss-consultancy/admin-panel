@@ -6,9 +6,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { getAllRides } from "../../api/services/ride";
+import { getAllRides , deleteRide} from "../../api/services/ride";
 import END_POINTS from "../../constants/endpoints";
-import { Typography, Box, Button, Drawer, Stack, TextField } from "@mui/material";
+import { Typography, Box, Button, Drawer, Stack, TextField, IconButton, Menu, MenuItem, Popover } from "@mui/material";
 import { Form } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -16,13 +16,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from "@mui/x-date-pickers";
-
+import CloseIcon from '@mui/icons-material/Close';
+import { FaEllipsisVertical } from "react-icons/fa6";
 
 function AllRides() {
     const [allRides, setAllRides] = useState([]);
     const { control, handleSubmit } = useForm()
-    const [open, setOpen] = useState(false)
-    const { BOOKING_LIST } = END_POINTS;
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { BOOKING_LIST , ADMIN_DELETE_BOOKING} = END_POINTS;
     useEffect(() => {
         const fetchRides = async () => {
             const data = await getAllRides(BOOKING_LIST);
@@ -32,6 +34,17 @@ function AllRides() {
         }
         fetchRides();
     }, []);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const openPopover = Boolean(anchorEl);
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const hanldeDeleteRide = async (id) => {
+        const data = await deleteRide(ADMIN_DELETE_BOOKING , id)
+    }
 
     return (
         <>
@@ -59,20 +72,6 @@ function AllRides() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/* {rows.map((row) => (
-                            <TableRow
-                                key={row.name}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {row.name}
-                                </TableCell>
-                                <TableCell align="right">{row.calories}</TableCell>
-                                <TableCell align="right">{row.fat}</TableCell>
-                                <TableCell align="right">{row.carbs}</TableCell>
-                                <TableCell align="right">{row.protein}</TableCell>
-                            </TableRow>
-                        ))} */}
                         {
                             allRides?.map((data, index) => {
                                 return (
@@ -85,7 +84,22 @@ function AllRides() {
                                         <TableCell className="!text-center">{data?.pickup_address + " " + data?.pickup_city + ", " + data?.pickup_pin}</TableCell>
                                         <TableCell>{data?.return_address + " " + data?.return_city + ", " + data?.return_pin}</TableCell>
                                         <TableCell className={data?.booking_status === "pending" ? ' !text-orange-400 capitalize' : ''}>{data?.booking_status}</TableCell>
-                                        <TableCell>{data?.booking_type}</TableCell>
+                                        <TableCell>
+                                            <Box>
+                                                <IconButton onClick={(e) => handleClick(e)}>
+                                                    <FaEllipsisVertical />
+                                                </IconButton>
+                                                <Popover open={openPopover} onClose={handleClose} anchorEl={anchorEl} anchorOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'left',
+                                                }}>
+                                                    <Box className=" flex flex-col" >
+                                                        <Button className="!px-4">Delete</Button>
+                                                        <Button className="!px-4">Cancel</Button>
+                                                    </Box>
+                                                </Popover>
+                                            </Box>
+                                        </TableCell>
                                     </TableRow>
                                 )
                             })
@@ -97,9 +111,14 @@ function AllRides() {
             <Box>
                 <Drawer open={open} anchor={'right'} >
                     <Box className="!pt-20 px-5">
-                        <Typography variant="h6" component="div" className="!mb-4">
-                            Create Ride
-                        </Typography>
+                        <Box className="flex justify-between items-center mb-4">
+                            <Typography variant="h6" component="div" >
+                                Create Ride
+                            </Typography>
+                            <IconButton onClick={() => setOpen(false)}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
                         {/* <Form > */}
                         <Stack direction={'row'} gap={2} className="!mb-6">
                             <Controller control={control} name="pass_name" render={({ field }) => <TextField {...field} label="Passenger Name" className="w-full" />} />

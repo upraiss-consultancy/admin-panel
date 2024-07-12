@@ -17,7 +17,7 @@ const END_POINTS = {
     BOOKING_LIST: "v0/booking/booking_list",
     ASSIGN_RIDE:"/v0/booking/assing_ride",
     USER_INTERESTED_ASSIGN_RIDE:"/v0/booking/user_interested_assing_ride",
-    ADMIN_DELETE_BOOKING:"/v0/admin/delete_booking",
+    ADMIN_DELETE_BOOKING:"v0/admin/delete_booking",
     ADMIN_CANCEL_BOOKING:"/v0/admin/cancel_booking/{bookingId}"
 }
 export default END_POINTS
