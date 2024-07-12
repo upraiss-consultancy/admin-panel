@@ -23,6 +23,7 @@ import END_POINTS from "../constants/endpoints";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonIcon from "@mui/icons-material/Person";
+import showToast from "../utils/toast";
 function Copyright(props) {
   return (
     <Typography
@@ -119,8 +120,8 @@ export default function FullLayout() {
         if (responseCode === 200) {
           localStorage.removeItem("token");
           localStorage.removeItem("expiry");
-          alert(message);
-          navigate("/login");
+          showToast(message , 'success');
+          navigate("/auth/login");
         } else {
           alert(message);
         }

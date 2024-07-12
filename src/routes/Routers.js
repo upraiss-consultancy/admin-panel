@@ -36,6 +36,15 @@ const Router = [
           />
         ),
       },
+      {
+        path: "/support",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<Profile />} />}
+          />
+        ),
+      },
     ],
   },
   {

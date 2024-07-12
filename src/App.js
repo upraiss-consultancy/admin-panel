@@ -12,11 +12,14 @@ import components from './components/pagination'
 import BookingForm from './components/form/form';
 import { RegisterAdmin } from './Authentication/register/register';
 import Router from './routes/Routers.js';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const routing = useRoutes(Router);
   return (
     <>
           {routing}
+          <ToastContainer/>
     </>
   );
 }

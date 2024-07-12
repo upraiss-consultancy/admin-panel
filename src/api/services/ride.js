@@ -1,6 +1,5 @@
 import api from "../middlewares/protected-interceptor";
 import CONFIG_KEYS from "../../config";
-import authInstanceAxios from "../middlewares/interceptor";
 export const getAllRides = async (endpoint) => {
   try {
     const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`);
@@ -14,7 +13,7 @@ export const getAllRides = async (endpoint) => {
         return responseData[0]?.data;
       }
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const deleteRide = async (endpoint, id) => {
@@ -28,7 +27,7 @@ export const deleteRide = async (endpoint, id) => {
         return responseData;
       }
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const cancelRide = async (endpoint, id) => {
@@ -42,5 +41,21 @@ export const cancelRide = async (endpoint, id) => {
         return responseData;
       }
     }
-  } catch (error) {}
+  } catch (error) { }
+};
+
+
+export const createRide = async (endpoint, rideData) => {
+  try {
+    const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, rideData);
+    if (response) {
+      const {
+        statusText,
+        data: { responseData: responseData },
+      } = response;
+      if (statusText === "OK") {
+        return responseData[0]?.data;
+      }
+    }
+  } catch (error) { }
 };

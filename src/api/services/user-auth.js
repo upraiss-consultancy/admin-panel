@@ -1,5 +1,6 @@
 import CONFIG_KEYS from "../../config";
 import authInstanceAxios from "../middlewares/interceptor";
+import api from "../middlewares/protected-interceptor";
 
 export const UserLogin = async (endpoint, adminLoginInfo) => {
   const response = await authInstanceAxios.post(
@@ -18,7 +19,7 @@ export const adminRegister = async (endpoint, adminData) => {
 };
 
 export const adminLogout = async (endpoint) => {
-  const response = await authInstanceAxios.post(
+  const response = await api.post(
     `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`
   );
   return response;

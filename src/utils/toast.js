@@ -1,30 +1,17 @@
-import { toast } from "react-toastify";
-const successToast = (message) => {
-    toast.success(
-      <div>
-        {/* <img src={successImage} alt="Success" style={{ width: '20px', marginRight: '8px' }} /> */}
-        {message}
-      </div>,
-      {
-        position: "top-center",
-        autoClose: 3000, // Close the toast after 3 seconds
-      }
-    );
-  };
+// const function 
+import { toast } from 'react-toastify';
 
-  const errorToast = (message) => {
-    toast.error(
-      <div>
-        {message}
-      </div>,
-      {
-        position:"top-center",
-        autoClose: 3000, // Close the toast after 3 seconds
-      }
-    );
-  };
+const showToast = (message, type) => {
+  toast(message, {
+      type: type,
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+  });
+}
 
-  export default {
-    successToast,
-    errorToast
-  }
+export default showToast;

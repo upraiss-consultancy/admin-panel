@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getAllRides, deleteRide, cancelRide } from "../../api/services/ride";
+import { getAllRides, deleteRide, cancelRide , createRide} from "../../api/services/ride";
 import END_POINTS from "../../constants/endpoints";
 import {
   Typography,
@@ -16,11 +16,7 @@ import {
   Stack,
   TextField,
   IconButton,
-  Menu,
-  MenuItem,
   Popover,
-  Dialog,
-  DialogTitle,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -29,6 +25,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers";
 import CloseIcon from "@mui/icons-material/Close";
 import { FaEllipsisVertical } from "react-icons/fa6";
+import showToast from "../../utils/toast";
 
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
@@ -38,6 +35,7 @@ function AllRides() {
     reset,
     watch,
     formState: { errors },
+  
   } = useForm({
     // resolver: yupResolver(AdminLoginSchema)
   });
@@ -66,7 +64,7 @@ function AllRides() {
     handleClose();
     const data = await deleteRide(ADMIN_DELETE_BOOKING, id);
     if (data?.responseCode === 200) {
-      alert(data?.message);
+      showToast(data?.message, 'success');
     }
   };
 
@@ -74,12 +72,13 @@ function AllRides() {
     handleClose();
     const data = await cancelRide(ADMIN_CANCEL_BOOKING, id);
     if (data?.responseCode === 200) {
-      alert(data?.message);
+      showToast(data?.message, 'success');
     }
   };
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data, "data");
   };
+
 
 
   return (
@@ -253,7 +252,7 @@ function AllRides() {
                   name="pickup_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date" {...field} />
+                      <DatePicker label="Pick-up Date" {...field} disablePast/>
                     </LocalizationProvider>
                   )}
                 />
@@ -321,7 +320,7 @@ function AllRides() {
                   name="return_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Drop-off Date" {...field} />
+                      <DatePicker label="Drop-off Date" {...field} disablePast/>
                     </LocalizationProvider>
                   )}
                 />

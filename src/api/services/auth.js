@@ -27,11 +27,9 @@ export const adminLogin = async (
 
   export const adminLogout = async (
     endpoint,
-    adminLogout
   ) => {
     const response = await api.post(
       `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
-      adminLogout
     );
     return response;
   };
