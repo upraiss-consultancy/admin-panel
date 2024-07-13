@@ -3,11 +3,11 @@ import { Container, TextField, Button, Typography, Box, InputLabel, IconButton, 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Controller } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import EmailIcon from '@mui/icons-material/Email';
 import { CheckBox } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { AdminRegisterSchema } from '../../validations/AuthValidation';
-import { adminRegister } from '../../api/services/user-auth';
+// import { adminRegister } from '../../api/services/user-auth';
+import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { yupResolver } from '@hookform/resolvers/yup';
 export const RegisterAdmin = () => {
@@ -16,7 +16,7 @@ export const RegisterAdmin = () => {
     });
     const watchValue = watch();
     const onSubmit = async (data) => {
-        const response = await adminRegister('v0/admin/register-admin',data)
+        // const response = await adminRegister('v0/admin/register-admin',data)
     };
     return (
         <Container>

@@ -7,6 +7,9 @@ import { Outlet } from "react-router-dom";
 import Dashboard from "../views/dashoboard/dashboard";
 import AllRides from "../views/ride-management/rides";
 import Profile from "../views/profile/profile";
+import Drivers from "../views/drivers/drivers";
+import COADMIN from "../views/co-admin/ViewCoAdmin";
+
 const Router = [
   {
     path: "/",
@@ -42,6 +45,24 @@ const Router = [
         element: (
           <ProtectedRoute
             component={<ProtectedRoute component={<Profile />} />}
+          />
+        ),
+      },
+      {
+        path: "/drivers?",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<Drivers />} />}
+          />
+        ),
+      },
+      {
+        path: "/co-admin",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<COADMIN />} />}
           />
         ),
       },

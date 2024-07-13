@@ -17,4 +17,3 @@ export const AdminLoginSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string().required('Password is required').min(4, "Password must be at least 8 characters")
 });
-
