@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getAllRides, deleteRide, cancelRide , createRide} from "../../api/services/ride";
+import { getAllRides, deleteRide, cancelRide, createRide } from "../../api/services/ride";
 import END_POINTS from "../../constants/endpoints";
 import {
   Typography,
@@ -16,6 +16,7 @@ import {
   Stack,
   TextField,
   IconButton,
+  Pagination,
   Popover,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
@@ -26,7 +27,10 @@ import { TimePicker } from "@mui/x-date-pickers";
 import CloseIcon from "@mui/icons-material/Close";
 import { FaEllipsisVertical } from "react-icons/fa6";
 import showToast from "../../utils/toast";
-
+import { CreateRideSchema } from "../../validations/RideValidation";
+import { yupResolver } from '@hookform/resolvers/yup';
+import AssignRideDialog from "./assignRideDialog";
+import dayjs from 'dayjs';
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
   const {
@@ -35,21 +39,25 @@ function AllRides() {
     reset,
     watch,
     formState: { errors },
-  
+
   } = useForm({
-    // resolver: yupResolver(AdminLoginSchema)
+    defaultValues: {
+      _id: null
+    },
+    resolver: yupResolver(CreateRideSchema)
   });
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING } =
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING } =
     END_POINTS;
+  const fetchRides = async () => {
+    const data = await getAllRides(BOOKING_LIST);
+    if (data?.length > 0) {
+      setAllRides(data);
+    }
+  };
   useEffect(() => {
-    const fetchRides = async () => {
-      const data = await getAllRides(BOOKING_LIST);
-      if (data?.length > 0) {
-        setAllRides(data);
-      }
-    };
     fetchRides();
   }, []);
   const handleClick = (event) => {
@@ -65,6 +73,7 @@ function AllRides() {
     const data = await deleteRide(ADMIN_DELETE_BOOKING, id);
     if (data?.responseCode === 200) {
       showToast(data?.message, 'success');
+      fetchRides();
     }
   };
 
@@ -73,14 +82,26 @@ function AllRides() {
     const data = await cancelRide(ADMIN_CANCEL_BOOKING, id);
     if (data?.responseCode === 200) {
       showToast(data?.message, 'success');
+      fetchRides();
     }
   };
   const onSubmit = async (data) => {
-    console.log(data, "data");
+    const pickupformattedDate = dayjs(data.pickup_date).format('YYYY-MM-DD');
+    const returnformattedDate = dayjs(data.return_date).format('YYYY-MM-DD');
+    const transformedData = {
+      ...data,
+      pickup_date: pickupformattedDate,
+      return_date: returnformattedDate,
+    };
+    const responseMessage = await createRide(CREATE_BOOKING, transformedData);
+    if (responseMessage) {
+      showToast(responseMessage, 'success')
+      fetchRides();
+      setDialogOpen(true);
+      setOpen(false);
+      reset();
+    }
   };
-
-
-
   return (
     <>
       <TableContainer component={Paper}>
@@ -184,6 +205,11 @@ function AllRides() {
             })}
           </TableBody>
         </Table>
+        <Stack spacing={2} className="!py-4 !w-full" direction={'row'} justifyContent={'center'}>
+          <Box>
+            <Pagination count={10} variant="outlined" shape="rounded" />
+          </Box>
+        </Stack>
       </TableContainer>
       <Box>
         <Drawer open={open} anchor={"right"}>
@@ -198,9 +224,9 @@ function AllRides() {
             </Box>
             <Box
               component={"form"}
-              className=" flex flex-col gap-4"
               onSubmit={handleSubmit(onSubmit)}
               onReset={() => reset()}
+              className=" flex flex-col gap-4"
             >
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
@@ -211,6 +237,8 @@ function AllRides() {
                       {...field}
                       label="Passenger Name"
                       className="w-full"
+                      error={!!errors.pass_name}
+                      helperText={errors.pass_name?.message}
                     />
                   )}
                 />
@@ -222,6 +250,8 @@ function AllRides() {
                       {...field}
                       label="Mobile No."
                       className="w-full"
+                      error={!!errors.pass_mobile_no}
+                      helperText={errors.pass_mobile_no?.message}
                     />
                   )}
                 />
@@ -235,6 +265,8 @@ function AllRides() {
                       {...field}
                       label="Area Type"
                       className="w-full"
+                      error={!!errors.area_type}
+                      helperText={errors.area_type?.message}
                     />
                   )}
                 />
@@ -242,7 +274,8 @@ function AllRides() {
                   control={control}
                   name="way_type"
                   render={({ field }) => (
-                    <TextField {...field} label="Way Type" className="w-full" />
+                    <TextField {...field} label="Way Type" className="w-full" error={!!errors.way_type}
+                      helperText={errors.way_type?.message} />
                   )}
                 />
               </Stack>
@@ -252,7 +285,16 @@ function AllRides() {
                   name="pickup_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date" {...field} disablePast/>
+                      <DatePicker label="Pick-up Date" {...field} disablePast renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          variant="outlined"
+                          error={!!errors.pickup_date}
+                          helperText={errors.pickup_date?.message}
+                        />
+                      )}
+                      />
                     </LocalizationProvider>
                   )}
                 />
@@ -261,7 +303,15 @@ function AllRides() {
                   name="pickup_time"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <TimePicker label="Pick-up Time" {...field} />
+                      <TimePicker label="Pick-up Time" {...field} renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          variant="outlined"
+                          error={!!errors.pickup_time}
+                          helperText={errors.pickup_time?.message}
+                        />
+                      )} />
                     </LocalizationProvider>
                   )}
                 />
@@ -275,6 +325,8 @@ function AllRides() {
                       {...field}
                       label="Pick-up address"
                       className="w-full"
+                      error={!!errors.pickup_address}
+                      helperText={errors.pickup_address?.message}
                     />
                   )}
                 />
@@ -286,6 +338,8 @@ function AllRides() {
                       {...field}
                       label="Pick-up state"
                       className="w-full"
+                      error={!!errors.pickup_state}
+                      helperText={errors.pickup_state?.message}
                     />
                   )}
                 />
@@ -299,6 +353,8 @@ function AllRides() {
                       {...field}
                       label="Pick-up city"
                       className="w-full"
+                      error={!!errors.pickup_city}
+                      helperText={errors.pickup_city?.message}
                     />
                   )}
                 />
@@ -310,6 +366,8 @@ function AllRides() {
                       {...field}
                       label="Pick-up Pincode"
                       className="w-full"
+                      error={!!errors.pickup_pin}
+                      helperText={errors.pickup_pin?.message}
                     />
                   )}
                 />
@@ -320,7 +378,15 @@ function AllRides() {
                   name="return_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Drop-off Date" {...field} disablePast/>
+                      <DatePicker label="Drop-off Date" {...field} disablePast render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Pick-up city"
+                          className="w-full"
+                          error={!!errors.return_date}
+                          helperText={errors.return_date?.message}
+                        />
+                      )} />
                     </LocalizationProvider>
                   )}
                 />
@@ -329,7 +395,15 @@ function AllRides() {
                   name="return_time"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <TimePicker label="Drop-off Time" {...field} />
+                      <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Pick-up city"
+                          className="w-full"
+                          error={!!errors.return_time}
+                          helperText={errors.return_time?.message}
+                        />
+                      )} />
                     </LocalizationProvider>
                   )}
                 />
@@ -343,6 +417,8 @@ function AllRides() {
                       {...field}
                       label="Drop-off address"
                       className="w-full"
+                      error={!!errors.return_address}
+                      helperText={errors.return_address?.message}
                     />
                   )}
                 />
@@ -354,6 +430,8 @@ function AllRides() {
                       {...field}
                       label="Drop-off state"
                       className="w-full"
+                      error={!!errors.return_state}
+                      helperText={errors.return_state?.message}
                     />
                   )}
                 />
@@ -367,6 +445,8 @@ function AllRides() {
                       {...field}
                       label="Drop-off city"
                       className="w-full"
+                      error={!!errors.return_city}
+                      helperText={errors.return_city?.message}
                     />
                   )}
                 />
@@ -378,6 +458,8 @@ function AllRides() {
                       {...field}
                       label="Drop-off Pincode"
                       className="w-full"
+                      error={!!errors.return_pin}
+                      helperText={errors.return_pin?.message}
                     />
                   )}
                 />
@@ -387,7 +469,8 @@ function AllRides() {
                   control={control}
                   name="amount"
                   render={({ field }) => (
-                    <TextField {...field} label="Amount" className="w-full" />
+                    <TextField {...field} label="Amount" className="w-full" error={!!errors.amount}
+                      helperText={errors.amount?.message} />
                   )}
                 />
               </Stack>
@@ -402,7 +485,9 @@ function AllRides() {
             </Box>
           </Box>
         </Drawer>
+
       </Box>
+      <AssignRideDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
     </>
   );
 }

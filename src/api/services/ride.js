@@ -50,12 +50,31 @@ export const createRide = async (endpoint, rideData) => {
     const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, rideData);
     if (response) {
       const {
-        statusText,
-        data: { responseData: responseData },
+        status,
+        data: { message },
       } = response;
-      if (statusText === "OK") {
-        return responseData[0]?.data;
+      if (status === 200) {
+        return message;
       }
     }
   } catch (error) { }
 };
+
+
+export const assignRide = async (endpoint, rideData) => {
+  try {
+    const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, rideData);
+    if (response) {
+      console.log(response , "Response")
+      const {
+        status,
+        data: { message },
+      } = response;
+      if (status === 200) {
+        return message;
+      }
+    }
+  } catch (error) { }
+};
+
+

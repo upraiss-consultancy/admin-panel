@@ -24,6 +24,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonIcon from "@mui/icons-material/Person";
 import showToast from "../utils/toast";
+
 function Copyright(props) {
   return (
     <Typography
@@ -189,21 +190,21 @@ export default function FullLayout() {
                 <Button
                   className="!px-6"
                   onClick={() => navigate("/profile")}
-                  endIcon={<PersonIcon />}
+                  startIcon={<PersonIcon />}
                 >
                   Profile
                 </Button>
                 <Button
                   className="!px-6"
                   onClick={() => navigate("/support")}
-                  endIcon={<SupportAgentIcon />}
+                  startIcon={<SupportAgentIcon />}
                 >
                   Support
                 </Button>
                 <Button
                   className="!px-6"
                   onClick={logout}
-                  endIcon={<LogoutIcon />}
+                  startIcon={<LogoutIcon />}
                 >
                   Logout
                 </Button>
