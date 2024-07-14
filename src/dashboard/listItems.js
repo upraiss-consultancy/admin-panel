@@ -36,18 +36,22 @@ export const mainListItems = (
         <ListItemText primary="Ride Management" />
       </ListItemButton>
     </NavLink>
-    <ListItemButton>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Activity" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
-    </ListItemButton>
+    <NavLink to={'/drivers'}>
+      <ListItemButton>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Drivers" />
+      </ListItemButton>
+    </NavLink>
+    <NavLink to={'/co-admin'}>
+      <ListItemButton>
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Co-Admins" />
+      </ListItemButton>
+    </NavLink>
   </React.Fragment>
 );
 
