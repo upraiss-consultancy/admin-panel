@@ -43,8 +43,10 @@ function COADMIN({ text }) {
         setOpen(false);
     }
     async function submit(data) {
+        
         const response = await createCoAdmin('v0/admin/register-admin', data)
     }
+    console.log(errors , "errors")
     return (
         <>
             <Container className=" !px-0">
@@ -108,7 +110,7 @@ function COADMIN({ text }) {
                                     <Controller name='address' control={control} rules={{ required: true }} render={({ field }) => <TextField label='Address' variant="standard" autoFocus required error={!!errors.address} helperText={errors.address?.message}  {...field} className='w-full' />} />
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Controller name='address' control={control} rules={{ required: true }} render={({ field }) => <Select defaultValue='Sales' label='Department' variant="standard" required className='w-full' {...field} error={!!errors.department} helperText={errors.department?.message} >
+                                    <Controller name='department' control={control} rules={{ required: true }} render={({ field }) => <Select defaultValue='Sales' label='Department' variant="standard" required className='w-full' {...field} error={!!errors.department} helperText={errors.department?.message} >
                                         <MenuItem value={'Sales'}>Sales</MenuItem>
                                         <MenuItem value={'Manager'}>Manager</MenuItem>
                                     </Select>} />

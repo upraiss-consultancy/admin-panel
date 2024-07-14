@@ -30,6 +30,7 @@ import showToast from "../../utils/toast";
 import { CreateRideSchema } from "../../validations/RideValidation";
 import { yupResolver } from '@hookform/resolvers/yup';
 import AssignRideDialog from "./assignRideDialog";
+import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
@@ -51,6 +52,8 @@ function AllRides() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING } =
     END_POINTS;
+  const [bookingID, setBookingID] = useState('')
+  const navigate = useNavigate()
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST);
     if (data?.length > 0) {
@@ -93,15 +96,25 @@ function AllRides() {
       pickup_date: pickupformattedDate,
       return_date: returnformattedDate,
     };
-    const responseMessage = await createRide(CREATE_BOOKING, transformedData);
-    if (responseMessage) {
-      showToast(responseMessage, 'success')
+    const response = await createRide(CREATE_BOOKING, transformedData);
+    if (response?.message) {
+      showToast(response?.message, 'success')
       fetchRides();
       setDialogOpen(true);
       setOpen(false);
       reset();
+      setBookingID(response?.bookingId)
     }
   };
+  const handleNavigate = (params) => {
+    if (params) {
+      const queryParams = new URLSearchParams({ bookingId: bookingID });
+      navigate(`/drivers?${queryParams.toString()}`);
+      setDialogOpen(false)
+    } else {
+      setDialogOpen(false)
+    }
+  }
   return (
     <>
       <TableContainer component={Paper}>
@@ -487,7 +500,7 @@ function AllRides() {
         </Drawer>
 
       </Box>
-      <AssignRideDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
+      <AssignRideDialog dialogOpen={dialogOpen} handleNavigate={handleNavigate} />
     </>
   );
 }

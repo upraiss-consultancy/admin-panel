@@ -49,7 +49,7 @@ const Router = [
         ),
       },
       {
-        path: "/drivers?",
+        path: "/drivers",
         exact: true,
         element: (
           <ProtectedRoute
