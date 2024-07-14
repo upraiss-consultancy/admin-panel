@@ -19,3 +19,4 @@ export const CreateRideSchema =  Yup.object().shape({
     return_pin: Yup.string().required('Return pin is required'),
     amount: Yup.number().required('Return amount is required')
 })
+

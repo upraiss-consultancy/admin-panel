@@ -32,6 +32,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import AssignRideDialog from "./assignRideDialog";
 import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
+import CancelRideDialog from "./cancelRideDialog";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ViewRideDialog from "./viewRideDialog";
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
   const {
@@ -52,8 +55,13 @@ function AllRides() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING } =
     END_POINTS;
-  const [bookingID, setBookingID] = useState('')
-  const navigate = useNavigate()
+  const [bookingID, setBookingID] = useState('');
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [isCancel, setIsCancel] = useState(false);
+  const [viewRide, setViewRide] = useState(false);
+  const [viewRideData, setViewRideData] = useState({})
+  const navigate = useNavigate();
+
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST);
     if (data?.length > 0) {
@@ -80,15 +88,17 @@ function AllRides() {
     }
   };
 
-  const handleCancelRide = async (id) => {
+  const handleCancelRide = async () => {
     handleClose();
-    const data = await cancelRide(ADMIN_CANCEL_BOOKING, id);
+    const data = await cancelRide(ADMIN_CANCEL_BOOKING, bookingID);
     if (data?.responseCode === 200) {
       showToast(data?.message, 'success');
       fetchRides();
     }
+    setIsCancel(false)
   };
   const onSubmit = async (data) => {
+
     const pickupformattedDate = dayjs(data.pickup_date).format('YYYY-MM-DD');
     const returnformattedDate = dayjs(data.return_date).format('YYYY-MM-DD');
     const transformedData = {
@@ -98,12 +108,16 @@ function AllRides() {
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
+      if (data?._id === null) {
+        setBookingID(response?.bookingId)
+        setDialogOpen(true);
+      } else {
+        setIsUpdate(false)
+      }
       showToast(response?.message, 'success')
       fetchRides();
-      setDialogOpen(true);
       setOpen(false);
       reset();
-      setBookingID(response?.bookingId)
     }
   };
   const handleNavigate = (params) => {
@@ -115,6 +129,33 @@ function AllRides() {
       setDialogOpen(false)
     }
   }
+
+  const handleUpdateRide = (data) => {
+    reset({
+      _id: data['_id'],
+      area_type: data['area_type'],
+      way_type: data['way_type'],
+      pass_name: data['pass_name'],
+      pass_mobile_no: data['pass_mobile_no'],
+      pickup_time: dayjs(data['pickup_time']),
+      return_time: dayjs(data['return_time']),
+      return_date: dayjs(data['return_date']),
+      pickup_date: dayjs(data['pickup_date']),
+      pickup_address: data['pickup_address'],
+      pickup_state: data['pickup_state'],
+      pickup_city: data['pickup_city'],
+      pickup_pin: data['pickup_pin'],
+      return_address: data['return_address'],
+      return_state: data['return_state'],
+      return_city: data['return_state'],
+      amount: data['amount']?.$numberDecimal,
+      return_pin: data['return_pin']
+    })
+    setIsUpdate(true)
+    setOpen(true);
+    handleClose()
+  }
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -134,12 +175,13 @@ function AllRides() {
           <TableHead>
             <TableRow>
               <TableCell>S.No.</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Mobile No.</TableCell>
+              <TableCell>Passenger Name</TableCell>
+              <TableCell>Passenger Mobile No.</TableCell>
               <TableCell>Booking Type</TableCell>
               <TableCell>Area Type</TableCell>
               <TableCell className="!text-center">Pick-up</TableCell>
               <TableCell className="!text-center">Drop-off</TableCell>
+              <TableCell className="!text-center">Interested Driver</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -167,14 +209,15 @@ function AllRides() {
                       ", " +
                       data?.return_pin}
                   </TableCell>
+                  <TableCell className="!text-center"><Button endIcon={<VisibilityIcon />} onClick={() => { setViewRide(true); setViewRideData(data) }}>View</Button></TableCell>
                   <TableCell
                     className={
                       data?.booking_status === "pending"
                         ? " !text-orange-400 capitalize"
-                        : ""
+                        : data?.booking_status === "approved" ? '!text-green-500 ' : data?.booking_status === "cancel" ? '!text-red-600 capitalize' : ''
                     }
                   >
-                    {data?.booking_status}
+                    {data?.booking_status === "approved" ? 'Assigned' : data?.booking_status}
                   </TableCell>
                   <TableCell>
                     <Box>
@@ -193,19 +236,25 @@ function AllRides() {
                         <Box className=" flex flex-col">
                           <Button
                             className="!px-4"
+                            onClick={() => handleUpdateRide(data)}
+                          >
+                            Update Ride
+                          </Button>
+                          <Button
+                            className="!px-4"
                             onClick={() => hanldeDeleteRide(data?._id)}
                           >
                             Delete Ride
                           </Button>
                           <Button
                             className="!px-4"
-                            onClick={() => handleCancelRide(data?._id)}
+                            onClick={() => { setBookingID(data?._id); setIsCancel(true); handleClose() }}
                           >
                             Cancel Ride
                           </Button>
                           <Button
                             className="!px-4"
-                            onClick={() => handleCancelRide(data?._id)}
+                            onClick={() => { setBookingID(data?._id); handleNavigate(true) }}
                           >
                             Assign Ride
                           </Button>
@@ -223,7 +272,7 @@ function AllRides() {
             <Pagination count={10} variant="outlined" shape="rounded" />
           </Box>
         </Stack>
-      </TableContainer>
+      </TableContainer >
       <Box>
         <Drawer open={open} anchor={"right"}>
           <Box className="!pt-20 !pb-4 px-5">
@@ -298,7 +347,7 @@ function AllRides() {
                   name="pickup_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date" {...field} disablePast renderInput={(params) => (
+                      <DatePicker label="Pick-up Date" {...field} renderInput={(params) => (
                         <TextField
                           {...params}
                           fullWidth
@@ -391,7 +440,7 @@ function AllRides() {
                   name="return_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Drop-off Date" {...field} disablePast render={({ field }) => (
+                      <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
                         <TextField
                           {...field}
                           label="Pick-up city"
@@ -491,9 +540,13 @@ function AllRides() {
                 <Button variant="outlined" className="!w-full" type="reset">
                   Reset
                 </Button>
-                <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
-                  Submit
-                </Button>
+                {
+                  isUpdate ? <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
+                    Update
+                  </Button> : <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
+                    Submit
+                  </Button>
+                }
               </Box>
             </Box>
           </Box>
@@ -501,6 +554,8 @@ function AllRides() {
 
       </Box>
       <AssignRideDialog dialogOpen={dialogOpen} handleNavigate={handleNavigate} />
+      <CancelRideDialog open={isCancel} handleClose={() => setIsCancel(false)} handleConfirm={handleCancelRide} />
+      <ViewRideDialog open={viewRide} data={viewRideData} handlClose={() => setViewRide(false)}/>
     </>
   );
 }
