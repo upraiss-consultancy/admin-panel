@@ -1,16 +1,16 @@
 import api from "../middlewares/protected-interceptor";
 import CONFIG_KEYS from "../../config";
-export const getAllRides = async (endpoint) => {
+export const getAllRides = async (endpoint, params) => {
   try {
-    const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`);
+    const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
     if (response) {
       const {
         statusText,
         data: { responseData: responseData },
       } = response;
-      console.log(responseData, "responseData");
+      console.log(responseData, response, "responseData");
       if (statusText === "OK") {
-        return responseData[0]?.data;
+        return { data: responseData[0]?.data, metadata: responseData[0]?.metadata };
       }
     }
   } catch (error) { }
@@ -91,5 +91,43 @@ export const interestedRides = async (endpoint) => {
     }
   } catch (error) { }
 };
+
+export const interestedDriverList = async (endpoint, params) => {
+  try {
+    const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
+    if (response) {
+      console.log(response, "response1212")
+      const {
+        statusText,
+        status,
+        data: { responseData },
+      } = response;
+      if (status === 200) {
+        return {
+          data: responseData[0]?.data, rideData:
+            responseData[0]?.metadata
+        };
+      }
+    }
+  } catch (error) { }
+};
+
+
+export const AssignInterestedDrivers = async (endpoint, data) => {
+  try {
+    const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
+    console.log(response , "response123")
+    if (response) {
+      const {
+        statusText,
+        data: { responseData: responseData  , responseCode , message} ,
+      } = response;
+      if (responseCode === 200) {
+        return responseCode;
+      }
+    }
+  } catch (error) { }
+};
+
 
 

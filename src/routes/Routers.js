@@ -9,7 +9,7 @@ import AllRides from "../views/ride-management/rides";
 import Profile from "../views/profile/profile";
 import Drivers from "../views/drivers/drivers";
 import COADMIN from "../views/co-admin/ViewCoAdmin";
-
+import RideDetailView from '../views/ride-management/RideDetails.js'
 const Router = [
   {
     path: "/",
@@ -63,6 +63,15 @@ const Router = [
         element: (
           <ProtectedRoute
             component={<ProtectedRoute component={<COADMIN />} />}
+          />
+        ),
+      },
+      {
+        path: "/ride-detail",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<RideDetailView />} />}
           />
         ),
       },

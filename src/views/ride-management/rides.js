@@ -18,6 +18,9 @@ import {
   IconButton,
   Pagination,
   Popover,
+  Select,
+  MenuItem,
+  TablePagination
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -34,7 +37,8 @@ import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
 import CancelRideDialog from "./cancelRideDialog";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ViewRideDialog from "./viewRideDialog";
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
   const {
@@ -46,7 +50,9 @@ function AllRides() {
 
   } = useForm({
     defaultValues: {
-      _id: null
+      _id: null,
+      way_type: 'one',
+      area_type: 'local'
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -58,19 +64,28 @@ function AllRides() {
   const [bookingID, setBookingID] = useState('');
   const [isUpdate, setIsUpdate] = useState(false);
   const [isCancel, setIsCancel] = useState(false);
-  const [viewRide, setViewRide] = useState(false);
-  const [viewRideData, setViewRideData] = useState({})
+  const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate();
-
+  const [paginationData, setPaginationData] = useState([])
   const fetchRides = async () => {
-    const data = await getAllRides(BOOKING_LIST);
-    if (data?.length > 0) {
-      setAllRides(data);
+    const data = await getAllRides(BOOKING_LIST, {
+      params: {
+        page: currentPage,
+        limit: 10,
+        booking_type: 'live',
+        area_type: 'local',
+        way_type: 'one'
+      }
+    });
+    console.log(data?.data)
+    if (data?.data?.length > 0) {
+      setAllRides(data?.data);
+      setPaginationData(data?.metadata)
     }
   };
   useEffect(() => {
     fetchRides();
-  }, []);
+  }, [currentPage]);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -156,6 +171,15 @@ function AllRides() {
     handleClose()
   }
 
+  const handlePagination = (event) => {
+    setCurrentPage(event.currentTarget.textContent)
+  }
+
+  const handleViewRideDetail = (_booking_id) => {
+    const queryParams = new URLSearchParams({ bookingId: _booking_id });
+    navigate(`/ride-detail?${queryParams.toString()}`);
+  }
+  const wayType = watch('way_type', 'one')
   return (
     <>
       <TableContainer component={Paper}>
@@ -163,6 +187,32 @@ function AllRides() {
           <Typography variant="h6" component="div">
             Ride Bookings
           </Typography>
+          <Controller name="" control={control} render={({ field }) => <TextField {...field} placeholder="Search Ride..." sx={{
+            '& .MuiInputBase-root': {
+              height: 40,  // Set the height you need
+            },
+          }} InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+
+            )
+          }} />} />
+          <Select defaultValue={'live'} className=" min-w-36 !max-h-10">
+            <MenuItem value={'live'}>Live</MenuItem>
+            <MenuItem value={'out-station'}>Out Station</MenuItem>
+          </Select>
+          <Select defaultValue={'local'} className=" min-w-36 !max-h-10">
+            <MenuItem value={'local'}>Local</MenuItem>
+            <MenuItem value={'out-station'}>Out Station</MenuItem>
+          </Select>
+          <Select defaultValue={'one'} className=" min-w-36 !max-h-10">
+            <MenuItem value={'one'}>One</MenuItem>
+            <MenuItem value={'rounded'}>Rounded</MenuItem>
+          </Select>
           <Button
             variant="contained"
             className="!bg-[#DD781E]"
@@ -209,7 +259,11 @@ function AllRides() {
                       ", " +
                       data?.return_pin}
                   </TableCell>
-                  <TableCell className="!text-center"><Button endIcon={<VisibilityIcon />} onClick={() => { setViewRide(true); setViewRideData(data) }}>View</Button></TableCell>
+                  <TableCell className="!text-center">
+                    {
+                      data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
+                    }
+                  </TableCell>
                   <TableCell
                     className={
                       data?.booking_status === "pending"
@@ -269,7 +323,7 @@ function AllRides() {
         </Table>
         <Stack spacing={2} className="!py-4 !w-full" direction={'row'} justifyContent={'center'}>
           <Box>
-            <Pagination count={10} variant="outlined" shape="rounded" />
+            <Pagination count={paginationData[0]?.total_page} variant="outlined" shape="rounded" onChange={handlePagination} />
           </Box>
         </Stack>
       </TableContainer >
@@ -323,21 +377,29 @@ function AllRides() {
                   control={control}
                   name="area_type"
                   render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Area Type"
-                      className="w-full"
-                      error={!!errors.area_type}
-                      helperText={errors.area_type?.message}
-                    />
+                    // <TextField
+                    //   {...field}
+                    //   label="Area Type"
+                    //   className="w-full"
+                    //   error={!!errors.area_type}
+                    //   helperText={errors.area_type?.message}
+                    // />
+                    <Select {...field} className="w-full" defaultValue="local" >
+                      <MenuItem value={'local'}>Local</MenuItem>
+                      <MenuItem value={'out-station'}>Out Station</MenuItem>
+                    </Select>
                   )}
                 />
                 <Controller
                   control={control}
                   name="way_type"
                   render={({ field }) => (
-                    <TextField {...field} label="Way Type" className="w-full" error={!!errors.way_type}
-                      helperText={errors.way_type?.message} />
+                    <Select {...field} className="w-full" defaultValue="one">
+                      <MenuItem value={'one'}>One</MenuItem>
+                      <MenuItem value={'rounded'}>Rounded</MenuItem>
+                    </Select>
+                    // <TextField {...field} label="Way Type" className="w-full" error={!!errors.way_type}
+                    //   helperText={errors.way_type?.message} />
                   )}
                 />
               </Stack>
@@ -434,98 +496,105 @@ function AllRides() {
                   )}
                 />
               </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="return_date"
-                  render={({ field }) => (
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Pick-up city"
-                          className="w-full"
-                          error={!!errors.return_date}
-                          helperText={errors.return_date?.message}
-                        />
-                      )} />
-                    </LocalizationProvider>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="return_time"
-                  render={({ field }) => (
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Pick-up city"
-                          className="w-full"
-                          error={!!errors.return_time}
-                          helperText={errors.return_time?.message}
-                        />
-                      )} />
-                    </LocalizationProvider>
-                  )}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="return_address"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Drop-off address"
-                      className="w-full"
-                      error={!!errors.return_address}
-                      helperText={errors.return_address?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="return_state"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Drop-off state"
-                      className="w-full"
-                      error={!!errors.return_state}
-                      helperText={errors.return_state?.message}
-                    />
-                  )}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="return_city"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Drop-off city"
-                      className="w-full"
-                      error={!!errors.return_city}
-                      helperText={errors.return_city?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="return_pin"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Drop-off Pincode"
-                      className="w-full"
-                      error={!!errors.return_pin}
-                      helperText={errors.return_pin?.message}
-                    />
-                  )}
-                />
-              </Stack>
+              {
+                wayType === "one" && (
+                  <>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="return_date"
+                        render={({ field }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
+                              <TextField
+                                {...field}
+                                label="Pick-up city"
+                                className="w-full"
+                                error={!!errors.return_date}
+                                helperText={errors.return_date?.message}
+                              />
+                            )} />
+                          </LocalizationProvider>
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="return_time"
+                        render={({ field }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
+                              <TextField
+                                {...field}
+                                label="Pick-up city"
+                                className="w-full"
+                                error={!!errors.return_time}
+                                helperText={errors.return_time?.message}
+                              />
+                            )} />
+                          </LocalizationProvider>
+                        )}
+                      />
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="return_address"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Drop-off address"
+                            className="w-full"
+                            error={!!errors.return_address}
+                            helperText={errors.return_address?.message}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="return_state"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Drop-off state"
+                            className="w-full"
+                            error={!!errors.return_state}
+                            helperText={errors.return_state?.message}
+                          />
+                        )}
+                      />
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="return_city"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Drop-off city"
+                            className="w-full"
+                            error={!!errors.return_city}
+                            helperText={errors.return_city?.message}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="return_pin"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Drop-off Pincode"
+                            className="w-full"
+                            error={!!errors.return_pin}
+                            helperText={errors.return_pin?.message}
+                          />
+                        )}
+                      />
+                    </Stack>
+                  </>
+                )
+              }
+
               <Stack direction={"row"} className="!mb-4">
                 <Controller
                   control={control}
@@ -555,7 +624,6 @@ function AllRides() {
       </Box>
       <AssignRideDialog dialogOpen={dialogOpen} handleNavigate={handleNavigate} />
       <CancelRideDialog open={isCancel} handleClose={() => setIsCancel(false)} handleConfirm={handleCancelRide} />
-      <ViewRideDialog open={viewRide} data={viewRideData} handlClose={() => setViewRide(false)}/>
     </>
   );
 }
