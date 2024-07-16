@@ -52,7 +52,8 @@ function AllRides() {
     defaultValues: {
       _id: null,
       way_type: 'one',
-      area_type: 'local'
+      area_type: 'local',
+
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -66,26 +67,31 @@ function AllRides() {
   const [isCancel, setIsCancel] = useState(false);
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate();
-  const [paginationData, setPaginationData] = useState([])
+  const [paginationData, setPaginationData] = useState([]);
+  const [allParams, setAllParams] = useState({
+    booking_type: 'live',
+    area_type: 'local',
+    way_type: 'one',
+    search: ''
+  })
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST, {
       params: {
+        ...allParams,
         page: currentPage,
         limit: 10,
-        booking_type: 'live',
-        area_type: 'local',
-        way_type: 'one'
       }
     });
-    console.log(data?.data)
     if (data?.data?.length > 0) {
       setAllRides(data?.data);
       setPaginationData(data?.metadata)
+    } else {
+      setAllRides([]);
     }
   };
   useEffect(() => {
     fetchRides();
-  }, [currentPage]);
+  }, [currentPage, allParams]);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -179,6 +185,8 @@ function AllRides() {
     const queryParams = new URLSearchParams({ bookingId: _booking_id });
     navigate(`/ride-detail?${queryParams.toString()}`);
   }
+
+  const [search, setSearch] = useState('')
   const wayType = watch('way_type', 'one')
   return (
     <>
@@ -187,29 +195,35 @@ function AllRides() {
           <Typography variant="h6" component="div">
             Ride Bookings
           </Typography>
-          <Controller name="" control={control} render={({ field }) => <TextField {...field} placeholder="Search Ride..." sx={{
+          {/* <Controller name="" control={control} render={({ field }) =>  */}
+          <TextField placeholder="Search Ride..." sx={{
             '& .MuiInputBase-root': {
               height: 40,  // Set the height you need
             },
           }} InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton>
+                <IconButton onClick={() => {
+                  // if (search.trim() !== "") {
+                    setAllParams(prevState => ({ ...prevState, search: search }))
+                  // }
+                }}>
                   <SearchIcon />
                 </IconButton>
               </InputAdornment>
 
             )
-          }} />} />
-          <Select defaultValue={'live'} className=" min-w-36 !max-h-10">
+          }} onChange={(e) => setSearch(e.target.value)} />
+          {/* } /> */}
+          <Select defaultValue={'live'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}>
             <MenuItem value={'live'}>Live</MenuItem>
-            <MenuItem value={'out-station'}>Out Station</MenuItem>
+            {/* <MenuItem value={'out-station'}>Out Station</MenuItem> */}
           </Select>
-          <Select defaultValue={'local'} className=" min-w-36 !max-h-10">
+          <Select defaultValue={'local'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, area_type: e.target.value }))}>
             <MenuItem value={'local'}>Local</MenuItem>
             <MenuItem value={'out-station'}>Out Station</MenuItem>
           </Select>
-          <Select defaultValue={'one'} className=" min-w-36 !max-h-10">
+          <Select defaultValue={'one'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, way_type: e.target.value }))}>
             <MenuItem value={'one'}>One</MenuItem>
             <MenuItem value={'rounded'}>Rounded</MenuItem>
           </Select>
