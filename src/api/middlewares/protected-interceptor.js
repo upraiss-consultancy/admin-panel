@@ -12,6 +12,9 @@ api.interceptors.request.use(
     if (tokenString) {
       config.headers.token = `${tokenString}`;
     }
+    config.params ={
+      ...config.params,
+    }
     return config;
   },
   (error) => {
