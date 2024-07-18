@@ -75,13 +75,15 @@ function AllRides() {
     search: ''
   })
   const fetchRides = async () => {
-    const data = await getAllRides(BOOKING_LIST, {
+    const data = await getAllRides(BOOKING_LIST, 
+      {
       params: {
         ...allParams,
         page: currentPage,
         limit: 10,
       }
-    });
+    }
+  );
     if (data?.data?.length > 0) {
       setAllRides(data?.data);
       setPaginationData(data?.metadata)
@@ -242,10 +244,11 @@ function AllRides() {
               <TableCell>Passenger Name</TableCell>
               <TableCell>Passenger Mobile No.</TableCell>
               <TableCell>Booking Type</TableCell>
-              <TableCell>Area Type</TableCell>
+              <TableCell>Way Type</TableCell>
               <TableCell className="!text-center">Pick-up</TableCell>
               <TableCell className="!text-center">Drop-off</TableCell>
               <TableCell className="!text-center">Interested Driver</TableCell>
+              <TableCell className="!text-center">Assigned Driver Name</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -254,6 +257,7 @@ function AllRides() {
             {allRides?.map((data, index) => {
               return (
                 <TableRow>
+            {console.log(data , 'ALl DATA')}
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{data?.pass_name}</TableCell>
                   <TableCell>{data?.pass_mobile_no}</TableCell>
@@ -278,6 +282,7 @@ function AllRides() {
                       data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
                     }
                   </TableCell>
+                  <TableCell className="!text-center">N.A.</TableCell>
                   <TableCell
                     className={
                       data?.booking_status === "pending"
