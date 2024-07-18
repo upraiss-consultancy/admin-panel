@@ -1,4 +1,4 @@
-import { Avatar, Card, CardHeader, Container, Grid, CardActions, Button, Typography, IconButton, Stack, List, ListItemAvatar, ListItem, TableContainer, Paper, Box, TextField, InputAdornment, TableCell, MenuItem, TableRow, Pagination, Popover, Select, Table, TableHead, TableBody } from "@mui/material";
+import { Avatar, Card, CardHeader, Container, Grid, CardActions, Button, Typography, IconButton, Stack, List, ListItemAvatar, ListItem, TableContainer, Paper, Box, TextField, InputAdornment, TableCell, MenuItem, TableRow, Pagination, Popover, Select, Table, TableHead, TableBody, FormControl, InputLabel } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { red } from '@mui/material/colors';
 import { getDriverList } from "../../api/services/driver";
@@ -17,24 +17,44 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
 import dayjs from 'dayjs';
+import { CreatePackageSchema } from "../../validations/PackagesValidation";
 // import InputAdornment from '@mui/material/InputAdornment';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { FaEllipsisVertical } from "react-icons/fa6";
-function Drivers({ text }) {
-    const [allDrivers, setAllDrivers] = useState([]);
+import { createPackage, getAllPackageList } from "../../api/services/packages";
+const { ALL_USER_ADMIN, ASSIGN_RIDE, CREATE_PACKAGES, GET_ALL_PACKAGE_LIST } = END_POINTS;
+function Packages({ text }) {
+    const [allPackages, setAllPackages] = useState([]);
     const [searchParams] = useSearchParams()
     const bookingId = searchParams.get('bookingId');
     const navigate = useNavigate();
     const [isUpdate, setIsUpdate] = useState(false);
-    const { ALL_USER_ADMIN, ASSIGN_RIDE } = END_POINTS;
+    const [params, setAllParams] = useState({
+        limit: 10,
+        page: 1,
+        search: ""
+    })
+
     const [open, setOpen] = useState(false)
     useEffect(() => {
-        const fetchRides = async () => {
-            const data = await getDriverList(ALL_USER_ADMIN);
-            if (data?.length > 0) {
-                setAllDrivers(data);
+        const fetchPackages = async () => {
+            const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
+                params: {
+                    ...params,
+                }
+            });
+            console.log(response?.data?.responseCode)
+            if (response) {
+                if (response?.data?.responseCode === 200) {
+                    showToast(response?.data?.message, 'success')
+                    setAllPackages(response?.data?.responseData)
+                } else {
+                    showToast(response?.data?.message, 'error')
+                }
             }
         };
-        fetchRides();
+
+        fetchPackages();
     }, []);
 
     const handleDrawer = () => {
@@ -55,17 +75,26 @@ function Drivers({ text }) {
         formState: { errors },
 
     } = useForm({
-        // defaultValues: {
-        //   _id: null,
-        //   way_type: 'one',
-        //   area_type: 'local',
-
-        // },
-        // resolver: yupResolver(CreateRideSchema)
+        defaultValues: {
+            _id: null,
+        },
+        resolver: yupResolver(CreatePackageSchema)
     });
-    const onSubmit = () => {
+    const onSubmit = async (data) => {
+        const response = await createPackage(CREATE_PACKAGES, data);
+        if (response) {
+            const { data: responseCode, message } = response;
 
+            if (responseCode === 200) {
+                showToast(message, 'success')
+                reset();
+                setOpen(false)
+            } else {
+                showToast(message, 'error')
+            }
+        }
     }
+console.log(allPackages , "allPackages")
     return (
         <>
             <Container className=" !px-0">
@@ -75,37 +104,12 @@ function Drivers({ text }) {
                             <ArrowBackIcon />
                         </NavLink>
                     </IconButton>
-                    <Typography>{bookingId ? "Suggestions" : "Drivers"}</Typography>
+                    <Typography>Go Back</Typography>
                 </Stack>
-                {/* <Grid container spacing={2} className="!mt-4 !mx-0">
-                    {
-                        allDrivers?.map((data) => <Grid item xs={6} sm={4} md={4}>
-                            {console.log(data, "data")}
-                            <Card>
-                                <CardHeader avatar={<Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                                </Avatar>} action={
-                                    <IconButton aria-label="settings">
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                }
-                                    title={data?.full_name}
-                                    subheader="September 14, 2016" />
-                                <CardActions className="!w-full ">
-                                    <Stack direction={'row'} justifyContent={'space-between'} className=" !w-full" gap={2}>
-                                        <Button className="w-full" onClick={handleDrawer}>View Profile</Button>
-                                        {
-                                            bookingId && <Button className="w-full" onClick={() => handleAssign(data?._id)}>Assign</Button>
-                                        }
-                                    </Stack>
-                                </CardActions>
-                            </Card>
-                        </Grid>)
-                    }
-                </Grid> */}
                 <TableContainer component={Paper}>
                     <Box className="flex my-2 justify-between px-4">
                         <Typography variant="h6" component="div">
-                            All Drivers
+                            All Packages
                         </Typography>
                         {/* <Controller name="" control={control} render={({ field }) =>  */}
                         <TextField placeholder="Search Drivers..." sx={{
@@ -154,48 +158,48 @@ function Drivers({ text }) {
                             className="!bg-[#DD781E]"
                             onClick={() => setOpen(true)}
                         >
-                            Create Driver
+                            Create Package
                         </Button>
                     </Box>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>S.No.</TableCell>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Mobile No.</TableCell>
-                                <TableCell>D.O.B</TableCell>
+                                <TableCell>Package Name</TableCell>
+                                <TableCell>Package Type</TableCell>
+                                <TableCell>Driver Charge</TableCell>
+                                <TableCell>Night Charge</TableCell>
+                                <TableCell className="!text-center">Kilometer</TableCell>
+                                <TableCell className="!text-center">Hours</TableCell>
+                                <TableCell className="!text-center">Days</TableCell>
+                                <TableCell className="!text-center">Extra Charge</TableCell>
+                                <TableCell>GST</TableCell>
+                                <TableCell>Basic Price</TableCell>
+                                <TableCell>Total Price</TableCell>
                                 <TableCell>Way Type</TableCell>
-                                <TableCell className="!text-center">UIDAI Number</TableCell>
-                                <TableCell className="!text-center">Driving License Number</TableCell>
-                                <TableCell className="!text-center">Issue Date</TableCell>
-                                <TableCell className="!text-center">Expiry Date</TableCell>
-                                <TableCell>Experience</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Vehicle Type</TableCell>
+                                <TableCell>Range</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {allDrivers?.map((data, index) => {
+                            {allPackages?.map((data, index) => {
                                 return (
                                     <TableRow>
-                                        {
-                                            console.log(data, 'DAta')
-                                        }
+                                        {console.log(data  , "data123")}
                                         <TableCell>
                                             {index + 1
                                             }</TableCell>
                                         <TableCell>
-                                            {data?.full_name}
+                                            {data?.package_name}
                                         </TableCell>
                                         <TableCell>
                                             {data?.mobile_no}
                                         </TableCell>
                                         <TableCell className="text-nowrap">
-                                            { dayjs(data?.dob).format('DD-MM-YYYY')}
+                                            {/* {dayjs(data?.dob).format('DD-MM-YYYY')} */}
                                         </TableCell>
                                         <TableCell>
-                                            {data?.area_type}
+                                            {/* {data?.area_type} */}
                                         </TableCell>
                                         <TableCell className="!text-center">
                                             {/* {data?.pickup_address +
@@ -210,6 +214,16 @@ function Drivers({ text }) {
                                                 data?.return_city +
                                                 ", " +
                                                 data?.return_pin} */}
+                                        </TableCell>
+                                        <TableCell className="!text-center">
+                                            {/* {
+                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
+                                            } */}
+                                        </TableCell>
+                                        <TableCell className="!text-center">
+                                            {/* {
+                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
+                                            } */}
                                         </TableCell>
                                         <TableCell className="!text-center">
                                             {/* {
@@ -294,7 +308,7 @@ function Drivers({ text }) {
                     <Box className="!pt-20 !pb-4 px-5">
                         <Box className="flex justify-between items-center mb-4">
                             <Typography variant="h6" component="div">
-                                Create Driver
+                                Create Package
                             </Typography>
                             <IconButton onClick={() => setOpen(false)}>
                                 <CloseIcon />
@@ -309,27 +323,58 @@ function Drivers({ text }) {
                             <Stack direction={"row"} gap={2} className="!mb-4">
                                 <Controller
                                     control={control}
-                                    name="pass_name"
+                                    name="package_name"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="Passenger Name"
+                                            label="Package Name"
                                             className="w-full"
-                                            error={!!errors.pass_name}
-                                            helperText={errors.pass_name?.message}
+                                            error={!!errors.package_name}
+                                            helperText={errors.package_name?.message}
                                         />
                                     )}
                                 />
                                 <Controller
                                     control={control}
-                                    name="pass_mobile_no"
+                                    name="package_type"
+                                    render={({ field }) => (
+                                        <FormControl sx={{ width: "100%" }}>
+                                            <InputLabel id="demo-simple-select-helper-label">Package Type</InputLabel>
+                                            <Select {...field} className="!w-full" labelId="demo-simple-select-helper-label"
+                                                id="demo-simple-select-helper"
+                                                label="Package Type"
+                                            >
+                                                <MenuItem value="diamond">Diamond</MenuItem>
+                                                <MenuItem value="gold">Gold</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                            </Stack>
+                            <Stack direction={"row"} gap={2} className="!mb-4">
+                                <Controller
+                                    control={control}
+                                    name="driver_charge"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="Mobile No."
+                                            label="Driver Charge"
                                             className="w-full"
-                                            error={!!errors.pass_mobile_no}
-                                            helperText={errors.pass_mobile_no?.message}
+                                            error={!!errors.driver_charge}
+                                            helperText={errors.driver_charge?.message}
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    control={control}
+                                    name="night_charge"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Night Charge"
+                                            className="w-full"
+                                            error={!!errors.night_charge}
+                                            helperText={errors.night_charge?.message}
                                         />
                                     )}
                                 />
@@ -337,140 +382,67 @@ function Drivers({ text }) {
                             <Stack direction={"row"} gap={2} className="!mb-4">
                                 <Controller
                                     control={control}
-                                    name="email_id"
+                                    name="kilometer"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="Email ID"
+                                            label="Kilometer"
                                             className="w-full"
-                                            error={!!errors.pass_mobile_no}
-                                            helperText={errors.pass_mobile_no?.message}
+                                            error={!!errors.kilometer}
+                                            helperText={errors.kilometer?.message}
                                         />
                                     )}
                                 />
                                 <Controller
                                     control={control}
-                                    name="d.o.b"
+                                    name="hours"
                                     render={({ field }) => (
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker label="D.O.B" {...field} renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    error={!!errors.pickup_date}
-                                                    helperText={errors.pickup_date?.message}
-                                                />
-                                            )}
+                                        <TextField
+                                            {...field}
+                                            label="Hours"
                                             className="w-full"
-                                            />
-                                        </LocalizationProvider>
-                                    )}
-                                />
-                                {/* <Controller
-                                    control={control}
-                                    name="area_type"
-                                    render={({ field }) => (
-                                        // <TextField
-                                        //   {...field}
-                                        //   label="Area Type"
-                                        //   className="w-full"
-                                        //   error={!!errors.area_type}
-                                        //   helperText={errors.area_type?.message}
-                                        // />
-                                        <Select {...field} className="w-full" defaultValue="local" >
-                                            <MenuItem value={'local'}>Local</MenuItem>
-                                            <MenuItem value={'out-station'}>Out Station</MenuItem>
-                                        </Select>
-                                    )}
-                                /> */}
-                                {/* <Controller
-                                    control={control}
-                                    name="way_type"
-                                    render={({ field }) => (
-                                        <Select {...field} className="w-full" defaultValue="one">
-                                            <MenuItem value={'one'}>One</MenuItem>
-                                            <MenuItem value={'rounded'}>Rounded</MenuItem>
-                                        </Select>
-                                        <TextField {...field} label="Way Type" className="w-full" error={!!errors.way_type}
-                                          helperText={errors.way_type?.message} />
-                                    )}
-                                /> */}
-                            </Stack>
-                            <Stack direction={"row"} gap={2} className="!mb-4">
-                                <Controller
-                                    control={control}
-                                    name="issue_date"
-                                    render={({ field }) => (
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker label="Issue Date" {...field} renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    error={!!errors.pickup_date}
-                                                    helperText={errors.pickup_date?.message}
-                                                />
-                                            )}
-                                            />
-                                        </LocalizationProvider>
-                                    )}
-                                />
-                                <Controller
-                                    control={control}
-                                    name="expiry_date"
-                                    render={({ field }) => (
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker label="Expiry Date" {...field} renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    error={!!errors.pickup_date}
-                                                    helperText={errors.pickup_date?.message}
-                                                />
-                                            )}
-                                            />
-                                        </LocalizationProvider>
+                                            error={!!errors.hours}
+                                            helperText={errors.hours?.message}
+                                        />
                                     )}
                                 />
                             </Stack>
                             <Stack direction={"row"} gap={2} className="!mb-4">
                                 <Controller
                                     control={control}
-                                    name="experience"
+                                    name="days"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="Experience"
+                                            label="Days"
                                             className="w-full"
-                                            error={!!errors.pickup_address}
-                                            helperText={errors.pickup_address?.message}
+                                            error={!!errors.days}
+                                            helperText={errors.days?.message}
                                         />
                                     )}
                                 />
                                 <Controller
                                     control={control}
-                                    name="referred_by"
+                                    name="extra_charge_kilometer"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="referred By"
+                                            label="Extra Charge Kilometer"
                                             className="w-full"
-                                            error={!!errors.pickup_state}
-                                            helperText={errors.pickup_state?.message}
+                                            error={!!errors.extra_charge_kilometer}
+                                            helperText={errors.extra_charge_kilometer?.message}
                                         />
                                     )}
                                 />
                             </Stack>
-                            {/* <Stack direction={"row"} gap={2} className="!mb-4">
+                            <Stack direction={"row"} gap={2} className="!mb-4">
                                 <Controller
                                     control={control}
-                                    name="pickup_city"
+                                    name="extra_charge"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="Pick-up city"
+                                            label="Extra Charge"
                                             className="w-full"
                                             error={!!errors.pickup_city}
                                             helperText={errors.pickup_city?.message}
@@ -479,124 +451,72 @@ function Drivers({ text }) {
                                 />
                                 <Controller
                                     control={control}
-                                    name="pickup_pin"
+                                    name="gst"
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
-                                            label="Pick-up Pincode"
+                                            label="GST"
                                             className="w-full"
                                             error={!!errors.pickup_pin}
                                             helperText={errors.pickup_pin?.message}
                                         />
                                     )}
                                 />
-                            </Stack> */}
-                            {/* {
-                                wayType === "one" && (
-                                    <>
-                                        <Stack direction={"row"} gap={2} className="!mb-4">
-                                            <Controller
-                                                control={control}
-                                                name="return_date"
-                                                render={({ field }) => (
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
-                                                            <TextField
-                                                                {...field}
-                                                                label="Pick-up city"
-                                                                className="w-full"
-                                                                error={!!errors.return_date}
-                                                                helperText={errors.return_date?.message}
-                                                            />
-                                                        )} />
-                                                    </LocalizationProvider>
-                                                )}
-                                            />
-                                            <Controller
-                                                control={control}
-                                                name="return_time"
-                                                render={({ field }) => (
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
-                                                            <TextField
-                                                                {...field}
-                                                                label="Pick-up city"
-                                                                className="w-full"
-                                                                error={!!errors.return_time}
-                                                                helperText={errors.return_time?.message}
-                                                            />
-                                                        )} />
-                                                    </LocalizationProvider>
-                                                )}
-                                            />
-                                        </Stack>
-                                        <Stack direction={"row"} gap={2} className="!mb-4">
-                                            <Controller
-                                                control={control}
-                                                name="return_address"
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        {...field}
-                                                        label="Drop-off address"
-                                                        className="w-full"
-                                                        error={!!errors.return_address}
-                                                        helperText={errors.return_address?.message}
-                                                    />
-                                                )}
-                                            />
-                                            <Controller
-                                                control={control}
-                                                name="return_state"
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        {...field}
-                                                        label="Drop-off state"
-                                                        className="w-full"
-                                                        error={!!errors.return_state}
-                                                        helperText={errors.return_state?.message}
-                                                    />
-                                                )}
-                                            />
-                                        </Stack>
-                                        <Stack direction={"row"} gap={2} className="!mb-4">
-                                            <Controller
-                                                control={control}
-                                                name="return_city"
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        {...field}
-                                                        label="Drop-off city"
-                                                        className="w-full"
-                                                        error={!!errors.return_city}
-                                                        helperText={errors.return_city?.message}
-                                                    />
-                                                )}
-                                            />
-                                            <Controller
-                                                control={control}
-                                                name="return_pin"
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        {...field}
-                                                        label="Drop-off Pincode"
-                                                        className="w-full"
-                                                        error={!!errors.return_pin}
-                                                        helperText={errors.return_pin?.message}
-                                                    />
-                                                )}
-                                            />
-                                        </Stack>
-                                    </>
-                                )
-                            } */}
-
-                            <Stack direction={"row"} className="!mb-4">
+                            </Stack>
+                            <Stack direction={"row"} gap={2} className="!mb-4">
                                 <Controller
                                     control={control}
-                                    name="amount"
+                                    name="basic_price"
                                     render={({ field }) => (
-                                        <TextField {...field} label="Amount" className="w-full" error={!!errors.amount}
-                                            helperText={errors.amount?.message} />
+                                        <TextField
+                                            {...field}
+                                            label="Basic Price"
+                                            className="w-full"
+                                            error={!!errors.basic_price}
+                                            helperText={errors.basic_price?.message}
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    control={control}
+                                    name="total_price"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Total Price"
+                                            className="w-full"
+                                            error={!!errors.total_price}
+                                            helperText={errors.total_price?.message}
+                                        />
+                                    )}
+                                />
+
+                            </Stack>
+                            <Stack direction={"row"} className="!mb-4" gap={2}>
+                                <Controller
+                                    control={control}
+                                    name="way_type"
+                                    render={({ field }) => (
+                                        <FormControl className="w-full">
+                                            <InputLabel id="demo-simple-select-helper-label">Way Type</InputLabel>
+                                            <Select {...field} className="w-full" label="Way Type">
+                                                <MenuItem value="one">One</MenuItem>
+                                                <MenuItem value="round trip">Round Trip</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                                <Controller
+                                    control={control}
+                                    name="range"
+                                    render={({ field }) => (
+                                        <FormControl className="w-full">
+                                            <InputLabel id="demo-simple-select-helper-label">Range</InputLabel>
+                                            <Select {...field} className="w-full" label="Range">
+                                                <MenuItem value="local">Local</MenuItem>
+                                                <MenuItem value="out-station">Out Station</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     )}
                                 />
                             </Stack>
@@ -620,4 +540,4 @@ function Drivers({ text }) {
     )
 }
 
-export default Drivers;
+export default Packages;

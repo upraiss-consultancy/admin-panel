@@ -44,6 +44,14 @@ export const mainListItems = (
         <ListItemText primary="Drivers" />
       </ListItemButton>
     </NavLink>
+    <NavLink to={'/packages-detail'}>
+      <ListItemButton>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Packages Detail" />
+      </ListItemButton>
+    </NavLink>
     <NavLink to={'/co-admin'}>
       <ListItemButton>
         <ListItemIcon>
