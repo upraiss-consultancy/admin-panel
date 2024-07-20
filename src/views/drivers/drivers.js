@@ -68,7 +68,7 @@ function Drivers({ text }) {
     }
     return (
         <>
-            <Container className=" !px-0">
+           
                 <Stack direction={'row'} gap={2} alignItems={'center'}>
                     <IconButton>
                         <NavLink to={'/rides'}>
@@ -615,7 +615,7 @@ function Drivers({ text }) {
                         </Box>
                     </Box>
                 </Drawer>
-            </Container>
+        
         </>
     )
 }

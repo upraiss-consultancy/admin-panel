@@ -22,3 +22,14 @@ export const getAllPackageList = async (
     );
     return response;
 };
+
+export const deletePackage = async (
+    endpoint,
+    body
+) => {
+    const response = await api.delete(
+        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+        body
+    );
+    return response;
+};
