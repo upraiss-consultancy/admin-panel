@@ -54,6 +54,7 @@ function Packages() {
             if (response?.data?.responseCode === 200) {
                 showToast(response?.data?.message, 'success')
                 setAllPackages(response?.data?.responseData[0]?.data)
+                setPaginationData(response?.data?.responseData[0]?.metadata)
             } else {
                 showToast(response?.data?.message, 'error')
             }
