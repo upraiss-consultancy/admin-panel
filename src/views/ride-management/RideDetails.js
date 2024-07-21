@@ -230,9 +230,6 @@ function RideDetailView() {
                             {rideData['data']?.map((data, index) => {
                                 return (
                                     <TableRow>
-                                        {
-                                            console.log(data, 'DAta')
-                                        }
                                         <TableCell>
                                             {index + 1
                                             }</TableCell>

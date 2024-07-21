@@ -257,7 +257,6 @@ function AllRides() {
             {allRides?.map((data, index) => {
               return (
                 <TableRow>
-            {console.log(data , 'ALl DATA')}
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{data?.pass_name}</TableCell>
                   <TableCell>{data?.pass_mobile_no}</TableCell>

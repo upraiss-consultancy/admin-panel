@@ -22,6 +22,8 @@ const END_POINTS = {
     USER_INTERESTED_BOOKING_LIST:"v0/booking/user_interested_in_booking_list",
     CREATE_PACKAGES: "v0/admin/package/create_package",
     GET_ALL_PACKAGE_LIST: "v0/admin/package/package_browse",
-    DELETE_PACKAGE: "v0/admin/package/delete_package"
+    DELETE_PACKAGE: "v0/admin/package/delete_package",
+    CREATE_DRIVER: "v0/admin/user/create_user",
+    DELETE_DRIVER: "v0/admin/user/delete_user"
 }
 export default END_POINTS

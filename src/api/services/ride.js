@@ -8,7 +8,6 @@ export const getAllRides = async (endpoint, params) => {
         statusText,
         data: { responseData: responseData },
       } = response;
-      console.log(responseData, response, "responseData");
       if (statusText === "OK") {
         return { data: responseData[0]?.data, metadata: responseData[0]?.metadata };
       }
@@ -54,7 +53,6 @@ export const createRide = async (endpoint, rideData) => {
         data: { message, responseData: { bookingId } },
 
       } = response;
-      console.log(response, "responseMessage")
       if (status === 200) {
         return { message: message, bookingId: bookingId };
       }
@@ -96,7 +94,6 @@ export const interestedDriverList = async (endpoint, params) => {
   try {
     const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
     if (response) {
-      console.log(response, "response1212")
       const {
         statusText,
         status,
