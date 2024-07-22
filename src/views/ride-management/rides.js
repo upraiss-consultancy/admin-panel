@@ -72,8 +72,8 @@ function AllRides() {
   const [paginationData, setPaginationData] = useState([]);
   const [packages, setAllPackages] = useState([])
   const [allParams, setAllParams] = useState({
-    booking_type: 'Local',
-    way_type: 'One Way',
+    booking_type: '',
+    way_type: '',
     search: '',
     status: ''
   })
@@ -231,25 +231,32 @@ function AllRides() {
             <MenuItem value={'live'}>Live</MenuItem>
           </Select> */}
           <FormControl>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10">
+            <InputLabel>Booking Type</InputLabel>
+            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label="Booking Type">
               <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: '' }))}>All</MenuItem>
               <MenuItem value={'Local'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Local' }))}>Local</MenuItem>
               <MenuItem value={'Outstation'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Outstation' }))}>Out Station</MenuItem>
             </Select>
           </FormControl>
-          <Select defaultValue={'One Way'} className=" min-w-36 !max-h-10">
-            <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
-            <MenuItem value={'One Way'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'One Way' }))}>One Way</MenuItem>
-            <MenuItem value={'Round Trip'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'Round Trip' }))}>Round Trip</MenuItem>
-          </Select>
-          <Select defaultValue={'All'} className=" min-w-36 !max-h-10">
-            <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, status: '' }))}>All</MenuItem>
-            <MenuItem value={'complete'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'complete' }))}>Complete</MenuItem>
-            <MenuItem value={'interested'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'interested' }))}>Interested</MenuItem>
-            <MenuItem value={'approved'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'approved' }))}>Approved</MenuItem>
-            <MenuItem value={'pending'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'pending' }))}>Pending</MenuItem>
-            <MenuItem value={'cancel'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'cancel' }))}>Cancel</MenuItem>
-          </Select>
+          <FormControl>
+            <InputLabel>Way Type</InputLabel>
+            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label='Way Type'>
+              <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
+              <MenuItem value={'One Way'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'One Way' }))}>One Way</MenuItem>
+              <MenuItem value={'Round Trip'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'Round Trip' }))}>Round Trip</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl>
+            <InputLabel>Status</InputLabel>
+            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label="Status">
+              <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, status: '' }))}>All</MenuItem>
+              <MenuItem value={'complete'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'complete' }))}>Complete</MenuItem>
+              <MenuItem value={'interested'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'interested' }))}>Interested</MenuItem>
+              <MenuItem value={'approved'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'approved' }))}>Approved</MenuItem>
+              <MenuItem value={'pending'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'pending' }))}>Pending</MenuItem>
+              <MenuItem value={'cancel'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'cancel' }))}>Cancel</MenuItem>
+            </Select>
+          </FormControl>
           <Button
             variant="contained"
             className="!bg-[#DD781E]"
@@ -283,7 +290,7 @@ function AllRides() {
                   <TableCell>{data?.pass_name}</TableCell>
                   <TableCell>{data?.pass_mobile_no}</TableCell>
                   <TableCell>{data?.booking_type}</TableCell>
-                  <TableCell>{data?.area_type}</TableCell>
+                  <TableCell>{data?.way_type}</TableCell>
                   <TableCell className="!text-center">
                     {data?.pickup_address +
                       " " +

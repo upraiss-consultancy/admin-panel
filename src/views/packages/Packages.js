@@ -13,6 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FaEllipsisVertical } from "react-icons/fa6";
 import { createPackage, getAllPackageList, deletePackage } from "../../api/services/packages";
 import DeletePackages from './PackagesDeleteDialogue'
+
 const { CREATE_PACKAGES, GET_ALL_PACKAGE_LIST, DELETE_PACKAGE } = END_POINTS;
 function SlideTransition(props) {
     return <Slide {...props} direction="down" />;
@@ -36,10 +37,11 @@ function Packages() {
         control,
         reset,
         formState: { errors },
-
+        watch
     } = useForm({
         defaultValues: {
             _id: null,
+            package_type: 'Day'
         },
         resolver: yupResolver(CreatePackageSchema)
     });
@@ -68,16 +70,15 @@ function Packages() {
 
     const onSubmit = async (data) => {
         const response = await createPackage(CREATE_PACKAGES, data);
-        if (response) {
-            const { data: responseCode, message } = response;
-            if (responseCode === 200) {
-                showToast(message, 'success')
-                reset();
-                setOpen(false)
-            } else {
-                showToast(message, 'error')
-            }
+        if (response?.data?.responseCode === 200) {
+            showToast(response?.data?.message, 'success')
+            reset();
+            setOpen(false)
+            fetchPackages(params)
+        } else {
+            showToast(response?.data?.message, 'error')
         }
+
     }
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -141,7 +142,8 @@ function Packages() {
             showToast(response?.data?.message, 'error')
         }
     }
-    const handleCloseAlert = () => setAlert(false)
+    const handleCloseAlert = () => setAlert(false);
+    const packageType = watch('package_type')
     return (
         <>
 
@@ -227,11 +229,11 @@ function Packages() {
                                         {data?.kilometer?.$numberDecimal}
                                     </TableCell>
                                     <TableCell>
-                                        {data?.hours}
+                                        {data?.hours ? data?.hours : "N.A."} 
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
-                                            data?.days
+                                            data?.days ? data?.days : 'N.A.'
                                         }
                                     </TableCell>
                                     <TableCell className="!text-center">
@@ -343,14 +345,42 @@ function Packages() {
                                             id="demo-simple-select-helper"
                                             label="Package Type"
                                         >
-                                            <MenuItem value="diamond">Diamond</MenuItem>
-                                            <MenuItem value="gold">Gold</MenuItem>
+                                            <MenuItem value="Day">Day</MenuItem>
+                                            <MenuItem value="Hour">Hour</MenuItem>
                                         </Select>
                                     </FormControl>
                                 )}
                             />
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
+                            {
+                                packageType === 'Day' ? <Controller
+                                    control={control}
+                                    name="days"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Days"
+                                            className="w-full"
+                                            error={!!errors.days}
+                                            helperText={errors.days?.message}
+                                        />
+                                    )}
+                                /> : <Controller
+                                    control={control}
+                                    name="hours"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Hours"
+                                            className="w-full"
+                                            error={!!errors.hours}
+                                            helperText={errors.hours?.message}
+                                        />
+                                    )}
+                                />
+                            }
+
                             <Controller
                                 control={control}
                                 name="driver_charge"
@@ -364,6 +394,8 @@ function Packages() {
                                     />
                                 )}
                             />
+                        </Stack>
+                        <Stack direction={"row"} gap={2} className="!mb-4">
                             <Controller
                                 control={control}
                                 name="night_charge"
@@ -377,8 +409,6 @@ function Packages() {
                                     />
                                 )}
                             />
-                        </Stack>
-                        <Stack direction={"row"} gap={2} className="!mb-4">
                             <Controller
                                 control={control}
                                 name="kilometer"
@@ -392,34 +422,9 @@ function Packages() {
                                     />
                                 )}
                             />
-                            <Controller
-                                control={control}
-                                name="hours"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Hours"
-                                        className="w-full"
-                                        error={!!errors.hours}
-                                        helperText={errors.hours?.message}
-                                    />
-                                )}
-                            />
+
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
-                            <Controller
-                                control={control}
-                                name="days"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Days"
-                                        className="w-full"
-                                        error={!!errors.days}
-                                        helperText={errors.days?.message}
-                                    />
-                                )}
-                            />
                             <Controller
                                 control={control}
                                 name="extra_charge_kilometer"
@@ -435,19 +440,34 @@ function Packages() {
                             />
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
-                            <Controller
-                                control={control}
-                                name="extra_charge"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Extra Charge"
-                                        className="w-full"
-                                        error={!!errors.pickup_city}
-                                        helperText={errors.pickup_city?.message}
+                            {
+                                packageType === 'day' ?
+                                    <Controller
+                                        control={control}
+                                        name="extra_charge"
+                                        render={({ field }) => (
+                                            <TextField
+                                                {...field}
+                                                label="Extra charges of per day"
+                                                className="w-full"
+                                                error={!!errors.extra_charge}
+                                                helperText={errors.extra_charge?.message}
+                                            />
+                                        )}
+                                    /> : <Controller
+                                        control={control}
+                                        name="extra_charge"
+                                        render={({ field }) => (
+                                            <TextField
+                                                {...field}
+                                                label="Extra charges of per hour"
+                                                className="w-full"
+                                                error={!!errors.extra_charge}
+                                                helperText={errors.extra_charge?.message}
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
+                            }
                             <Controller
                                 control={control}
                                 name="gst"
@@ -456,8 +476,8 @@ function Packages() {
                                         {...field}
                                         label="GST"
                                         className="w-full"
-                                        error={!!errors.pickup_pin}
-                                        helperText={errors.pickup_pin?.message}
+                                        error={!!errors.gst}
+                                        helperText={errors.gst?.message}
                                     />
                                 )}
                             />
@@ -499,8 +519,8 @@ function Packages() {
                                     <FormControl className="w-full">
                                         <InputLabel id="demo-simple-select-helper-label">Way Type</InputLabel>
                                         <Select {...field} className="w-full" label="Way Type">
-                                            <MenuItem value="one">One</MenuItem>
-                                            <MenuItem value="round trip">Round Trip</MenuItem>
+                                            <MenuItem value="One Way">One Way</MenuItem>
+                                            <MenuItem value="Round Trip">Round Trip</MenuItem>
                                         </Select>
                                     </FormControl>
                                 )}
@@ -512,8 +532,8 @@ function Packages() {
                                     <FormControl className="w-full">
                                         <InputLabel id="demo-simple-select-helper-label">Range</InputLabel>
                                         <Select {...field} className="w-full" label="Range">
-                                            <MenuItem value="local">Local</MenuItem>
-                                            <MenuItem value="out-station">Out Station</MenuItem>
+                                            <MenuItem value="Local">Local</MenuItem>
+                                            <MenuItem value="Outstation">Out Station</MenuItem>
                                         </Select>
                                     </FormControl>
                                 )}

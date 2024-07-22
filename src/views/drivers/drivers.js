@@ -113,6 +113,43 @@ function Drivers() {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+
+    // mobile_no: Yup.string().required('Mobile number is required'),
+    // full_name: Yup.string().required("Name is required"),
+    // dob: Yup.date().required("D.O.B is required"),
+    // email: Yup.string().required("Email id is required"),
+    // adhar_no: Yup.string().required("Aadhar number is required"),
+    // pan_no: Yup.string(),
+    // dl_no: Yup.string().required("Driving license number is required"),
+    // dl_issue_date: Yup.string().required("Driving license issue date is required"),
+    // dl_expiry_date: Yup.string().required("Driving license expiry date is required"),
+    // profile_img: Yup.string(),
+    // vehicle_type: Yup.string().required("Vehicle type is required"),
+    // vehicle_feature: Yup.string().required("Vehicle feature is required"),
+    // adhar_verified: Yup.boolean(),
+    // age: Yup.number().required("Age is required")
+    const handleUpdateDriver = (data) => {
+        reset({
+            mobile_no: data?.mobile_no,
+            full_name: data?.full_name,
+            dob: data?.dob,
+            email: data?.email,
+            adhar_no: data?.adhar_no,
+            pan_no: data?.pan_no,
+            dl_no: data?.dl_no,
+            dl_issue_date: data?.dl_issue_date,
+            dl_expiry_date: data?.dl_expiry_date,
+            profile_img: data?.profile_img,
+            vehicle_type: data?.vehicle_type,
+            vehicle_feature: data?.vehicle_feature,
+            adhar_verified: data?.adhar_verified,
+            age: data?.age,
+        })
+        setIsUpdate(true)
+        setOpen(true);
+        handleClose()
+    }
+
     return (
         <>
 
@@ -185,7 +222,7 @@ function Drivers() {
                             <TableCell>Name</TableCell>
                             <TableCell>Mobile No.</TableCell>
                             <TableCell>D.O.B</TableCell>
-                            <TableCell className="!text-center">UIDAI Number</TableCell>
+                            <TableCell className="!text-center">Aadhar Number</TableCell>
                             <TableCell className="!text-center">Driving License Number</TableCell>
                             <TableCell className="!text-center">Issue Date</TableCell>
                             <TableCell className="!text-center">Expiry Date</TableCell>
@@ -200,7 +237,7 @@ function Drivers() {
                             return (
                                 <TableRow>
                                     <TableCell>
-                                        {(params?.page - 1) * 10 +  index + 1
+                                        {(params?.page - 1) * 10 + index + 1
                                         }</TableCell>
                                     <TableCell>
                                         {data?.full_name}
@@ -227,9 +264,9 @@ function Drivers() {
                                         {data?.experience}
                                     </TableCell>
                                     <TableCell className="!text-center">
-                                        {/* {
-                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
-                                            } */}
+                                        {
+                                            data?.status
+                                        }
                                     </TableCell>
                                     <TableCell
 
@@ -255,7 +292,7 @@ function Drivers() {
                                                 <Box className=" flex flex-col">
                                                     <Button
                                                         className="!px-4"
-                                                    // onClick={() => handleUpdateRide(data)}
+                                                        onClick={() => handleUpdateDriver(data)}
                                                     >
                                                         Update Driver
                                                     </Button>
@@ -293,7 +330,7 @@ function Drivers() {
                 <Box className="!pt-20 !pb-4 px-5">
                     <Box className="flex justify-between items-center mb-4">
                         <Typography variant="h6" component="div">
-                            Create Driver
+                            {isUpdate ? 'Update Driver' : 'Create Driver'}
                         </Typography>
                         <IconButton onClick={() => setOpen(false)}>
                             <CloseIcon />
