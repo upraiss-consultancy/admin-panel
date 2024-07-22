@@ -12,6 +12,15 @@ export const createPackage = async (
     return response;
 };
 
+export const getPackages = async (
+    endpoint
+) => {
+    const response = await api.get(
+        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+    );
+    return response;
+};
+
 export const getAllPackageList = async (
     endpoint,
     params
@@ -19,6 +28,17 @@ export const getAllPackageList = async (
     const response = await api.get(
         `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
         params
+    );
+    return response;
+};
+
+export const deletePackage = async (
+    endpoint,
+    body
+) => {
+    const response = await api.delete(
+        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+        body
     );
     return response;
 };

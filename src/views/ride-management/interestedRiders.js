@@ -36,7 +36,6 @@ function Drivers({ text, booking_id , booking_list}) {
                 <Grid container spacing={2} className="!mt-4">
                     {
                         allDrivers?.map((data) => <Grid item xs={6} sm={4} md={4}>
-                            {console.log(data, "data")}
                             <Card>
                                 <CardHeader avatar={<Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
                                     R

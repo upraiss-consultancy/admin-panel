@@ -37,20 +37,23 @@ function RideDetailView() {
     const [rideData, setRideData] = useState({
         data: [],
         rideData: []
-
+    });
+    const [search, setSearch] = useState('')
+    const [allParams, setAllParams] = useState({
+        search: ''
     })
     const fetchInterestedUserList = async () => {
         const interestedDriverData = await interestedDriverList(`${USER_INTERESTED_BOOKING_LIST}`, {
             params: {
-                booking_id: bookingId
+                booking_id: bookingId,
+                ...allParams
             }
         });
         setRideData({ data: interestedDriverData['data'], rideData: interestedDriverData['rideData'] });
     };
     useEffect(() => {
-
         fetchInterestedUserList();
-    }, []);
+    }, [allParams]);
 
     const handleAssignRide = async (id) => {
         const responseCode = await AssignInterestedDrivers(USER_INTERESTED_ASSIGN_RIDE, { bookingId: id });
@@ -158,7 +161,6 @@ function RideDetailView() {
                         <Typography variant="h6" component="div">
                             Interested Drivers
                         </Typography>
-                        {/* <Controller name="" control={control} render={({ field }) =>  */}
                         <TextField placeholder="Search Drivers..." sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,  // Set the height you need
@@ -167,9 +169,7 @@ function RideDetailView() {
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton onClick={() => {
-                                        // if (search.trim() !== "") {
-                                        // setAllParams(prevState => ({ ...prevState, search: search }))
-                                        // }
+                                        setAllParams(prevState => ({ ...prevState, search: search }))
                                     }}>
                                         <SearchIcon />
                                     </IconButton>
@@ -177,9 +177,9 @@ function RideDetailView() {
 
                             )
                         }}
-                        // onChange={
-                        //     (e) => setSearch(e.target.value)
-                        //     } 
+                            onChange={
+                                (e) => setSearch(e.target.value)
+                            }
                         />
                         {/* } /> */}
                         {/* <Select defaultValue={'live'} className=" min-w-36 !max-h-10"
@@ -213,122 +213,49 @@ function RideDetailView() {
                             <TableRow>
                                 <TableCell>S.No.</TableCell>
                                 <TableCell>Name</TableCell>
+                                <TableCell>Age</TableCell>
+                                <TableCell>Email</TableCell>
                                 <TableCell>Mobile No.</TableCell>
-                                <TableCell>D.O.B</TableCell>
-                                <TableCell>Way Type</TableCell>
-                                <TableCell className="!text-center">UIDAI Number</TableCell>
-                                <TableCell className="!text-center">Driving License Number</TableCell>
-                                <TableCell className="!text-center">Issue Date</TableCell>
-                                <TableCell className="!text-center">Expiry Date</TableCell>
-                                <TableCell>Experience</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Vehicle Type</TableCell>
-                                <TableCell>Actions</TableCell>
+                                <TableCell>Experience
+                                </TableCell>
+                                <TableCell className="!text-center">Vehicle Feature</TableCell>
+                                <TableCell className="!text-center">Vehicle Type</TableCell>
+                                <TableCell className="!text-center">Assign Ride</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {rideData['data']?.map((data, index) => {
                                 return (
                                     <TableRow>
-                                        {
-                                            console.log(data, 'DAta')
-                                        }
+                                        {console.log(data?.users?.full_name, "DATA222")}
                                         <TableCell>
                                             {index + 1
                                             }</TableCell>
                                         <TableCell>
-                                            {data?.full_name}
+                                            {data?.users?.full_name}
                                         </TableCell>
                                         <TableCell>
-                                            {data?.mobile_no}
+                                            {data?.users?.age}
                                         </TableCell>
                                         <TableCell className="text-nowrap">
-                                            {dayjs(data?.dob).format('DD-MM-YYYY')}
+                                            {data?.users?.email}
                                         </TableCell>
                                         <TableCell>
-                                            {data?.area_type}
+                                            {data?.users?.mobile_no}
+                                        </TableCell>
+
+                                        <TableCell className="!text-center">
+                                            {data?.users?.experience}
                                         </TableCell>
                                         <TableCell className="!text-center">
-                                            {/* {data?.pickup_address +
-                                                " " +
-                                                data?.pickup_city +
-                                                ", " +
-                                                data?.pickup_pin} */}
-                                        </TableCell>
-                                        <TableCell>
-                                            {/* {data?.return_address +
-                                                " " +
-                                                data?.return_city +
-                                                ", " +
-                                                data?.return_pin} */}
+                                            {data?.users?.vehicle_feature
+                                            }
                                         </TableCell>
                                         <TableCell className="!text-center">
-                                            {/* {
-                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
-                                            } */}
+                                            {data?.users?.vehicle_type}
                                         </TableCell>
                                         <TableCell className="!text-center">
-                                            {/* {
-                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
-                                            } */}
-                                        </TableCell>
-                                        <TableCell className="!text-center">
-                                            {/* {
-                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
-                                            } */}
-                                        </TableCell>
-                                        <TableCell className="!text-center">
-                                            {/* {
-                                                data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
-                                            } */}
-                                        </TableCell>
-                                        <TableCell
-                                        // className={
-                                        //     data?.booking_status === "pending"
-                                        //         ? " !text-orange-400 capitalize"
-                                        //         : data?.booking_status === "approved" ? '!text-green-500 ' : data?.booking_status === "cancel" ? '!text-red-600 capitalize' : ''
-                                        // }
-                                        >
-                                            {/* {data?.booking_status === "approved" ? 'Assigned' : data?.booking_status} */}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box>
-                                                <IconButton
-                                                // onClick={(e) => handleClick(e)}
-                                                >
-                                                    <FaEllipsisVertical />
-                                                </IconButton>
-                                                <Popover
-                                                    // open={openPopover}
-                                                    // onClose={handleClose}
-                                                    // anchorEl={anchorEl}
-                                                    anchorOrigin={{
-                                                        vertical: "bottom",
-                                                        horizontal: "left",
-                                                    }}
-                                                >
-                                                    <Box className=" flex flex-col">
-                                                        {/* <Button
-                                                            className="!px-4"
-                                                            onClick={() => handleUpdateRide(data)}
-                                                        >
-                                                            Update Ride
-                                                        </Button> */}
-                                                        <Button
-                                                            className="!px-4"
-                                                        // onClick={() => hanldeDeleteRide(data?._id)}
-                                                        >
-                                                            Delete Driver
-                                                        </Button>
-                                                        <Button
-                                                            className="!px-4"
-                                                        // onClick={() => { setBookingID(data?._id); handleNavigate(true) }}
-                                                        >
-                                                            Assign Driver
-                                                        </Button>
-                                                    </Box>
-                                                </Popover>
-                                            </Box>
+                                            <Button variant="outlined" onClick={() => handleAssignRide(data?._id)}>Assign Ride</Button>
                                         </TableCell>
                                     </TableRow>
                                 );
