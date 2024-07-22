@@ -20,7 +20,9 @@ import {
   Popover,
   Select,
   MenuItem,
-  TablePagination
+  TablePagination,
+  FormControl,
+  InputLabel
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -39,6 +41,7 @@ import CancelRideDialog from "./cancelRideDialog";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
+import { getPackages } from "../../api/services/packages";
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
   const {
@@ -51,16 +54,15 @@ function AllRides() {
   } = useForm({
     defaultValues: {
       _id: null,
-      way_type: 'one',
-      area_type: 'local',
-
+      way_type: 'One Way',
+      booking_type: 'Local',
     },
     resolver: yupResolver(CreateRideSchema)
   });
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING } =
+  const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING, GET_ALL_PACKAGES } =
     END_POINTS;
   const [bookingID, setBookingID] = useState('');
   const [isUpdate, setIsUpdate] = useState(false);
@@ -68,22 +70,22 @@ function AllRides() {
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate();
   const [paginationData, setPaginationData] = useState([]);
+  const [packages, setAllPackages] = useState([])
   const [allParams, setAllParams] = useState({
-    booking_type: 'live',
-    area_type: 'local',
-    way_type: 'one',
+    booking_type: 'Local',
+    way_type: 'One Way',
     search: ''
   })
   const fetchRides = async () => {
-    const data = await getAllRides(BOOKING_LIST, 
+    const data = await getAllRides(BOOKING_LIST,
       {
-      params: {
-        ...allParams,
-        page: currentPage,
-        limit: 10,
+        params: {
+          ...allParams,
+          page: currentPage,
+          limit: 10,
+        }
       }
-    }
-  );
+    );
     if (data?.data?.length > 0) {
       setAllRides(data?.data);
       setPaginationData(data?.metadata)
@@ -91,9 +93,19 @@ function AllRides() {
       setAllRides([]);
     }
   };
+  const fetchPackage = async () => {
+    const response = await getPackages(GET_ALL_PACKAGES);
+    if (response?.data?.responseCode === 200) {
+      setAllPackages(response?.data?.responseData)
+    }
+  };
   useEffect(() => {
     fetchRides();
   }, [currentPage, allParams]);
+
+  useEffect(() => {
+    fetchPackage()
+  }, [])
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -143,20 +155,16 @@ function AllRides() {
       reset();
     }
   };
-  const handleNavigate = (params) => {
-    if (params) {
-      const queryParams = new URLSearchParams({ bookingId: bookingID });
-      navigate(`/drivers?${queryParams.toString()}`);
-      setDialogOpen(false)
-    } else {
-      setDialogOpen(false)
-    }
+  const handleNavigate = (id) => {
+    const queryParams = new URLSearchParams({ bookingId: id });
+    navigate(`/drivers?${queryParams.toString()}`);
+    setDialogOpen(false)
   }
 
   const handleUpdateRide = (data) => {
     reset({
       _id: data['_id'],
-      area_type: data['area_type'],
+      booking_type: data['booking_type'],
       way_type: data['way_type'],
       pass_name: data['pass_name'],
       pass_mobile_no: data['pass_mobile_no'],
@@ -171,8 +179,9 @@ function AllRides() {
       return_address: data['return_address'],
       return_state: data['return_state'],
       return_city: data['return_state'],
-      amount: data['amount']?.$numberDecimal,
-      return_pin: data['return_pin']
+      package_id: data['package_id'],
+      return_pin: data['return_pin'],
+      car_type: data['car_type']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -184,12 +193,14 @@ function AllRides() {
   }
 
   const handleViewRideDetail = (_booking_id) => {
+
     const queryParams = new URLSearchParams({ bookingId: _booking_id });
+    console.log(queryParams, _booking_id, "CHCHC")
     navigate(`/ride-detail?${queryParams.toString()}`);
   }
 
   const [search, setSearch] = useState('')
-  const wayType = watch('way_type', 'one')
+  const wayType = watch('way_type', 'One Way')
   return (
     <>
       <TableContainer component={Paper}>
@@ -197,7 +208,6 @@ function AllRides() {
           <Typography variant="h6" component="div">
             Ride Bookings
           </Typography>
-          {/* <Controller name="" control={control} render={({ field }) =>  */}
           <TextField placeholder="Search Ride..." sx={{
             '& .MuiInputBase-root': {
               height: 40,  // Set the height you need
@@ -207,7 +217,7 @@ function AllRides() {
               <InputAdornment position="end">
                 <IconButton onClick={() => {
                   // if (search.trim() !== "") {
-                    setAllParams(prevState => ({ ...prevState, search: search }))
+                  setAllParams(prevState => ({ ...prevState, search: search }))
                   // }
                 }}>
                   <SearchIcon />
@@ -216,18 +226,20 @@ function AllRides() {
 
             )
           }} onChange={(e) => setSearch(e.target.value)} />
-          {/* } /> */}
-          <Select defaultValue={'live'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}>
+          {/* <Select defaultValue={'live'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}>
             <MenuItem value={'live'}>Live</MenuItem>
-            {/* <MenuItem value={'out-station'}>Out Station</MenuItem> */}
-          </Select>
-          <Select defaultValue={'local'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, area_type: e.target.value }))}>
-            <MenuItem value={'local'}>Local</MenuItem>
-            <MenuItem value={'out-station'}>Out Station</MenuItem>
-          </Select>
-          <Select defaultValue={'one'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, way_type: e.target.value }))}>
-            <MenuItem value={'one'}>One</MenuItem>
-            <MenuItem value={'rounded'}>Rounded</MenuItem>
+          </Select> */}
+          <FormControl>
+            <Select defaultValue={'All'} className=" min-w-36 !max-h-10">
+              <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: '' }))}>All</MenuItem>
+              <MenuItem value={'Local'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Local' }))}>Local</MenuItem>
+              <MenuItem value={'Outstation'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Outstation' }))}>Out Station</MenuItem>
+            </Select>
+          </FormControl>
+          <Select defaultValue={'One Way'} className=" min-w-36 !max-h-10">
+            <MenuItem onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
+            <MenuItem value={'One Way'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'One Way' }))}>One Way</MenuItem>
+            <MenuItem value={'Round Trip'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'Round Trip' }))}>Round Trip</MenuItem>
           </Select>
           <Button
             variant="contained"
@@ -291,6 +303,7 @@ function AllRides() {
                   >
                     {data?.booking_status === "approved" ? 'Assigned' : data?.booking_status}
                   </TableCell>
+                  {console.log(data?._id, "Data ID")}
                   <TableCell>
                     <Box>
                       <IconButton onClick={(e) => handleClick(e)}>
@@ -326,7 +339,9 @@ function AllRides() {
                           </Button>
                           <Button
                             className="!px-4"
-                            onClick={() => { setBookingID(data?._id); handleNavigate(true) }}
+                            onClick={async () => {
+                              handleNavigate(data?._id)
+                            }}
                           >
                             Assign Ride
                           </Button>
@@ -393,31 +408,28 @@ function AllRides() {
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
                   control={control}
-                  name="area_type"
+                  name="booking_type"
                   render={({ field }) => (
-                    // <TextField
-                    //   {...field}
-                    //   label="Area Type"
-                    //   className="w-full"
-                    //   error={!!errors.area_type}
-                    //   helperText={errors.area_type?.message}
-                    // />
-                    <Select {...field} className="w-full" defaultValue="local" >
-                      <MenuItem value={'local'}>Local</MenuItem>
-                      <MenuItem value={'out-station'}>Out Station</MenuItem>
-                    </Select>
+                    <FormControl fullWidth>
+                      <InputLabel>Booking Type</InputLabel>
+                      <Select {...field} className="w-full" defaultValue="Local" label="Booking Type">
+                        <MenuItem value={'Local'}>Local</MenuItem>
+                        <MenuItem value={'Outstation'}>Out Station</MenuItem>
+                      </Select>
+                    </FormControl>
                   )}
                 />
                 <Controller
                   control={control}
                   name="way_type"
                   render={({ field }) => (
-                    <Select {...field} className="w-full" defaultValue="one">
-                      <MenuItem value={'one'}>One</MenuItem>
-                      <MenuItem value={'rounded'}>Rounded</MenuItem>
-                    </Select>
-                    // <TextField {...field} label="Way Type" className="w-full" error={!!errors.way_type}
-                    //   helperText={errors.way_type?.message} />
+                    <FormControl fullWidth>
+                      <InputLabel>Way Type</InputLabel>
+                      <Select {...field} className="w-full" defaultValue="One Way" label="Packages">
+                        <MenuItem value={'One Way'}>One Way</MenuItem>
+                        <MenuItem value={'Round Trip'}>Round Trip</MenuItem>
+                      </Select>
+                    </FormControl>
                   )}
                 />
               </Stack>
@@ -515,7 +527,7 @@ function AllRides() {
                 />
               </Stack>
               {
-                wayType === "one" && (
+                wayType === "One Way" && (
                   <>
                     <Stack direction={"row"} gap={2} className="!mb-4">
                       <Controller
@@ -613,13 +625,34 @@ function AllRides() {
                 )
               }
 
-              <Stack direction={"row"} className="!mb-4">
+              <Stack direction={"row"} className="!mb-4" gap={2}>
                 <Controller
                   control={control}
-                  name="amount"
+                  name="car_type"
                   render={({ field }) => (
-                    <TextField {...field} label="Amount" className="w-full" error={!!errors.amount}
-                      helperText={errors.amount?.message} />
+                    <TextField
+                      {...field}
+                      label="Car Type"
+                      className="w-full"
+                      error={!!errors.car_type}
+                      helperText={errors.car_type?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="package_id"
+                  render={({ field }) => (
+                    <FormControl fullWidth>
+                      <InputLabel>Packages</InputLabel>
+                      <Select {...field} className="w-full" label="Packages">
+                        {
+                          packages?.map((data) => <MenuItem value={data?._id}>
+                            {data?.package_name}
+                          </MenuItem>)
+                        }
+                      </Select>
+                    </FormControl>
                   )}
                 />
               </Stack>

@@ -72,7 +72,7 @@ function Loginform() {
                 </NavLink>
               </Typography>
             </Stack>
-            <Button variant="contained" className='w-full !mt-2 h-10' type='submit'>Next</Button>
+            <Button variant="contained" className='w-full !bg-[#DD781E] !mt-2 h-10' type='submit'>Next</Button>
             <Typography className='text-center'>
               Do you have account? <NavLink className={''}>Register</NavLink>
             </Typography>

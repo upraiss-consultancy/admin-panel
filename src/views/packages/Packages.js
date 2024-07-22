@@ -136,6 +136,7 @@ function Packages() {
         if (response?.status === 200) {
             showToast(response?.data?.message, 'success');
             fetchPackages(params)
+            setIsDelete(false)
         } else {
             showToast(response?.data?.message, 'error')
         }

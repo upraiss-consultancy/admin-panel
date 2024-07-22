@@ -12,6 +12,15 @@ export const createPackage = async (
     return response;
 };
 
+export const getPackages = async (
+    endpoint
+) => {
+    const response = await api.get(
+        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+    );
+    return response;
+};
+
 export const getAllPackageList = async (
     endpoint,
     params

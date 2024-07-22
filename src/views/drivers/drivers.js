@@ -199,9 +199,8 @@ function Drivers() {
                         {driverListResponse?.data?.map((data, index) => {
                             return (
                                 <TableRow>
-                                    {/* {console.log(data, "DRIVER DATA")} */}
                                     <TableCell>
-                                        {index + 1
+                                        {(params?.page - 1) * 10 +  index + 1
                                         }</TableCell>
                                     <TableCell>
                                         {data?.full_name}

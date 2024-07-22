@@ -1,19 +1,20 @@
 import * as Yup from 'yup';
 
 export const CreateRideSchema = Yup.object().shape({
-    area_type: Yup.string().required('Area type is required'),
+    booking_type: Yup.string().required('Area type is required'),
+    car_type: Yup.string().required("Car Type is required"),
     way_type: Yup.string().required('Way type is required'),
     pass_name: Yup.string().required('Passenger name is required'),
     pass_mobile_no: Yup.string().required('Passenger mobile number  is required'),
     pickup_time: Yup.string().required('Pick-up time is required'),
     return_time: Yup.string().when('way_type', {
-        is: 'one',
+        is: 'One Way',
         then: () => Yup.string().required('Return time is required'),
         // otherwise: Yup.string().required('Return time is required'),
     }),
     pickup_date: Yup.string().required('Pick-up date is required'),
     return_date: Yup.string().when('way_type', {
-        is: 'one',
+        is: 'One Way',
         then: () => Yup.string().required('Return date is required'),
         // otherwise: Yup.string().required('Return date is required'),
     }),
@@ -22,30 +23,30 @@ export const CreateRideSchema = Yup.object().shape({
     pickup_city: Yup.string().required('Pick-up city is required'),
     pickup_pin: Yup.string().required('Pick-up pin is required'),
     return_address: Yup.string().when('way_type', {
-        is: 'one',
+        is: 'One Way',
         then: () => Yup.string().required('Return address is required')
         // otherwise: Yup.string().required('Return address is required'),
     }),
     return_state: Yup.string().when('way_type', {
-        is: 'one',
+        is: 'One Way',
         then: () => Yup.string().required('Return state is required')
 
         // otherwise: Yup.string().required('Return state is required'),
     }),
     return_city: Yup.string().when('way_type', {
-        is: 'one',
+        is: 'One Way',
         then: () =>
             Yup.string().required('Return city is required')
         ,
         // otherwise: Yup.string().required('Return city is required'),
     }),
     return_pin: Yup.string().when('way_type', {
-        is: 'one',
+        is: 'One Way',
         then: () =>
             Yup.string().required('Return pin is required')
         ,
         // otherwise: Yup.string().required('Return pin is required'),
     }),
-    amount: Yup.number().required('Return amount is required')
+    package_id: Yup.string().required('Please select package')
 })
 
