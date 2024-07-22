@@ -475,11 +475,9 @@ function Drivers() {
                                             label="Vehicle Type"
                                             {...field}
                                         >
-                                            <MenuItem value="car">Car</MenuItem>
-                                            <MenuItem value="bike">Bike</MenuItem>
-                                            <MenuItem value="truck">Truck</MenuItem>
-                                            <MenuItem value="bus">Bus</MenuItem>
-                                            <MenuItem value="van">Van</MenuItem>
+                                            <MenuItem value="Luxury">Luxury</MenuItem>
+                                            <MenuItem value="Normal">Normal</MenuItem>
+                                            <MenuItem value="Both">Both</MenuItem>
                                         </Select>
                                     </FormControl>
                                 )}

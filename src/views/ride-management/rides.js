@@ -74,7 +74,8 @@ function AllRides() {
   const [allParams, setAllParams] = useState({
     booking_type: 'Local',
     way_type: 'One Way',
-    search: ''
+    search: '',
+    status: ''
   })
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
@@ -237,9 +238,17 @@ function AllRides() {
             </Select>
           </FormControl>
           <Select defaultValue={'One Way'} className=" min-w-36 !max-h-10">
-            <MenuItem onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
+            <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
             <MenuItem value={'One Way'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'One Way' }))}>One Way</MenuItem>
             <MenuItem value={'Round Trip'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'Round Trip' }))}>Round Trip</MenuItem>
+          </Select>
+          <Select defaultValue={'All'} className=" min-w-36 !max-h-10">
+            <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, status: '' }))}>All</MenuItem>
+            <MenuItem value={'complete'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'complete' }))}>Complete</MenuItem>
+            <MenuItem value={'interested'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'interested' }))}>Interested</MenuItem>
+            <MenuItem value={'approved'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'approved' }))}>Approved</MenuItem>
+            <MenuItem value={'pending'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'pending' }))}>Pending</MenuItem>
+            <MenuItem value={'cancel'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'cancel' }))}>Cancel</MenuItem>
           </Select>
           <Button
             variant="contained"
@@ -261,6 +270,7 @@ function AllRides() {
               <TableCell className="!text-center">Drop-off</TableCell>
               <TableCell className="!text-center">Interested Driver</TableCell>
               <TableCell className="!text-center">Assigned Driver Name</TableCell>
+              <TableCell className="!text-center">Assigned Driver Number</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -294,6 +304,7 @@ function AllRides() {
                     }
                   </TableCell>
                   <TableCell className="!text-center">N.A.</TableCell>
+                  <TableCell className="!text-center">N.A.</TableCell>
                   <TableCell
                     className={
                       data?.booking_status === "pending"
@@ -303,7 +314,7 @@ function AllRides() {
                   >
                     {data?.booking_status === "approved" ? 'Assigned' : data?.booking_status}
                   </TableCell>
-                  {console.log(data?._id, "Data ID")}
+                  {/* {console.log(data , "DATA HAIN KYA ??")} */}
                   <TableCell>
                     <Box>
                       <IconButton onClick={(e) => handleClick(e)}>
