@@ -14,7 +14,7 @@ import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems, secondaryListItems } from "./listItems";
+import { MainListItems, secondaryListItems } from "./listItems";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Button, Popover, Stack } from "@mui/material";
@@ -24,7 +24,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonIcon from "@mui/icons-material/Person";
 import showToast from "../utils/toast";
-
+import { useLocation } from "react-router-dom";
 function Copyright(props) {
   return (
     <Typography
@@ -121,13 +121,13 @@ export default function FullLayout() {
         if (responseCode === 200) {
           localStorage.removeItem("token");
           localStorage.removeItem("expiry");
-          showToast(message , 'success');
+          showToast(message, 'success');
           navigate("/auth/login");
         } else {
           alert(message);
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -227,8 +227,7 @@ export default function FullLayout() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
+            <MainListItems />            <Divider sx={{ my: 1 }} />
             {secondaryListItems}
           </List>
         </Drawer>
