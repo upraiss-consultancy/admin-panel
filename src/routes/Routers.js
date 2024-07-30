@@ -11,6 +11,7 @@ import Drivers from "../views/drivers/drivers";
 import COADMIN from "../views/co-admin/ViewCoAdmin";
 import RideDetailView from '../views/ride-management/RideDetails.js';
 import Packages from "../views/packages/Packages.js";
+import DriverPaymentHistory from "../views/payments/PaymentHistory.js";
 const Router = [
   {
     path: "/",
@@ -82,6 +83,15 @@ const Router = [
         element: (
           <ProtectedRoute
             component={<ProtectedRoute component={<Packages />} />}
+          />
+        ),
+      },
+      {
+        path: "/payment-detail",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<DriverPaymentHistory />} />}
           />
         ),
       },

@@ -285,7 +285,7 @@ function AllRides() {
           <TableBody>
             {allRides?.map((data, index) => {
               return (
-                <TableRow>
+                <TableRow onClick={() => navigate('/profile')}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{data?.pass_name}</TableCell>
                   <TableCell>{data?.pass_mobile_no}</TableCell>
@@ -307,7 +307,7 @@ function AllRides() {
                   </TableCell>
                   <TableCell className="!text-center">
                     {
-                      data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={() => handleViewRideDetail(data?._id)} >{data?.request_count}</Button> : "N.A."
+                      data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id); e.stopPropagation(); }} >{data?.request_count}</Button> : "N.A."
                     }
                   </TableCell>
                   <TableCell className="!text-center">N.A.</TableCell>
@@ -324,7 +324,7 @@ function AllRides() {
                   {/* {console.log(data , "DATA HAIN KYA ??")} */}
                   <TableCell>
                     <Box>
-                      <IconButton onClick={(e) => handleClick(e)}>
+                      <IconButton onClick={(e) => {handleClick(e); e.stopPropagation()}}>
                         <FaEllipsisVertical />
                       </IconButton>
                       <Popover
