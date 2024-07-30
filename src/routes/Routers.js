@@ -12,6 +12,8 @@ import COADMIN from "../views/co-admin/ViewCoAdmin";
 import RideDetailView from '../views/ride-management/RideDetails.js';
 import Packages from "../views/packages/Packages.js";
 import DriverPaymentHistory from "../views/payments/PaymentHistory.js";
+import JobForm from "../views/job/CreateJob.js";
+import JobTable from "../views/job/JobCandidateTable.js";
 const Router = [
   {
     path: "/",
@@ -95,6 +97,24 @@ const Router = [
           />
         ),
       },
+      {
+        path: "/all-jobs",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<JobForm />} />}
+          />
+        ),
+      },
+      {
+        path: "/all-candidates",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<JobTable />} />}
+          />
+        ),
+      }
     ],
   },
   {

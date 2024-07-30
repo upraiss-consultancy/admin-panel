@@ -42,6 +42,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import { getPackages } from "../../api/services/packages";
+import { Country, State, City } from 'country-state-city';
+const CarType = ["Hatchback", "Sedan", "Suv", "Luxury"]
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
   const {
@@ -77,6 +79,11 @@ function AllRides() {
     search: '',
     status: ''
   })
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [dropOffStates, setDropOffStates] = useState([])
+  const [dropOffCity, setDropOffCity] = useState([]);
+  const [isLoading, setISLoading] = useState(false)
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -100,6 +107,34 @@ function AllRides() {
       setAllPackages(response?.data?.responseData)
     }
   };
+
+  const pickupState = watch('pickup_state');
+  const dropOffState = watch('return_state');
+
+  useEffect(() => {
+    const stateData = State.getStatesOfCountry('IN');
+    setDropOffStates(stateData)
+    setStates(stateData);
+  }, []);
+
+  useEffect(() => {
+    if (pickupState) {
+      const cityData = City.getCitiesOfState('IN', pickupState);
+      setCities(cityData);
+    } else {
+      setCities([]);
+    }
+  }, [pickupState]);
+
+  useEffect(() => {
+    if (dropOffState) {
+      const cityData = City.getCitiesOfState('IN', dropOffState);
+      setDropOffCity(cityData);
+    } else {
+      setDropOffCity([]);
+    }
+  }, [dropOffState])
+
   useEffect(() => {
     fetchRides();
   }, [currentPage, allParams]);
@@ -134,7 +169,7 @@ function AllRides() {
     setIsCancel(false)
   };
   const onSubmit = async (data) => {
-
+    setISLoading(true)
     const pickupformattedDate = dayjs(data.pickup_date).format('YYYY-MM-DD');
     const returnformattedDate = dayjs(data.return_date).format('YYYY-MM-DD');
     const transformedData = {
@@ -143,8 +178,10 @@ function AllRides() {
       return_date: returnformattedDate,
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
+    console.log(response, "response???")
     if (response?.message) {
       if (data?._id === null) {
+        setISLoading(false)
         setBookingID(response?.bookingId)
         setDialogOpen(true);
       } else {
@@ -179,10 +216,11 @@ function AllRides() {
       pickup_pin: data['pickup_pin'],
       return_address: data['return_address'],
       return_state: data['return_state'],
-      return_city: data['return_state'],
+      return_city: data['return_city'],
       package_id: data['package_id'],
       return_pin: data['return_pin'],
-      car_type: data['car_type']
+      car_type: data['car_type'],
+      whatsapp_number: data['whatsapp_number']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -202,6 +240,15 @@ function AllRides() {
 
   const [search, setSearch] = useState('')
   const wayType = watch('way_type', 'One Way')
+  // const handleStateChange = (event) => {
+  //   setSelectedState(event.target.value);
+  //   setSelectedCity('');
+  // };
+
+  // const handleCityChange = (event) => {
+  //   setSelectedCity(event.target.value);
+  // };
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -271,6 +318,7 @@ function AllRides() {
               <TableCell>S.No.</TableCell>
               <TableCell>Passenger Name</TableCell>
               <TableCell>Passenger Mobile No.</TableCell>
+              <TableCell>Passenger Whatsapp No.</TableCell>
               <TableCell>Booking Type</TableCell>
               <TableCell>Way Type</TableCell>
               <TableCell className="!text-center">Pick-up</TableCell>
@@ -285,9 +333,12 @@ function AllRides() {
           <TableBody>
             {allRides?.map((data, index) => {
               return (
-                <TableRow onClick={() => navigate('/profile')}>
+                <TableRow
+                // onClick={() => navigate('/profile')}
+                >
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{data?.pass_name}</TableCell>
+                  <TableCell>{data?.pass_mobile_no}</TableCell>
                   <TableCell>{data?.pass_mobile_no}</TableCell>
                   <TableCell>{data?.booking_type}</TableCell>
                   <TableCell>{data?.way_type}</TableCell>
@@ -310,8 +361,8 @@ function AllRides() {
                       data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id); e.stopPropagation(); }} >{data?.request_count}</Button> : "N.A."
                     }
                   </TableCell>
-                  <TableCell className="!text-center">N.A.</TableCell>
-                  <TableCell className="!text-center">N.A.</TableCell>
+                  <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.full_name : "N.A."}</TableCell>
+                  <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.mobile_no : "N.A."}</TableCell>
                   <TableCell
                     className={
                       data?.booking_status === "pending"
@@ -324,7 +375,7 @@ function AllRides() {
                   {/* {console.log(data , "DATA HAIN KYA ??")} */}
                   <TableCell>
                     <Box>
-                      <IconButton onClick={(e) => {handleClick(e); e.stopPropagation()}}>
+                      <IconButton onClick={(e) => { handleClick(e); e.stopPropagation() }}>
                         <FaEllipsisVertical />
                       </IconButton>
                       <Popover
@@ -345,13 +396,13 @@ function AllRides() {
                           </Button>
                           <Button
                             className="!px-4"
-                            onClick={() => hanldeDeleteRide(data?._id)}
+                            onClick={(e) => { hanldeDeleteRide(data?._id); e.stopPropagation() }}
                           >
                             Delete Ride
                           </Button>
                           <Button
                             className="!px-4"
-                            onClick={() => { setBookingID(data?._id); setIsCancel(true); handleClose() }}
+                            onClick={(e) => { setBookingID(data?._id); setIsCancel(true); handleClose(); e.stopPropagation() }}
                           >
                             Cancel Ride
                           </Button>
@@ -426,6 +477,21 @@ function AllRides() {
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
                   control={control}
+                  name="whatsapp_number"
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Whatsapp Number"
+                      className="w-full"
+                      error={!!errors.whatsapp_number}
+                      helperText={errors.whatsapp_number?.message}
+                    />
+                  )}
+                />
+              </Stack>
+              <Stack direction={"row"} gap={2} className="!mb-4">
+                <Controller
+                  control={control}
                   name="booking_type"
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -489,6 +555,42 @@ function AllRides() {
                 />
               </Stack>
               <Stack direction={"row"} gap={2} className="!mb-4">
+
+                <Controller
+                  control={control}
+                  name="pickup_state"
+                  render={({ field }) => (
+                    <FormControl fullWidth>
+                      <InputLabel>Pickup State</InputLabel>
+                      <Select label="Pick-up State" {...field}>
+                        {states.map((state) => (
+                          <MenuItem key={state.isoCode} value={state.isoCode}>
+                            {state.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="pickup_city"
+                  render={({ field }) => (
+                    <FormControl fullWidth>
+                      <InputLabel>Pick-up City</InputLabel>
+                      <Select label="Pick-up City" {...field}>
+                        {cities.map((city) => (
+                          <MenuItem key={city.name} value={city.name}>
+                            {city.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+
+              </Stack>
+              <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
                   control={control}
                   name="pickup_address"
@@ -499,34 +601,6 @@ function AllRides() {
                       className="w-full"
                       error={!!errors.pickup_address}
                       helperText={errors.pickup_address?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="pickup_state"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Pick-up state"
-                      className="w-full"
-                      error={!!errors.pickup_state}
-                      helperText={errors.pickup_state?.message}
-                    />
-                  )}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="pickup_city"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Pick-up city"
-                      className="w-full"
-                      error={!!errors.pickup_city}
-                      helperText={errors.pickup_city?.message}
                     />
                   )}
                 />
@@ -573,13 +647,48 @@ function AllRides() {
                             <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
                               <TextField
                                 {...field}
-                                label="Pick-up city"
+                                label="Drop-off Time"
                                 className="w-full"
                                 error={!!errors.return_time}
                                 helperText={errors.return_time?.message}
                               />
                             )} />
                           </LocalizationProvider>
+                        )}
+                      />
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="return_state"
+                        render={({ field }) => (
+                          <FormControl fullWidth>
+                            <InputLabel>Drop-off State</InputLabel>
+                            <Select label="Drop-off State" {...field}>
+                              {dropOffStates.map((state) => (
+                                <MenuItem key={state.isoCode} value={state.isoCode}>
+                                  {state.name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="return_city"
+                        render={({ field }) => (
+                          <FormControl fullWidth>
+                            <InputLabel>Drop-off City</InputLabel>
+                            <Select label="Drop-off City" {...field}>
+                              {dropOffCity.map((city) => (
+                                <MenuItem key={city.name} value={city.name}>
+                                  {city.name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
                         )}
                       />
                     </Stack>
@@ -594,34 +703,6 @@ function AllRides() {
                             className="w-full"
                             error={!!errors.return_address}
                             helperText={errors.return_address?.message}
-                          />
-                        )}
-                      />
-                      <Controller
-                        control={control}
-                        name="return_state"
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Drop-off state"
-                            className="w-full"
-                            error={!!errors.return_state}
-                            helperText={errors.return_state?.message}
-                          />
-                        )}
-                      />
-                    </Stack>
-                    <Stack direction={"row"} gap={2} className="!mb-4">
-                      <Controller
-                        control={control}
-                        name="return_city"
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Drop-off city"
-                            className="w-full"
-                            error={!!errors.return_city}
-                            helperText={errors.return_city?.message}
                           />
                         )}
                       />
@@ -648,13 +729,23 @@ function AllRides() {
                   control={control}
                   name="car_type"
                   render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Car Type"
-                      className="w-full"
-                      error={!!errors.car_type}
-                      helperText={errors.car_type?.message}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel>Car Type</InputLabel>
+                      <Select {...field} className="w-full" label="Car Type">
+                        {
+                          CarType?.map((carType) => <MenuItem value={carType}>
+                            {carType}
+                          </MenuItem>)
+                        }
+                      </Select>
+                    </FormControl>
+                    // <TextField
+                    //   {...field}
+                    //   label="Car Type"
+                    //   className="w-full"
+                    //   error={!!errors.car_type}
+                    //   helperText={errors.car_type?.message}
+                    // />
                   )}
                 />
                 <Controller
@@ -681,7 +772,7 @@ function AllRides() {
                 {
                   isUpdate ? <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
                     Update
-                  </Button> : <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
+                  </Button> : <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]" disabled={isLoading}>
                     Submit
                   </Button>
                 }
