@@ -54,6 +54,8 @@ function RideDetailView() {
         }
 
     }
+
+    console.log(rideData['rideData'][0]?.bookingData , "bookingData")
     return (
         <>
             <Grid container>

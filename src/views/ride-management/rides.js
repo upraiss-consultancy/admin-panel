@@ -152,7 +152,10 @@ function AllRides() {
 
   const hanldeDeleteRide = async (id) => {
     handleClose();
-    const data = await deleteRide(ADMIN_DELETE_BOOKING, id);
+    const data = await deleteRide(ADMIN_DELETE_BOOKING, {
+      bookingId: id,
+      remarks: "NO Idea"
+    });
     if (data?.responseCode === 200) {
       showToast(data?.message, 'success');
       fetchRides();
@@ -238,16 +241,8 @@ function AllRides() {
     navigate(`/ride-detail?${queryParams.toString()}`);
   }
 
-  const [search, setSearch] = useState('')
-  const wayType = watch('way_type', 'One Way')
-  // const handleStateChange = (event) => {
-  //   setSelectedState(event.target.value);
-  //   setSelectedCity('');
-  // };
-
-  // const handleCityChange = (event) => {
-  //   setSelectedCity(event.target.value);
-  // };
+  const [search, setSearch] = useState('');
+  const wayType = watch('way_type', 'One Way');
 
   return (
     <>
@@ -739,13 +734,6 @@ function AllRides() {
                         }
                       </Select>
                     </FormControl>
-                    // <TextField
-                    //   {...field}
-                    //   label="Car Type"
-                    //   className="w-full"
-                    //   error={!!errors.car_type}
-                    //   helperText={errors.car_type?.message}
-                    // />
                   )}
                 />
                 <Controller
