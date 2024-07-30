@@ -42,7 +42,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import { getPackages } from "../../api/services/packages";
-import { Country, State, City } from 'country-state-city';
+import { State, City } from 'country-state-city';
 const CarType = ["Hatchback", "Sedan", "Suv", "Luxury"]
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
