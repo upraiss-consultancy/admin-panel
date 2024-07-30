@@ -15,10 +15,13 @@ export const getAllRides = async (endpoint, params) => {
   } catch (error) { }
 };
 
-export const deleteRide = async (endpoint, id) => {
+export const deleteRide = async (endpoint, payload) => {
   try {
     const response = await api.delete(
-      `${CONFIG_KEYS.API_BASE_URL}/${endpoint}/${id}`
+      `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+      {
+        data: payload
+      }
     );
     if (response) {
       const { statusText, data: responseData } = response;
@@ -113,11 +116,11 @@ export const interestedDriverList = async (endpoint, params) => {
 export const AssignInterestedDrivers = async (endpoint, data) => {
   try {
     const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
-    console.log(response , "response123")
+    console.log(response, "response123")
     if (response) {
       const {
         statusText,
-        data: { responseData: responseData  , responseCode , message} ,
+        data: { responseData: responseData, responseCode, message },
       } = response;
       if (responseCode === 200) {
         return responseCode;

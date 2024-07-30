@@ -6,9 +6,6 @@ import {
     Grid,
     Typography,
     Stack,
-    Card,
-    CardHeader,
-    Avatar,
     Table, TableHead, TableBody,
     TableContainer,
     TableCell,
@@ -17,19 +14,12 @@ import {
     InputAdornment,
     TableRow,
     IconButton,
-    CardActions,
-    Popover,
     Button
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import { red } from '@mui/material/colors';
 import { useSearchParams } from 'react-router-dom';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
-import { FaEllipsisVertical } from "react-icons/fa6";
 function RideDetailView() {
     const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE } = END_POINTS;
     const [searchParams] = useSearchParams()
@@ -64,15 +54,17 @@ function RideDetailView() {
         }
 
     }
+
+    console.log(rideData['rideData'][0]?.bookingData , "bookingData")
     return (
         <>
             <Grid container>
                 <Grid item xs={12}>
-                    <Typography variant='h5' className='!mb-4'>Ride Details</Typography>
+                    <Typography variant='h4' className='!mb-4'>Ride Details</Typography>
                     <Box >
                         <Stack direction={'row'} gap={2} className='py-2'>
                             <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
-                                <Typography>Passeneger Name:</Typography>
+                                <Typography>Passenger Name:</Typography>
                                 <Typography>{rideData['rideData'][0]?.bookingData?.pass_name}</Typography>
                             </Stack>
                             <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
@@ -220,7 +212,7 @@ function RideDetailView() {
                                 </TableCell>
                                 <TableCell className="!text-center">Vehicle Feature</TableCell>
                                 <TableCell className="!text-center">Vehicle Type</TableCell>
-                                <TableCell className="!text-center">Assign Ride</TableCell>
+                                <TableCell className="!text-center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -255,7 +247,8 @@ function RideDetailView() {
                                             {data?.users?.vehicle_type}
                                         </TableCell>
                                         <TableCell className="!text-center">
-                                            <Button variant="outlined" onClick={() => handleAssignRide(data?._id)}>Assign Ride</Button>
+                                            <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button>
+                                            <Button variant="outlined" onClick={() => handleAssignRide(data?._id)}>Unassign Ride</Button>
                                         </TableCell>
                                     </TableRow>
                                 );

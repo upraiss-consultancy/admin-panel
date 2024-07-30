@@ -47,6 +47,7 @@ export const CreateRideSchema = Yup.object().shape({
         ,
         // otherwise: Yup.string().required('Return pin is required'),
     }),
-    package_id: Yup.string().required('Please select package')
+    package_id: Yup.string().required('Please select package'),
+    whatsapp_number: Yup.string().required('Passenger whatsapp number  is required')
 })
 

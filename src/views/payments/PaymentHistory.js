@@ -7,6 +7,7 @@ import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import Drawer from '@mui/material/Drawer';
 import { assignRide } from "../../api/services/ride";
 import showToast from "../../utils/toast";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from '@mui/icons-material/Search';
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,9 +19,8 @@ import { CreateDriverSchema } from "../../validations/DriverValidation";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createDriver } from "../../api/services/driver";
 import { FaEllipsisVertical } from "react-icons/fa6";
-import DeleteDriver from "./DriverDeleteDialogue";
-import { State, City } from 'country-state-city';
-function Drivers() {
+// import DeleteDriver from "./DriverDeleteDialogue";
+function DriverPaymentHistory() {
     const [driverListResponse, setDriverListResponse] = useState({
         data: [],
         metadata: []
@@ -50,15 +50,6 @@ function Drivers() {
     };
     const [isDelete, setIsDelete] = useState(false);
     const [driverId, setDriverId] = useState(null);
-    const [states, setStates] = useState([]);
-    const [cities, setCities] = useState([]);
-
-    useEffect(() => {
-        const stateData = State.getStatesOfCountry('IN');
-        setStates(stateData);
-    }, []);
-
-
     useEffect(() => {
 
         fetchRides();
@@ -79,21 +70,10 @@ function Drivers() {
 
     } = useForm({
         defaultValues: {
-            adhar_verified: false,
-            state: '',
-            city: ''
+            adhar_verified: false
         },
         resolver: yupResolver(CreateDriverSchema)
     });
-    const state = watch('state');
-    useEffect(() => {
-        if (state) {
-            const cityData = City.getCitiesOfState('IN', state);
-            setCities(cityData);
-        } else {
-            setCities([]);
-        }
-    }, [state]);
     const onSubmit = async (data) => {
         const response = await createDriver(CREATE_DRIVER, data);
         if (response?.responseCode === 200) {
@@ -134,6 +114,20 @@ function Drivers() {
         setAnchorEl(event.currentTarget);
     };
 
+    // mobile_no: Yup.string().required('Mobile number is required'),
+    // full_name: Yup.string().required("Name is required"),
+    // dob: Yup.date().required("D.O.B is required"),
+    // email: Yup.string().required("Email id is required"),
+    // adhar_no: Yup.string().required("Aadhar number is required"),
+    // pan_no: Yup.string(),
+    // dl_no: Yup.string().required("Driving license number is required"),
+    // dl_issue_date: Yup.string().required("Driving license issue date is required"),
+    // dl_expiry_date: Yup.string().required("Driving license expiry date is required"),
+    // profile_img: Yup.string(),
+    // vehicle_type: Yup.string().required("Vehicle type is required"),
+    // vehicle_feature: Yup.string().required("Vehicle feature is required"),
+    // adhar_verified: Yup.boolean(),
+    // age: Yup.number().required("Age is required")
     const handleUpdateDriver = (data) => {
         reset({
             mobile_no: data?.mobile_no,
@@ -161,7 +155,7 @@ function Drivers() {
 
             <Stack direction={'row'} gap={2} alignItems={'center'}>
                 <IconButton>
-                    <NavLink to={'/rides'}>
+                    <NavLink to={'/rides'}> 
                         <ArrowBackIcon />
                     </NavLink>
                 </IconButton>
@@ -170,7 +164,7 @@ function Drivers() {
             <TableContainer component={Paper}>
                 <Box className="flex my-2 justify-between px-4">
                     <Typography variant="h6" component="div">
-                        All Drivers
+                        All Transactions
                     </Typography>
                     <TextField placeholder="Search Drivers..." sx={{
                         '& .MuiInputBase-root': {
@@ -213,13 +207,13 @@ function Drivers() {
                             <MenuItem value={'one'}>One</MenuItem>
                             <MenuItem value={'rounded'}>Rounded</MenuItem>
                         </Select> */}
-                    <Button
+                    {/* <Button
                         variant="contained"
                         className="!bg-[#DD781E]"
                         onClick={() => setOpen(true)}
                     >
                         Create Driver
-                    </Button>
+                    </Button> */}
                 </Box>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -332,7 +326,7 @@ function Drivers() {
                     </Box>
                 </Stack>
             </TableContainer >
-            <Drawer open={open} anchor="right">
+            {/* <Drawer open={open} anchor="right">
                 <Box className="!pt-20 !pb-4 px-5">
                     <Box className="flex justify-between items-center mb-4">
                         <Typography variant="h6" component="div">
@@ -407,40 +401,6 @@ function Drivers() {
                                             className="w-full"
                                         />
                                     </LocalizationProvider>
-                                )}
-                            />
-                        </Stack>
-                        <Stack direction={"row"} gap={2} className="!mb-4">
-                            <Controller
-                                control={control}
-                                name="state"
-                                render={({ field }) => (
-                                    <FormControl fullWidth>
-                                        <InputLabel>State</InputLabel>
-                                        <Select label="State" {...field}>
-                                            {states.map((state) => (
-                                                <MenuItem key={state.isoCode} value={state.isoCode}>
-                                                    {state.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                )}
-                            />
-                            <Controller
-                                control={control}
-                                name="city"
-                                render={({ field }) => (
-                                    <FormControl fullWidth>
-                                        <InputLabel>City</InputLabel>
-                                        <Select label="city" {...field}>
-                                            {cities.map((city) => (
-                                                <MenuItem key={city.name} value={city.name}>
-                                                    {city.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
                                 )}
                             />
                         </Stack>
@@ -608,10 +568,10 @@ function Drivers() {
                         </Box>
                     </Box>
                 </Box>
-            </Drawer>
-            <DeleteDriver open={isDelete} handleClose={() => setIsDelete(false)} handleConfirm={handleDeleteDriver} />
+            </Drawer> */}
+            {/* <DeleteDriver open={isDelete} handleClose={() => setIsDelete(false)} handleConfirm={handleDeleteDriver} /> */}
         </>
     )
 }
 
-export default Drivers;
+export default DriverPaymentHistory;
