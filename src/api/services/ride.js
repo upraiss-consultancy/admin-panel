@@ -32,10 +32,12 @@ export const deleteRide = async (endpoint, payload) => {
   } catch (error) { }
 };
 
-export const cancelRide = async (endpoint, id) => {
+export const cancelRide = async (endpoint, payload) => {
   try {
     const response = await api.delete(
-      `${CONFIG_KEYS.API_BASE_URL}/${endpoint}/${id}`
+      `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, {
+      data: payload
+    }
     );
     if (response) {
       const { statusText, data: responseData } = response;
