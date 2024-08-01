@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { interestedDriverList, AssignInterestedDrivers } from "../../api/services/ride";
+import { interestedDriverList, AssignInterestedDrivers, unAssignRide } from "../../api/services/ride";
 import END_POINTS from "../../constants/endpoints";
 import {
     Box,
@@ -21,7 +21,7 @@ import { useSearchParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
 function RideDetailView() {
-    const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE } = END_POINTS;
+    const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE , UNASSIGN_DRIVER } = END_POINTS;
     const [searchParams] = useSearchParams()
     const bookingId = searchParams.get('bookingId')
     const [rideData, setRideData] = useState({
@@ -55,7 +55,20 @@ function RideDetailView() {
 
     }
 
-    console.log(rideData['rideData'][0]?.bookingData , "bookingData")
+    const handleUnAssignRide = async (id) => {
+        const response = await unAssignRide(UNASSIGN_DRIVER , {
+            bookingId: id,
+            remarks: "No Idea"
+        });
+
+        if(response?.status === 200) {
+            showToast(response?.data?.message , 'success')
+        } else {
+            showToast(response?.data?.message , 'error')
+        }
+    }
+
+    console.log(rideData['rideData'][0]?.bookingData, "bookingData")
     return (
         <>
             <Grid container>
@@ -248,7 +261,7 @@ function RideDetailView() {
                                         </TableCell>
                                         <TableCell className="!text-center">
                                             <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button>
-                                            <Button variant="outlined" onClick={() => handleAssignRide(data?._id)}>Unassign Ride</Button>
+                                            <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
                                         </TableCell>
                                     </TableRow>
                                 );
