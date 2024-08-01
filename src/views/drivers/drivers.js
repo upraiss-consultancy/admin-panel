@@ -150,6 +150,10 @@ function Drivers() {
             vehicle_feature: data?.vehicle_feature,
             adhar_verified: data?.adhar_verified,
             age: data?.age,
+            address: data?.address,
+            pin_code: data?.pin_code,
+            city: data?.city,
+            state: data?.state
         })
         setIsUpdate(true)
         setOpen(true);
@@ -407,6 +411,34 @@ function Drivers() {
                                             className="w-full"
                                         />
                                     </LocalizationProvider>
+                                )}
+                            />
+                        </Stack>
+                        <Stack direction={"row"} gap={2} className="!mb-4">
+                            <Controller
+                                control={control}
+                                name="address"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Address"
+                                        className="w-full"
+                                        error={!!errors.address}
+                                        helperText={errors.address?.message}
+                                    />
+                                )}
+                            />
+                            <Controller
+                                control={control}
+                                name="pin_code"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Pin Code"
+                                        className="w-full"
+                                        error={!!errors.pin_code}
+                                        helperText={errors.pin_code?.message}
+                                    />
                                 )}
                             />
                         </Stack>

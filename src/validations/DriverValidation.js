@@ -14,5 +14,9 @@ export const CreateDriverSchema = Yup.object().shape({
     vehicle_type: Yup.string().required("Vehicle type is required"),
     vehicle_feature: Yup.string().required("Vehicle feature is required"),
     adhar_verified: Yup.boolean(),
-    age: Yup.number().required("Age is required")
+    age: Yup.number().required("Age is required"),
+    address: Yup.string().required('Address is required'),
+    pin_code:Yup.string().required('Pincode is required'),
+    city: Yup.string().required('City is required'),
+    state: Yup.string().required('State is required'),
 })
