@@ -100,6 +100,7 @@ function Drivers() {
             showToast('Driver created successfully', 'success');
             setOpen(false);
             reset();
+            fetchRides()
         } else {
             showToast(response?.message, 'error')
         }

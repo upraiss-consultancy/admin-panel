@@ -21,7 +21,7 @@ import { useSearchParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
 function RideDetailView() {
-    const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE , UNASSIGN_DRIVER } = END_POINTS;
+    const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE, UNASSIGN_DRIVER } = END_POINTS;
     const [searchParams] = useSearchParams()
     const bookingId = searchParams.get('bookingId')
     const [rideData, setRideData] = useState({
@@ -50,25 +50,25 @@ function RideDetailView() {
         if (responseCode) {
             if (responseCode === 200) {
                 showToast('Ride Assign Sucessfully', 'success')
+                fetchInterestedUserList();
             }
         }
 
     }
 
     const handleUnAssignRide = async (id) => {
-        const response = await unAssignRide(UNASSIGN_DRIVER , {
+        const response = await unAssignRide(UNASSIGN_DRIVER, {
             bookingId: id,
             remarks: "No Idea"
         });
 
-        if(response?.status === 200) {
-            showToast(response?.data?.message , 'success')
+        if (response?.status === 200) {
+            showToast(response?.data?.message, 'success')
+            fetchInterestedUserList();
         } else {
-            showToast(response?.data?.message , 'error')
+            showToast(response?.data?.message, 'error')
         }
     }
-
-    console.log(rideData['rideData'][0]?.bookingData, "bookingData")
     return (
         <>
             <Grid container>
@@ -225,6 +225,7 @@ function RideDetailView() {
                                 </TableCell>
                                 <TableCell className="!text-center">Vehicle Feature</TableCell>
                                 <TableCell className="!text-center">Vehicle Type</TableCell>
+                                <TableCell>Status</TableCell>
                                 <TableCell className="!text-center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -232,7 +233,7 @@ function RideDetailView() {
                             {rideData['data']?.map((data, index) => {
                                 return (
                                     <TableRow>
-                                        {console.log(data?.users?.full_name, "DATA222")}
+                                        {console.log(data, "DATA222")}
                                         <TableCell>
                                             {index + 1
                                             }</TableCell>
@@ -243,14 +244,14 @@ function RideDetailView() {
                                             {data?.users?.age}
                                         </TableCell>
                                         <TableCell className="text-nowrap">
-                                            {data?.users?.email}
+                                            {data?.users?.email ? data?.users?.email : "N.A."}
                                         </TableCell>
                                         <TableCell>
-                                            {data?.users?.mobile_no}
+                                            {data?.users?.mobile_no ? data?.users?.mobile_no : "N.A."}
                                         </TableCell>
 
                                         <TableCell className="!text-center">
-                                            {data?.users?.experience}
+                                            {data?.users?.experience ? data?.users?.experience : "N.A."} years
                                         </TableCell>
                                         <TableCell className="!text-center">
                                             {data?.users?.vehicle_feature
@@ -259,9 +260,15 @@ function RideDetailView() {
                                         <TableCell className="!text-center">
                                             {data?.users?.vehicle_type}
                                         </TableCell>
+                                        <TableCell className={`!text-center ${data?.status === "cancel" ? '!text-red-600' : data?.status === "approved" || "complete" ? '!text-green-500' : "!text-orange-500"} capitalize`}>
+                                            {data?.status}
+                                        </TableCell>
                                         <TableCell className="!text-center">
-                                            <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button>
-                                            <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
+
+                                            {
+                                                data?.status === "pending" || "cancel" ? <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button> : data?.status !== "cancel" && <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
+                                            }
+
                                         </TableCell>
                                     </TableRow>
                                 );
