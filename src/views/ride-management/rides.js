@@ -83,7 +83,8 @@ function AllRides() {
   const [cities, setCities] = useState([]);
   const [dropOffStates, setDropOffStates] = useState([])
   const [dropOffCity, setDropOffCity] = useState([]);
-  const [isLoading, setISLoading] = useState(false)
+  const [isLoading, setISLoading] = useState(false);
+  const [remarks, setRemarks] = useState('')
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -163,8 +164,12 @@ function AllRides() {
   };
 
   const handleCancelRide = async () => {
+    if (remarks.trim() === "") {
+      showToast('Please add remarks before cancel ride.', 'error');
+      return;
+    }
     handleClose();
-    const data = await cancelRide(ADMIN_CANCEL_BOOKING, bookingID);
+    const data = await cancelRide(ADMIN_CANCEL_BOOKING, { bookingId: bookingID, remarks: remarks });
     if (data?.responseCode === 200) {
       showToast(data?.message, 'success');
       fetchRides();
@@ -181,7 +186,6 @@ function AllRides() {
       return_date: returnformattedDate,
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
-    console.log(response, "response???")
     if (response?.message) {
       if (data?._id === null) {
         setISLoading(false)
@@ -197,9 +201,20 @@ function AllRides() {
     }
   };
   const handleNavigate = (id) => {
+
     const queryParams = new URLSearchParams({ bookingId: id });
     navigate(`/drivers?${queryParams.toString()}`);
     setDialogOpen(false)
+  }
+
+  const handleRedirect = (boolean) => {
+    if (boolean === true) {
+      const queryParams = new URLSearchParams({ bookingId: bookingID });
+      navigate(`/drivers?${queryParams.toString()}`);
+      setDialogOpen(false)
+    } else {
+      setDialogOpen(false)
+    }
   }
 
   const handleUpdateRide = (data) => {
@@ -770,8 +785,8 @@ function AllRides() {
         </Drawer>
 
       </Box>
-      <AssignRideDialog dialogOpen={dialogOpen} handleNavigate={handleNavigate} />
-      <CancelRideDialog open={isCancel} handleClose={() => setIsCancel(false)} handleConfirm={handleCancelRide} />
+      <AssignRideDialog dialogOpen={dialogOpen} handleNavigate={handleRedirect} />
+      <CancelRideDialog open={isCancel} remarksChange={(value) => setRemarks(value)} handleClose={() => setIsCancel(false)} handleConfirm={handleCancelRide} />
     </>
   );
 }

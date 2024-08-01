@@ -32,10 +32,12 @@ export const deleteRide = async (endpoint, payload) => {
   } catch (error) { }
 };
 
-export const cancelRide = async (endpoint, id) => {
+export const cancelRide = async (endpoint, payload) => {
   try {
     const response = await api.delete(
-      `${CONFIG_KEYS.API_BASE_URL}/${endpoint}/${id}`
+      `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, {
+      data: payload
+    }
     );
     if (response) {
       const { statusText, data: responseData } = response;
@@ -60,7 +62,9 @@ export const createRide = async (endpoint, rideData) => {
         return { message: message, bookingId: bookingId };
       }
     }
-  } catch (error) { }
+  } catch (error) { 
+    
+  }
 };
 
 
@@ -74,6 +78,17 @@ export const assignRide = async (endpoint, rideData) => {
       if (status === 200) {
         return true;
       }
+    }
+  } catch (error) { }
+};
+
+export const unAssignRide = async (endpoint, payload) => {
+  try {
+    const response = await api.delete(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, {
+      data: payload
+    });
+    if (response) {
+      return response;
     }
   } catch (error) { }
 };
