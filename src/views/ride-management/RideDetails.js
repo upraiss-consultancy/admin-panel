@@ -266,7 +266,7 @@ function RideDetailView() {
                                         <TableCell className="!text-center">
 
                                             {
-                                                data?.status === "pending" || "cancel" ? <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button> : data?.status !== "cancel" && <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
+                                                data?.status === ("pending" || "cancel") ? <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button> : data?.status !== "cancel"  && <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
                                             }
 
                                         </TableCell>

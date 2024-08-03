@@ -238,7 +238,7 @@ function AllRides() {
       package_id: data['package_id'],
       return_pin: data['return_pin'],
       car_type: data['car_type'],
-      whatsapp_number: data['whatsapp_number']
+      pass_whatsapp_no: data['whatsapp_number']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -493,14 +493,14 @@ function AllRides() {
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
                   control={control}
-                  name="whatsapp_number"
+                  name="pass_whatsapp_no"
                   render={({ field }) => (
                     <TextField
                       {...field}
                       label="Whatsapp Number"
                       className="w-full"
-                      error={!!errors.whatsapp_number}
-                      helperText={errors.whatsapp_number?.message}
+                      error={!!errors.pass_whatsapp_no}
+                      helperText={errors.pass_whatsapp_no?.message}
                     />
                   )}
                 />
