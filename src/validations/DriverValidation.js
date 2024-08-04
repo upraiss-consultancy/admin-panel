@@ -1,9 +1,8 @@
 import * as Yup from 'yup';
-
 export const CreateDriverSchema = Yup.object().shape({
     mobile_no: Yup.string().required('Mobile number is required'),
     full_name: Yup.string().required("Name is required"),
-    dob: Yup.date().required("D.O.B is required"),
+    dob: Yup.string().required("D.O.B is required"),
     email: Yup.string().required("Email id is required"),
     adhar_no: Yup.string().required("Aadhar number is required"),
     pan_no: Yup.string(),

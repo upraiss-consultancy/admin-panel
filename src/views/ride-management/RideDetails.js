@@ -20,6 +20,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useSearchParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 function RideDetailView() {
     const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE, UNASSIGN_DRIVER } = END_POINTS;
     const [searchParams] = useSearchParams()
@@ -46,6 +48,7 @@ function RideDetailView() {
     }, [allParams]);
 
     const handleAssignRide = async (id) => {
+        console.log(id  , "ID ??")
         const responseCode = await AssignInterestedDrivers(USER_INTERESTED_ASSIGN_RIDE, { bookingId: id });
         if (responseCode) {
             if (responseCode === 200) {
@@ -87,6 +90,10 @@ function RideDetailView() {
                         </Stack>
                         <Stack direction={'row'} gap={2} className='py-2'>
                             <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
+                                <Typography>Car Type:</Typography>
+                                <Typography>{rideData['rideData'][0]?.bookingData?.car_type}</Typography>
+                            </Stack>
+                            <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
                                 <Typography>Booking Type:</Typography>
                                 <Typography>{rideData['rideData'][0]?.bookingData?.booking_type}</Typography>
                             </Stack>
@@ -104,9 +111,13 @@ function RideDetailView() {
                                 <Typography>Pick-Up Date:</Typography>
                                 <Typography>{dayjs(rideData['rideData'][0]?.bookingData?.pickup_date).format('MM-DD-YYYY')}</Typography>
                             </Stack>
+                            <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
+                                <Typography>Pick-Up Time:</Typography>
+                                <Typography>{dayjs(rideData['rideData'][0]?.bookingData?.pickup_time).utc().format('HH:mm:ss')}</Typography>
+                            </Stack>
                         </Stack>
                         {
-                            rideData['rideData'][0]?.bookingData?.way_type === "one" && <Stack direction={'row'} gap={2} className=' py-2'>
+                            rideData['rideData'][0]?.bookingData?.way_type === "One Way" && <Stack direction={'row'} gap={2} className=' py-2'>
                                 <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
                                     <Typography>Return Address:</Typography>
                                     <Typography>{rideData['rideData'][0]?.bookingData?.return_address + ", " + rideData['rideData'][0]?.bookingData?.return_city + ", " + rideData['rideData'][0]?.bookingData?.return_state + " " + rideData['rideData'][0]?.bookingData?.return_pin}</Typography>
@@ -115,52 +126,17 @@ function RideDetailView() {
                                     <Typography>Return Date:</Typography>
                                     <Typography>{dayjs(rideData['rideData'][0]?.bookingData?.return_date).format('MM-DD-YYYY')}</Typography>
                                 </Stack>
+                                <Stack direction={'row'} justifyContent={'space-between'} gap={0.5}>
+                                    <Typography>Return Time:</Typography>
+                                    <Typography>
+                                        {dayjs(rideData['rideData'][0]?.bookingData?.return_time).utc().format('HH:mm:ss')}
+                                    </Typography>
+                                </Stack>
                             </Stack>
                         }
 
                     </Box>
                 </Grid>
-                {/* <Grid item xs={12}>
-                    <Typography variant='h5' className=' !mb-4'>Interested Drivers</Typography>
-                    {
-                        rideData['data']?.map((data) => {
-                            return (
-                                <Card className=' min-h-[200px] pt-3 px-3'>
-                                    <Stack direction={'row'}>
-                                        <CardMedia
-                                            component="img"
-                                            height="140"
-                                            className='!w-[140px] rounded-[50%]'
-
-                                            image={data?.users?.profile_img ? data?.users?.profile_img : "https://tse2.mm.bing.net/th?id=OIP.2_2CrrjAxEeaLcS23kQ0wAHaHa&pid=Api&P=0&h=180"}
-                                            alt="Driver photo"
-                                        />
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="div">
-                                                {data?.users?.full_name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Mobile: {data?.users?.mobile_no}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Email: {data?.users?.email}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Vehicle Type: {data?.users?.vehicle_type}
-                                            </Typography>
-
-                                        </CardContent>
-
-                                    </Stack>
-
-                                    <CardActions >
-                                        <Button variant="outlined" onClick={() => handleAssignRide(data?._id)}>Assign Ride</Button>
-                                    </CardActions>
-                                </Card>
-                            )
-                        })
-                    }
-                </Grid> */}
                 <TableContainer component={Paper}>
                     <Box className="flex my-2 justify-between px-4">
                         <Typography variant="h6" component="div">
@@ -186,32 +162,6 @@ function RideDetailView() {
                                 (e) => setSearch(e.target.value)
                             }
                         />
-                        {/* } /> */}
-                        {/* <Select defaultValue={'live'} className=" min-w-36 !max-h-10"
-                         onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}
-                        >
-                            <MenuItem value={'live'}>Live</MenuItem>
-                            <MenuItem value={'out-station'}>Out Station</MenuItem>
-                        </Select> */}
-                        {/* <Select defaultValue={'local'} className=" min-w-36 !max-h-10"
-                        onChange={(e) => setAllParams(prevState => ({ ...prevState, area_type: e.target.value }))}
-                        >
-                            <MenuItem value={'local'}>Local</MenuItem>
-                            <MenuItem value={'out-station'}>Out Station</MenuItem>
-                        </Select>
-                        <Select defaultValue={'one'} className=" min-w-36 !max-h-10"
-                         onChange={(e) => setAllParams(prevState => ({ ...prevState, way_type: e.target.value }))}
-                        >
-                            <MenuItem value={'one'}>One</MenuItem>
-                            <MenuItem value={'rounded'}>Rounded</MenuItem>
-                        </Select> */}
-                        {/* <Button
-                            variant="contained"
-                            className="!bg-[#DD781E]"
-                            onClick={() => setOpen(true)}
-                        >
-                            Create Driver
-                        </Button> */}
                     </Box>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
@@ -263,11 +213,15 @@ function RideDetailView() {
                                         <TableCell className={`!text-center ${data?.status === "cancel" ? '!text-red-600' : data?.status === "approved" || "complete" ? '!text-green-500' : "!text-orange-500"} capitalize`}>
                                             {data?.status}
                                         </TableCell>
+                                        {
+                                            console.log(data , data?._id)                                        }
                                         <TableCell className="!text-center">
 
                                             {
-                                                data?.status === ("pending" || "cancel") ? <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button> : data?.status !== "cancel"  && <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
+                                                data?.status !== "approved" && <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button>
                                             }
+                                            <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
+
 
                                         </TableCell>
                                     </TableRow>
