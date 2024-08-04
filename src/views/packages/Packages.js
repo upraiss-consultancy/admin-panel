@@ -12,9 +12,14 @@ import { CreatePackageSchema } from "../../validations/PackagesValidation";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaEllipsisVertical } from "react-icons/fa6";
 import { createPackage, getAllPackageList, deletePackage } from "../../api/services/packages";
-import DeletePackages from './PackagesDeleteDialogue'
+import DeletePackages from './PackagesDeleteDialogue';
+import { State, City } from 'country-state-city';
+
 
 const { CREATE_PACKAGES, GET_ALL_PACKAGE_LIST, DELETE_PACKAGE } = END_POINTS;
+
+
+
 function SlideTransition(props) {
     return <Slide {...props} direction="down" />;
 }
@@ -31,7 +36,12 @@ function Packages() {
     const [open, setOpen] = useState(false)
     const [isDelete, setIsDelete] = useState(false);
     const [packageId, setPackageId] = useState(null);
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [dropOffCity, setDropOffCities] = useState([]);
     const [alert, setAlert] = useState(false)
+
+
     const {
         handleSubmit,
         control,
@@ -45,6 +55,12 @@ function Packages() {
         },
         resolver: yupResolver(CreatePackageSchema)
     });
+
+
+    const pickupState = watch('pickup_state');
+    const dropOffState = watch('dropoff_state');
+    const bookingType = watch('booking_type');
+    const tripType = watch('trip_type');
 
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
@@ -65,8 +81,38 @@ function Packages() {
 
     useEffect(() => {
         fetchPackages(params);
+        const stateData = State.getStatesOfCountry('IN');
+        setStates(stateData);
     }, []);
 
+    useEffect(() => {
+        if (pickupState) {
+            const cityData = City.getCitiesOfState('IN', pickupState);
+            setCities(cityData);
+        } else {
+            setCities([]);
+        }
+    }, [pickupState]);
+
+
+
+    useEffect(() => {
+        if (pickupState) {
+            const cityData = City.getCitiesOfState('IN', pickupState);
+            setCities(cityData);
+        } else {
+            setCities([]);
+        }
+    }, [pickupState]);
+
+    useEffect(() => {
+        if (dropOffState) {
+            const cityData = City.getCitiesOfState('IN', dropOffState);
+            setDropOffCities(cityData);
+        } else {
+            setDropOffCities([]);
+        }
+    }, [dropOffState]);
 
     const onSubmit = async (data) => {
         const response = await createPackage(CREATE_PACKAGES, data);
@@ -143,7 +189,6 @@ function Packages() {
         }
     }
     const handleCloseAlert = () => setAlert(false);
-    const packageType = watch('package_type')
     return (
         <>
 
@@ -191,18 +236,24 @@ function Packages() {
                         <TableRow>
                             <TableCell>S.No.</TableCell>
                             <TableCell>Package Name</TableCell>
-                            <TableCell>Package Type</TableCell>
+                            <TableCell>Booking Type</TableCell>
+                            <TableCell>Car Type</TableCell>
+                            <TableCell>Way Type</TableCell>
+                            <TableCell className="text-nowrap">Pick-Up State</TableCell>
+                            <TableCell className="text-nowrap">Pick-Up City</TableCell>
+                            <TableCell className="text-nowrap">Drop-Off State</TableCell>
+                            <TableCell className="text-nowrap">Drop-Off City</TableCell>
+                            <TableCell>Hours Package</TableCell>
+                            <TableCell>Days Package</TableCell>
+                            <TableCell>Minimum Distance</TableCell>
+                            <TableCell>Maximum Distance</TableCell>
                             <TableCell>Driver Charge</TableCell>
                             <TableCell>Night Charge</TableCell>
-                            <TableCell className="!text-center">Kilometer</TableCell>
-                            <TableCell className="!text-center">Hours</TableCell>
-                            <TableCell className="!text-center">Days</TableCell>
-                            <TableCell className="!text-center">Extra Charge</TableCell>
+                            <TableCell>Travelling Charge</TableCell>
+                            <TableCell className="!text-center">Convenience Charge</TableCell>
                             <TableCell>GST</TableCell>
                             <TableCell>Basic Price</TableCell>
                             <TableCell>Total Price</TableCell>
-                            <TableCell>Way Type</TableCell>
-                            <TableCell>Range</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -216,50 +267,80 @@ function Packages() {
                                     <TableCell>
                                         {data?.package_name}
                                     </TableCell>
-                                    <TableCell>
-                                        {data?.package_type}
-                                    </TableCell>
                                     <TableCell className="text-nowrap">
-                                        {data?.driver_charge?.$numberDecimal}
+                                        {
+                                            data?.booking_type
+                                        }
+
                                     </TableCell>
                                     <TableCell>
-                                        {data?.night_charge?.$numberDecimal}
+                                        {data?.car_type}
+                                    </TableCell>
+
+                                    <TableCell>
+                                        {data?.trip_type}
+
                                     </TableCell>
                                     <TableCell className="!text-center">
-                                        {data?.kilometer?.$numberDecimal}
+                                        {data?.pickup_state ? data?.pickup_state : "N.A."}
+
                                     </TableCell>
                                     <TableCell>
-                                        {data?.hours ? data?.hours : "N.A."} 
+                                        {data?.pickup_city ? data?.pickup_city : "N.A."}
+
+
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
-                                            data?.days ? data?.days : 'N.A.'
+                                            data?.dropoff_state ? data?.dropoff_state : 'N.A.'
                                         }
                                     </TableCell>
                                     <TableCell className="!text-center">
-                                        {data?.extra_charge_kilometer?.$numberDecimal}
+                                        {
+                                            data?.dropoff_city ? data?.dropoff_city : 'N.A.'
+                                        }
+
                                     </TableCell>
                                     <TableCell className="!text-center text-nowrap">
-                                        {data?.gst?.$numberDecimal} %
+                                        {
+                                            data?.hours_package ? data?.hours_package : 'N.A.'
+                                        }
+
                                     </TableCell>
                                     <TableCell className="!text-center">
+
                                         {
-                                            data?.basic_price?.$numberDecimal
+                                            data?.days_package ? data?.days_package : 'N.A.'
                                         }
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
-                                            data?.total_price?.$numberDecimal
+                                            data?.min_distance ? data?.min_distance : 'N.A.'
                                         }
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
-                                            data?.way_type}
+                                            data?.max_distance ? data?.max_distance : 'N.A.'
+                                        }
                                     </TableCell>
                                     <TableCell
                                     >
-                                        {data?.range}
+                                        {data?.driver_charge?.$numberDecimal ? data?.driver_charge?.$numberDecimal : 'N.A.'}
                                     </TableCell>
+                                    <TableCell>
+                                        {data?.night_charge?.$numberDecimal ? data?.night_charge?.$numberDecimal : "N.A."}
+                                    </TableCell>
+
+                                    <TableCell
+                                    >
+                                        {data?.travelling_charge?.$numberDecimal ? data?.travelling_charge?.$numberDecimal : 'N.A.'}
+                                    </TableCell>
+                                    <TableCell>
+                                        {data?.convience_charge?.$numberDecimal ? data?.convience_charge?.$numberDecimal : "N.A."}
+                                    </TableCell>
+                                    <TableCell>{data?.gst?.$numberDecimal ? data?.gst?.$numberDecimal : "N.A."}</TableCell>
+                                    <TableCell>{data?.gst?.$numberDecimal ? data?.gst?.$numberDecimal : "N.A."}</TableCell>
+                                    <TableCell>{data?.total_price?.$numberDecimal ? data?.total_price?.$numberDecimal : "N.A."}</TableCell>
                                     <TableCell>
                                         <Box>
                                             <IconButton
@@ -337,50 +418,137 @@ function Packages() {
                             />
                             <Controller
                                 control={control}
-                                name="package_type"
+                                name="booking_type"
                                 render={({ field }) => (
                                     <FormControl sx={{ width: "100%" }}>
-                                        <InputLabel id="demo-simple-select-helper-label">Package Type</InputLabel>
+                                        <InputLabel id="demo-simple-select-helper-label">Booking Type</InputLabel>
                                         <Select {...field} className="!w-full" labelId="demo-simple-select-helper-label"
                                             id="demo-simple-select-helper"
-                                            label="Package Type"
+                                            label="Booking Type"
+
                                         >
-                                            <MenuItem value="Day">Day</MenuItem>
-                                            <MenuItem value="Hour">Hour</MenuItem>
+                                            <MenuItem value="Local">Local</MenuItem>
+                                            <MenuItem value="Outstation">Out Station</MenuItem>
                                         </Select>
                                     </FormControl>
                                 )}
                             />
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
-                            {
-                                packageType === 'Day' ? <Controller
-                                    control={control}
-                                    name="days"
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            label="Days"
-                                            className="w-full"
-                                            error={!!errors.days}
-                                            helperText={errors.days?.message}
-                                        />
-                                    )}
-                                /> : <Controller
-                                    control={control}
-                                    name="hours"
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            label="Hours"
-                                            className="w-full"
-                                            error={!!errors.hours}
-                                            helperText={errors.hours?.message}
-                                        />
-                                    )}
-                                />
-                            }
+                            <Controller
+                                control={control}
+                                name="trip_type"
+                                render={({ field }) => (
+                                    <FormControl sx={{ width: "100%" }}>
+                                        <InputLabel id="demo-simple-select-helper-label">Way Type</InputLabel>
+                                        <Select {...field} className="!w-full" labelId="demo-simple-select-helper-label"
+                                            id="demo-simple-select-helper"
+                                            label="Package Type"
+                                        >
+                                            <MenuItem value="One Way">One Way</MenuItem>
+                                            <MenuItem value="Round Trip">Round Trip</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                )}
+                            />
+                            <Controller
+                                control={control}
+                                name="car_type"
+                                render={({ field }) => (
+                                    <FormControl sx={{ width: "100%" }}>
+                                        <InputLabel id="demo-simple-select-helper-label">Car Type</InputLabel>
+                                        <Select {...field} className="!w-full" labelId="demo-simple-select-helper-label"
+                                            id="demo-simple-select-helper"
+                                            label="Car Type"
+                                        >
+                                            <MenuItem value="Hatchback">Hatchback</MenuItem>
+                                            <MenuItem value="Sedan">Sedan</MenuItem>
+                                            <MenuItem value="Luxury">Luxury</MenuItem>
+                                            <MenuItem value="Suv">Suv</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                )}
+                            />
+                        </Stack>
+                        {
+                            (bookingType === 'Local' && tripType === "One Way") && <>
+                                <Stack direction={"row"} gap={2} className="!mb-4">
+                                    <Controller
+                                        control={control}
+                                        name="pickup_state"
+                                        render={({ field }) => (
+                                            <FormControl fullWidth>
+                                                <InputLabel>Pick-Up State</InputLabel>
+                                                <Select label="Pick-Up State" {...field}>
+                                                    {states.map((state) => (
+                                                        <MenuItem key={state.isoCode} value={state.isoCode}>
+                                                            {state.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+                                    <Controller
+                                        control={control}
+                                        name="pickup_city"
+                                        render={({ field }) => (
+                                            <FormControl fullWidth>
+                                                <InputLabel>City</InputLabel>
+                                                <Select label="Pick-Up City" {...field}>
+                                                    {cities.map((city) => (
+                                                        <MenuItem key={city.name} value={city.name}>
+                                                            {city.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+                                </Stack>
+                            </>
+                        }
 
+                        {
+                            (bookingType === 'Local' && tripType === "One Way") && <>
+                                <Stack direction={"row"} gap={2} className="!mb-4">
+                                    <Controller
+                                        control={control}
+                                        name="dropoff_state"
+                                        render={({ field }) => (
+                                            <FormControl fullWidth>
+                                                <InputLabel>Drop-Off State</InputLabel>
+                                                <Select label="Drop-Off State" {...field}>
+                                                    {states.map((state) => (
+                                                        <MenuItem key={state.isoCode} value={state.isoCode}>
+                                                            {state.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+                                    <Controller
+                                        control={control}
+                                        name="dropoff_city"
+                                        render={({ field }) => (
+                                            <FormControl fullWidth>
+                                                <InputLabel>Drop Off City</InputLabel>
+                                                <Select label="Pick-Up City" {...field}>
+                                                    {dropOffCity.map((city) => (
+                                                        <MenuItem key={city.name} value={city.name}>
+                                                            {city.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+                                </Stack>
+                            </>
+                        }
+
+                        <Stack direction={"row"} gap={2} className="!mb-4">
                             <Controller
                                 control={control}
                                 name="driver_charge"
@@ -394,80 +562,224 @@ function Packages() {
                                     />
                                 )}
                             />
+                            <Controller
+                                control={control}
+                                name="convience_charge"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Convenience Charge"
+                                        className="w-full"
+                                        error={!!errors.convience_charge}
+                                        helperText={errors.convience_charge?.message}
+                                    />
+                                )}
+                            />
+                            {/* <Controller
+                                control={control}
+                                name="days_package"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Days Package"
+                                        className="w-full"
+                                        error={!!errors.days_package}
+                                        helperText={errors.days_package?.message}
+                                    />
+                                )}
+                            /> */}
+                            {/* <Controller
+                                control={control}
+                                name="hours_package"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Hours Package"
+                                        className="w-full"
+                                        error={!!errors.hours_package}
+                                        helperText={errors.hours_package?.message}
+                                    />
+                                )}
+                            /> */}
+
                         </Stack>
-                        <Stack direction={"row"} gap={2} className="!mb-4">
-                            <Controller
+                        {
+                            (bookingType === "Local" && tripType === "One Way") && (
+                                <>
+                                    <Stack direction={"row"} gap={2} className="!mb-4">
+                                        <Controller
+                                            control={control}
+                                            name="max_distance"
+                                            render={({ field }) => (
+                                                <TextField
+                                                    {...field}
+                                                    label="Maximum Distance"
+                                                    className="w-full"
+                                                    error={!!errors.max_distance}
+                                                    helperText={errors.max_distance?.message}
+                                                />
+                                            )}
+                                        />
+
+
+                                        {/* <Controller
                                 control={control}
-                                name="night_charge"
+                                name="days_package"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        label="Night Charge"
+                                        label="Days Package"
                                         className="w-full"
-                                        error={!!errors.night_charge}
-                                        helperText={errors.night_charge?.message}
+                                        error={!!errors.days_package}
+                                        helperText={errors.days_package?.message}
                                     />
                                 )}
-                            />
-                            <Controller
+                            /> */}
+                                        {/* <Controller
                                 control={control}
-                                name="kilometer"
+                                name="hours_package"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        label="Kilometer"
+                                        label="Hours Package"
                                         className="w-full"
-                                        error={!!errors.kilometer}
-                                        helperText={errors.kilometer?.message}
+                                        error={!!errors.hours_package}
+                                        helperText={errors.hours_package?.message}
                                     />
                                 )}
-                            />
+                            /> */}
+
+                                    </Stack>
+                                </>
+                            )
+                        }
+
+
+                        <Stack direction={"row"} className="!mb-4" gap={2}>
+                            {
+                                bookingType === "Local" ? <Controller
+                                    control={control}
+                                    name="hours_package"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Hours Package"
+                                            className="w-full"
+                                            error={!!errors.hours_package}
+                                            helperText={errors.hours_package?.message}
+                                        />
+                                    )}
+                                /> : <Controller
+                                    control={control}
+                                    name="days_package"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Days Package"
+                                            className="w-full"
+                                            error={!!errors.days_package}
+                                            helperText={errors.days_package?.message}
+                                        />
+                                    )}
+                                />
+                            }
+                            {
+                                (bookingType === "Local" && tripType === "One Way") ? <Controller
+                                    control={control}
+                                    name="extra_charge"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Extra Charge Per Distance"
+                                            className="w-full"
+                                            error={!!errors.extra_charge}
+                                            helperText={errors.extra_charge?.message}
+                                        />
+                                    )}
+                                /> : (bookingType === "Local" && tripType === "Round Trip") ? <Controller
+                                    control={control}
+                                    name="extra_charge"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Extra Charge Per Hour"
+                                            className="w-full"
+                                            error={!!errors.extra_charge}
+                                            helperText={errors.extra_charge?.message}
+                                        />
+                                    )}
+                                /> : (bookingType === "Outstation" && tripType === "One Way") ? <Controller
+                                    control={control}
+                                    name="extra_charge"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Extra Charge Per Days"
+                                            className="w-full"
+                                            error={!!errors.extra_charge}
+                                            helperText={errors.extra_charge?.message}
+                                        />
+                                    )}
+                                /> : <Controller
+                                    control={control}
+                                    name="extra_charge"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Extra Charge Per Days"
+                                            className="w-full"
+                                            error={!!errors.extra_charge}
+                                            helperText={errors.extra_charge?.message}
+                                        />
+                                    )}
+                                />
+                            }
 
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
                             <Controller
                                 control={control}
-                                name="extra_charge_kilometer"
+                                name="travelling_charge"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        label="Extra Charge Kilometer"
+                                        label="Other Charges"
                                         className="w-full"
-                                        error={!!errors.extra_charge_kilometer}
-                                        helperText={errors.extra_charge_kilometer?.message}
+                                        error={!!errors.travelling_charge}
+                                        helperText={errors.travelling_charge?.message}
                                     />
                                 )}
                             />
-                        </Stack>
-                        <Stack direction={"row"} gap={2} className="!mb-4">
-                            {
-                                packageType === 'day' ?
-                                    <Controller
-                                        control={control}
-                                        name="extra_charge"
-                                        render={({ field }) => (
-                                            <TextField
-                                                {...field}
-                                                label="Extra charges of per day"
-                                                className="w-full"
-                                                error={!!errors.extra_charge}
-                                                helperText={errors.extra_charge?.message}
-                                            />
-                                        )}
-                                    /> : <Controller
-                                        control={control}
-                                        name="extra_charge"
-                                        render={({ field }) => (
-                                            <TextField
-                                                {...field}
-                                                label="Extra charges of per hour"
-                                                className="w-full"
-                                                error={!!errors.extra_charge}
-                                                helperText={errors.extra_charge?.message}
-                                            />
-                                        )}
+                            <Controller
+                                control={control}
+                                name="basic_total"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Basic Amount"
+                                        className="w-full"
+                                        error={!!errors.basic_total}
+                                        helperText={errors.basic_total?.message}
                                     />
-                            }
+                                )}
+                            />
+
+                        </Stack>
+
+                        <Stack direction={"row"} gap={2} className="!mb-4">
+                            <Controller
+                                control={control}
+                                name="company_charge"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Company Charges"
+                                        className="w-full"
+                                        error={!!errors.company_charge}
+                                        helperText={errors.company_charge?.message}
+                                    />
+                                )}
+                            />
                             <Controller
                                 control={control}
                                 name="gst"
@@ -481,21 +793,10 @@ function Packages() {
                                     />
                                 )}
                             />
+
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
-                            <Controller
-                                control={control}
-                                name="basic_price"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Basic Price"
-                                        className="w-full"
-                                        error={!!errors.basic_price}
-                                        helperText={errors.basic_price?.message}
-                                    />
-                                )}
-                            />
+
                             <Controller
                                 control={control}
                                 name="total_price"
@@ -510,35 +811,9 @@ function Packages() {
                                 )}
                             />
 
+
                         </Stack>
-                        <Stack direction={"row"} className="!mb-4" gap={2}>
-                            <Controller
-                                control={control}
-                                name="way_type"
-                                render={({ field }) => (
-                                    <FormControl className="w-full">
-                                        <InputLabel id="demo-simple-select-helper-label">Way Type</InputLabel>
-                                        <Select {...field} className="w-full" label="Way Type">
-                                            <MenuItem value="One Way">One Way</MenuItem>
-                                            <MenuItem value="Round Trip">Round Trip</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                )}
-                            />
-                            <Controller
-                                control={control}
-                                name="range"
-                                render={({ field }) => (
-                                    <FormControl className="w-full">
-                                        <InputLabel id="demo-simple-select-helper-label">Range</InputLabel>
-                                        <Select {...field} className="w-full" label="Range">
-                                            <MenuItem value="Local">Local</MenuItem>
-                                            <MenuItem value="Outstation">Out Station</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                )}
-                            />
-                        </Stack>
+
                         <Box className="flex" gap={2}>
                             <Button variant="outlined" className="!w-full" type="reset">
                                 Reset

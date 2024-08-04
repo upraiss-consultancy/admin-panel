@@ -1,4 +1,4 @@
-import { Button, Typography, IconButton, Stack, InputLabel, FormControl, TableContainer, Paper, Box, TextField, InputAdornment, TableCell, MenuItem, TableRow, Pagination, Popover, Select, Table, TableHead, TableBody } from "@mui/material";
+import { Button, Typography, IconButton, Stack, InputLabel, FormControl, Avatar, TableContainer, Paper, Box, TextField, InputAdornment, TableCell, MenuItem, TableRow, Pagination, Popover, Select, Table, TableHead, TableBody } from "@mui/material";
 import { getDriverList, deleteDriver } from "../../api/services/driver";
 import { useEffect, useState } from "react";
 import END_POINTS from "../../constants/endpoints";
@@ -53,6 +53,8 @@ function Drivers() {
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
 
+    const [bookId , setBookId] = useState('')
+
     useEffect(() => {
         const stateData = State.getStatesOfCountry('IN');
         setStates(stateData);
@@ -64,7 +66,7 @@ function Drivers() {
         fetchRides();
     }, [params]);
     const handleAssign = async (_id) => {
-        const response = await assignRide(ASSIGN_RIDE, { bookingId: bookingId, userId: _id });
+        const response = await assignRide(ASSIGN_RIDE, { bookingId: bookingId, userId: bookId });
         if (response) {
             showToast('Ride assign to driver successfully', 'success');
             navigate('/rides')
@@ -124,7 +126,6 @@ function Drivers() {
         }
     }
     const handleDelete = (driverID) => {
-        setDriverId(driverID)
         setIsDelete(true)
     }
     const openPopover = Boolean(anchorEl);
@@ -136,16 +137,18 @@ function Drivers() {
     };
 
     const handleUpdateDriver = (data) => {
+        console.log(data, "Check Data")
+        setIsUpdate(true)
         reset({
             mobile_no: data?.mobile_no,
             full_name: data?.full_name,
-            dob: data?.dob,
+            dob: dayjs(data?.dob),
             email: data?.email,
             adhar_no: data?.adhar_no,
             pan_no: data?.pan_no,
             dl_no: data?.dl_no,
-            dl_issue_date: data?.dl_issue_date,
-            dl_expiry_date: data?.dl_expiry_date,
+            dl_issue_date: dayjs(data?.dl_issue_date),
+            dl_expiry_date: dayjs(data?.dl_expiry_date),
             profile_img: data?.profile_img,
             vehicle_type: data?.vehicle_type,
             vehicle_feature: data?.vehicle_feature,
@@ -154,11 +157,10 @@ function Drivers() {
             address: data?.address,
             pin_code: data?.pin_code,
             city: data?.city,
-            state: data?.state
+            state: data?.state,
+            experience: data?.experience
         })
-        setIsUpdate(true)
-        setOpen(true);
-        handleClose()
+
     }
 
     return (
@@ -230,6 +232,7 @@ function Drivers() {
                     <TableHead>
                         <TableRow>
                             <TableCell>S.No.</TableCell>
+                            <TableCell>Profile Image</TableCell>
                             <TableCell>Name</TableCell>
                             <TableCell>Mobile No.</TableCell>
                             <TableCell>D.O.B</TableCell>
@@ -244,50 +247,54 @@ function Drivers() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {driverListResponse?.data?.map((data, index) => {
+                        {driverListResponse?.data?.map((driver, index) => {
                             return (
                                 <TableRow>
                                     <TableCell>
                                         {(params?.page - 1) * 10 + index + 1
                                         }</TableCell>
                                     <TableCell>
-                                        {data?.full_name}
+                                        <Avatar src={driver?.profile_img} />
+                                        {/* {data?.pass_name} */}
                                     </TableCell>
                                     <TableCell>
-                                        {data?.mobile_no}
+                                        {driver?.full_name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {driver?.mobile_no}
                                     </TableCell>
                                     <TableCell className="text-nowrap">
-                                        {dayjs(data?.dob).format('DD-MM-YYYY')}
+                                        {dayjs(driver?.dob).format('DD-MM-YYYY')}
                                     </TableCell>
                                     <TableCell>
-                                        {data?.adhar_no}
+                                        {driver?.adhar_no}
                                     </TableCell>
                                     <TableCell className="!text-center">
-                                        {data?.dl_no}
+                                        {driver?.dl_no}
                                     </TableCell>
                                     <TableCell className="text-nowrap">
-                                        {dayjs(data?.dl_issue_date).format('DD-MM-YYYY')}
+                                        {dayjs(driver?.dl_issue_date).format('DD-MM-YYYY')}
                                     </TableCell>
                                     <TableCell className="!text-center text-nowrap">
-                                        {dayjs(data?.dl_expiry_date).format('DD-MM-YYYY')}
+                                        {dayjs(driver?.dl_expiry_date).format('DD-MM-YYYY')}
                                     </TableCell>
                                     <TableCell className="!text-center">
-                                        {data?.experience}
+                                        {driver?.experience ? driver?.experience + " years" : ""}  
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
-                                            data?.status
+                                            driver?.status
                                         }
                                     </TableCell>
                                     <TableCell
 
                                     >
-                                        {data?.vehicle_type}
+                                        {driver?.vehicle_type}
                                     </TableCell>
                                     <TableCell>
                                         <Box>
                                             <IconButton
-                                                onClick={(e) => handleClick(e)}
+                                                onClick={(e) => { handleClick(e); handleUpdateDriver(driver); setBookId(driver?._id)}}
                                             >
                                                 <FaEllipsisVertical />
                                             </IconButton>
@@ -303,20 +310,20 @@ function Drivers() {
                                                 <Box className=" flex flex-col">
                                                     <Button
                                                         className="!px-4"
-                                                        onClick={() => handleUpdateDriver(data)}
+                                                        onClick={() => { setOpen(true) }}
                                                     >
                                                         Update Driver
                                                     </Button>
                                                     <Button
                                                         className="!px-4"
-                                                        onClick={() => handleDelete(data?._id)}
+                                                        onClick={() => handleDelete(driver?._id)}
                                                     >
                                                         Delete Driver
                                                     </Button>
                                                     {
                                                         bookingId && <Button
                                                             className="!px-4"
-                                                            onClick={() => { handleAssign(data?._id) }}
+                                                            onClick={() => { handleAssign(driver?._id) }}
                                                         >
                                                             Assign Driver
                                                         </Button>

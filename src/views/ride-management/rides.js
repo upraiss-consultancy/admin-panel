@@ -8,6 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getAllRides, deleteRide, cancelRide, createRide } from "../../api/services/ride";
 import END_POINTS from "../../constants/endpoints";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import {
   Typography,
   Box,
@@ -22,13 +23,14 @@ import {
   MenuItem,
   TablePagination,
   FormControl,
-  InputLabel
+  InputLabel,
+  Avatar
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CloseIcon from "@mui/icons-material/Close";
 import { FaEllipsisVertical } from "react-icons/fa6";
 import showToast from "../../utils/toast";
@@ -43,6 +45,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import { getPackages } from "../../api/services/packages";
 import { State, City } from 'country-state-city';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 const CarType = ["Hatchback", "Sedan", "Suv", "Luxury"]
 function AllRides() {
   const [allRides, setAllRides] = useState([]);
@@ -200,9 +204,8 @@ function AllRides() {
       reset();
     }
   };
-  const handleNavigate = (id) => {
-
-    const queryParams = new URLSearchParams({ bookingId: id });
+  const handleNavigate = () => {
+    const queryParams = new URLSearchParams({ bookingId: bookingID });
     navigate(`/drivers?${queryParams.toString()}`);
     setDialogOpen(false)
   }
@@ -238,7 +241,7 @@ function AllRides() {
       package_id: data['package_id'],
       return_pin: data['return_pin'],
       car_type: data['car_type'],
-      pass_whatsapp_no: data['whatsapp_number']
+      pass_whatsapp_no: data['pass_whatsapp_no']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -250,15 +253,13 @@ function AllRides() {
   }
 
   const handleViewRideDetail = (_booking_id) => {
-
     const queryParams = new URLSearchParams({ bookingId: _booking_id });
-    console.log(queryParams, _booking_id, "CHCHC")
     navigate(`/ride-detail?${queryParams.toString()}`);
   }
 
   const [search, setSearch] = useState('');
   const wayType = watch('way_type', 'One Way');
-
+  const date = new Date();
   return (
     <>
       <TableContainer component={Paper}>
@@ -332,7 +333,10 @@ function AllRides() {
               <TableCell>Booking Type</TableCell>
               <TableCell>Way Type</TableCell>
               <TableCell className="!text-center">Pick-up</TableCell>
+              <TableCell className="!text-center">Pick-up Date</TableCell>
+              <TableCell className="!text-center">Pick-up Time</TableCell>
               <TableCell className="!text-center">Drop-off</TableCell>
+              <TableCell className="!text-center">Drop-off Date</TableCell>
               <TableCell className="!text-center">Interested Driver</TableCell>
               <TableCell className="!text-center">Assigned Driver Name</TableCell>
               <TableCell className="!text-center">Assigned Driver Number</TableCell>
@@ -349,32 +353,50 @@ function AllRides() {
                   // onClick={() => navigate('/profile')}
                   >
                     <TableCell>{index + 1}</TableCell>
+
                     <TableCell>{data?.pass_name}</TableCell>
                     <TableCell>{data?.pass_mobile_no}</TableCell>
-                    <TableCell>{data?.pass_mobile_no}</TableCell>
+                    <TableCell>{data?.pass_whatsapp_no}</TableCell>
                     <TableCell>{data?.booking_type}</TableCell>
                     <TableCell>{data?.way_type}</TableCell>
-                    <TableCell className="!text-center">
-                      {data?.pickup_address +
-                        " " +
-                        data?.pickup_city +
-                        ", " +
-                        data?.pickup_pin}
+                    <TableCell className="!text-center">{
+                      data?.pickup_address +
+                      " " +
+                      data?.pickup_city +
+                      ", " +
+                      data?.pickup_pin}
+
                     </TableCell>
                     <TableCell>
-                      {data?.return_address +
+                      {
+                        date.toISOString(data?.pickup_date).split('T')[0]
+                      }
+                    </TableCell>
+                    <TableCell>
+                      {dayjs(data?.pickup_time).utc().format('HH:mm:ss')}
+
+                    </TableCell>
+                    <TableCell>
+                      {data?.return_address !== undefined ? data?.return_address +
                         " " +
                         data?.return_city +
                         ", " +
-                        data?.return_pin}
+                        data?.return_pin : 'N.A.'}
+                    </TableCell>
+                    <TableCell>
+
+
+                      {
+                        data?.return_date ? date.toISOString(data?.return_date).split('T')[0] : 'N.A.'
+                      }
                     </TableCell>
                     <TableCell className="!text-center">
                       {
-                        data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id); e.stopPropagation(); }} >{data?.request_count}</Button> : "N.A."
+                        data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id); e.stopPropagation(); }} >{data?.request_count}</Button> : <Button endIcon={<VisibilityIcon />} disabled={true}>0</Button>
                       }
                     </TableCell>
-                    <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.full_name : "N.A."}</TableCell>
-                    <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.mobile_no : "N.A."}</TableCell>
+                    <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.full_name : "Pending"}</TableCell>
+                    <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.mobile_no : "Pending"}</TableCell>
                     <TableCell
                       className={
                         data?.booking_status === "pending"
@@ -387,7 +409,7 @@ function AllRides() {
                     {/* {console.log(data , "DATA HAIN KYA ??")} */}
                     <TableCell>
                       <Box>
-                        <IconButton onClick={(e) => { handleClick(e); e.stopPropagation() }}>
+                        <IconButton onClick={(e) => { handleClick(e); e.stopPropagation(); setBookingID(data?._id); }}>
                           <FaEllipsisVertical />
                         </IconButton>
                         <Popover
@@ -414,7 +436,7 @@ function AllRides() {
                             </Button>
                             <Button
                               className="!px-4"
-                              onClick={(e) => { setBookingID(data?._id); setIsCancel(true); handleClose(); e.stopPropagation() }}
+                              onClick={(e) => {setIsCancel(true); handleClose(); e.stopPropagation() }}
                             >
                               Cancel Ride
                             </Button>
@@ -434,8 +456,8 @@ function AllRides() {
                 );
               })}
             </TableBody> :
-          
-             <Typography className=" text-nowrap text-center">No Data Found</Typography>
+
+              <Typography className=" text-nowrap text-center">No Data Found</Typography>
           }
 
         </Table>
@@ -557,15 +579,9 @@ function AllRides() {
                   name="pickup_time"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <TimePicker label="Pick-up Time" {...field} renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          variant="outlined"
-                          error={!!errors.pickup_time}
-                          helperText={errors.pickup_time?.message}
-                        />
-                      )} />
+                      <DemoContainer components={['TimePicker']}>
+                        <TimePicker label="Pick-up Time" {...field} />
+                      </DemoContainer>
                     </LocalizationProvider>
                   )}
                 />
@@ -660,15 +676,17 @@ function AllRides() {
                         name="return_time"
                         render={({ field }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
-                              <TextField
-                                {...field}
-                                label="Drop-off Time"
-                                className="w-full"
-                                error={!!errors.return_time}
-                                helperText={errors.return_time?.message}
-                              />
-                            )} />
+                            <DemoContainer components={['TimePicker']}>
+                              <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
+                                <TextField
+                                  {...field}
+                                  label="Drop-off Time"
+                                  className="w-full"
+                                  error={!!errors.return_time}
+                                  helperText={errors.return_time?.message}
+                                />
+                              )} />
+                            </DemoContainer>
                           </LocalizationProvider>
                         )}
                       />

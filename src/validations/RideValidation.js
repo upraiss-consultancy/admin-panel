@@ -10,13 +10,11 @@ export const CreateRideSchema = Yup.object().shape({
     return_time: Yup.string().when('way_type', {
         is: 'One Way',
         then: () => Yup.string().required('Return time is required'),
-        // otherwise: Yup.string().required('Return time is required'),
     }),
     pickup_date: Yup.string().required('Pick-up date is required'),
     return_date: Yup.string().when('way_type', {
         is: 'One Way',
         then: () => Yup.string().required('Return date is required'),
-        // otherwise: Yup.string().required('Return date is required'),
     }),
     pickup_address: Yup.string().required('Pick-up address is required'),
     pickup_state: Yup.string().required('Pick-up state is required'),
@@ -25,27 +23,20 @@ export const CreateRideSchema = Yup.object().shape({
     return_address: Yup.string().when('way_type', {
         is: 'One Way',
         then: () => Yup.string().required('Return address is required')
-        // otherwise: Yup.string().required('Return address is required'),
     }),
     return_state: Yup.string().when('way_type', {
         is: 'One Way',
         then: () => Yup.string().required('Return state is required')
-
-        // otherwise: Yup.string().required('Return state is required'),
     }),
     return_city: Yup.string().when('way_type', {
         is: 'One Way',
         then: () =>
-            Yup.string().required('Return city is required')
-        ,
-        // otherwise: Yup.string().required('Return city is required'),
+            Yup.string().required('Return city is required'),
     }),
     return_pin: Yup.string().when('way_type', {
         is: 'One Way',
         then: () =>
-            Yup.string().required('Return pin is required')
-        ,
-        // otherwise: Yup.string().required('Return pin is required'),
+            Yup.string().required('Return pin is required'),
     }),
     package_id: Yup.string().required('Please select package'),
     pass_whatsapp_no: Yup.string().required('Passenger whatsapp number  is required')
