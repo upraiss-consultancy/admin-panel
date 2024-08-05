@@ -51,7 +51,10 @@ function Packages() {
     } = useForm({
         defaultValues: {
             _id: null,
-            package_type: 'Day'
+            package_type: 'Day',
+            driver_charge: 0,
+            convience_charge: 0,
+            company_charge: 0
         },
         resolver: yupResolver(CreatePackageSchema)
     });
@@ -61,6 +64,8 @@ function Packages() {
     const dropOffState = watch('dropoff_state');
     const bookingType = watch('booking_type');
     const tripType = watch('trip_type');
+    let TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge'));
+    let TotalAmount = TotalBasic + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
 
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
@@ -115,7 +120,8 @@ function Packages() {
     }, [dropOffState]);
 
     const onSubmit = async (data) => {
-        const response = await createPackage(CREATE_PACKAGES, data);
+        const payload = { ...data, basic_total: TotalBasic, total: TotalAmount }
+        const response = await createPackage(CREATE_PACKAGES, payload);
         if (response?.data?.responseCode === 200) {
             showToast(response?.data?.message, 'success')
             reset();
@@ -135,22 +141,28 @@ function Packages() {
     };
 
     const handleUpdatePackage = (data) => {
+        console.log(data , "Data")
         reset({
             _id: data?._id,
             package_name: data?.package_name,
-            package_type: data?.type,
+            booking_type: data?.booking_type,
+            car_type: data?.car_type,
+            trip_type: data?.trip_type,
+            pickup_state: data?.pickup_state,
+            pickup_city: data?.pickup_city,
+            dropoff_state: data?.dropoff_state,
+            dropoff_city: data?.dropoff_city,
+            hours_package: data?.hours_package,
+            days_package: data?.days_package,
+            max_distance: data?.max_distance,
+            extra_charge: data?.extra_charge?.$numberDecimal,
             driver_charge: data?.driver_charge?.$numberDecimal,
-            night_charge: data?.night_charge?.$numberDecimal,
-            kilometer: data?.kilometer?.$numberDecimal,
-            hours: data?.hours,
-            days: data?.days,
-            extra_charge_kilometer: data?.kilometer?.$numberDecimal,
-            extra_charge: data?.extra_charge_kilometer?.$numberDecimal,
+            other_charge: data?.other_charge?.$numberDecimal,
+            company_charge: data?.company_charge?.$numberDecimal,
+            convience_charge: data?.convience_charge?.$numberDecimal,
             gst: data?.gst?.$numberDecimal,
-            basic_price: data?.basic_price?.$numberDecimal,
-            total_price: data?.total_price?.$numberDecimal,
-            way_type: data?.way_type,
-            range: data?.range
+            basic_total: data?.basic_price?.$numberDecimal,
+            total: data?.basic_price?.$numberDecimal,
         })
         setIsUpdate(true)
         setOpen(true);
@@ -245,11 +257,11 @@ function Packages() {
                             <TableCell className="text-nowrap">Drop-Off City</TableCell>
                             <TableCell>Hours Package</TableCell>
                             <TableCell>Days Package</TableCell>
-                            <TableCell>Minimum Distance</TableCell>
+
                             <TableCell>Maximum Distance</TableCell>
                             <TableCell>Driver Charge</TableCell>
                             <TableCell>Night Charge</TableCell>
-                            <TableCell>Travelling Charge</TableCell>
+
                             <TableCell className="!text-center">Convenience Charge</TableCell>
                             <TableCell>GST</TableCell>
                             <TableCell>Basic Price</TableCell>
@@ -313,11 +325,7 @@ function Packages() {
                                             data?.days_package ? data?.days_package : 'N.A.'
                                         }
                                     </TableCell>
-                                    <TableCell className="!text-center">
-                                        {
-                                            data?.min_distance ? data?.min_distance : 'N.A.'
-                                        }
-                                    </TableCell>
+
                                     <TableCell className="!text-center">
                                         {
                                             data?.max_distance ? data?.max_distance : 'N.A.'
@@ -331,16 +339,13 @@ function Packages() {
                                         {data?.night_charge?.$numberDecimal ? data?.night_charge?.$numberDecimal : "N.A."}
                                     </TableCell>
 
-                                    <TableCell
-                                    >
-                                        {data?.travelling_charge?.$numberDecimal ? data?.travelling_charge?.$numberDecimal : 'N.A.'}
-                                    </TableCell>
+
                                     <TableCell>
                                         {data?.convience_charge?.$numberDecimal ? data?.convience_charge?.$numberDecimal : "N.A."}
                                     </TableCell>
                                     <TableCell>{data?.gst?.$numberDecimal ? data?.gst?.$numberDecimal : "N.A."}</TableCell>
-                                    <TableCell>{data?.gst?.$numberDecimal ? data?.gst?.$numberDecimal : "N.A."}</TableCell>
-                                    <TableCell>{data?.total_price?.$numberDecimal ? data?.total_price?.$numberDecimal : "N.A."}</TableCell>
+                                    <TableCell>{data?.basic_total?.$numberDecimal ? data?.basic_total?.$numberDecimal : "N.A."}</TableCell>
+                                    <TableCell>{data?.total?.$numberDecimal ? data?.total?.$numberDecimal : "N.A."}</TableCell>
                                     <TableCell>
                                         <Box>
                                             <IconButton
@@ -750,19 +755,17 @@ function Packages() {
                                     />
                                 )}
                             />
-                            <Controller
-                                control={control}
-                                name="basic_total"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Basic Amount"
-                                        className="w-full"
-                                        error={!!errors.basic_total}
-                                        helperText={errors.basic_total?.message}
-                                    />
-                                )}
+
+                            <TextField
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                value={TotalBasic}
+                                label="Basic Amount"
+                                className="w-full"
+
                             />
+
 
                         </Stack>
 
@@ -796,22 +799,11 @@ function Packages() {
 
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
-
-                            <Controller
-                                control={control}
-                                name="total_price"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Total Price"
-                                        className="w-full"
-                                        error={!!errors.total_price}
-                                        helperText={errors.total_price?.message}
-                                    />
-                                )}
+                            <TextField
+                                label="Total Price"
+                                className="w-full"
+                                value={TotalAmount}
                             />
-
-
                         </Stack>
 
                         <Box className="flex" gap={2}>
