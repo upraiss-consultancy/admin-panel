@@ -141,6 +141,7 @@ function Packages() {
     };
 
     const handleUpdatePackage = (data) => {
+        console.log(data , "Data")
         reset({
             _id: data?._id,
             package_name: data?.package_name,
@@ -160,8 +161,8 @@ function Packages() {
             company_charge: data?.company_charge?.$numberDecimal,
             convience_charge: data?.convience_charge?.$numberDecimal,
             gst: data?.gst?.$numberDecimal,
-            basic_total: data?.basic_total?.$numberDecimal,
-            total: data?.total?.$numberDecimal,
+            basic_total: data?.basic_price?.$numberDecimal,
+            total: data?.basic_price?.$numberDecimal,
         })
         setIsUpdate(true)
         setOpen(true);

@@ -126,6 +126,7 @@ function Drivers() {
         }
     }
     const handleDelete = (driverID) => {
+        setDriverId(driverID)
         setIsDelete(true)
     }
     const openPopover = Boolean(anchorEl);
