@@ -141,7 +141,7 @@ function Packages() {
     };
 
     const handleUpdatePackage = (data) => {
-        console.log(data , "Data")
+        console.log(data, "Data")
         reset({
             _id: data?._id,
             package_name: data?.package_name,
@@ -476,7 +476,7 @@ function Packages() {
                             />
                         </Stack>
                         {
-                            (bookingType === 'Local' && tripType === "One Way") && <>
+                            ((bookingType === 'Local' || bookingType === "Outstation") && tripType === "One Way") && <>
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
@@ -515,7 +515,7 @@ function Packages() {
                         }
 
                         {
-                            (bookingType === 'Local' && tripType === "One Way") && <>
+                            ((bookingType === 'Local' || bookingType === "Outstation") && tripType === "One Way") && <>
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
@@ -607,6 +607,21 @@ function Packages() {
                                 )}
                             /> */}
 
+                        </Stack>
+                        <Stack>
+                            <Controller
+                                control={control}
+                                name="night_charge"
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Night Charge"
+                                        className="w-full"
+                                        error={!!errors.night_charge}
+                                        helperText={errors.night_charge?.message}
+                                    />
+                                )}
+                            />
                         </Stack>
                         {
                             (bookingType === "Local" && tripType === "One Way") && (

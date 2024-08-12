@@ -26,6 +26,7 @@ const END_POINTS = {
     CREATE_DRIVER: "v0/admin/user/create_user",
     DELETE_DRIVER: "v0/admin/user/delete_user",
     GET_ALL_PACKAGES: "v0/admin/package/package_list",
-    UNASSIGN_DRIVER: "v0/admin/cancel_assing_booking"
+    UNASSIGN_DRIVER: "v0/admin/cancel_assing_booking",
+    GET_USER_DRIVER: "v0/admin/user-profile_detail"
 }
 export default END_POINTS

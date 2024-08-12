@@ -29,3 +29,14 @@ export const deleteDriver = async (endpoint, data) => {
 };
 
 
+export const getDriver = async (endpoint, params) => {
+  try {
+    const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
+    if (response?.data?.responseCode === 200) {
+      return response?.data?.responseData;
+    }
+  } catch (error) { }
+};
+
+
+

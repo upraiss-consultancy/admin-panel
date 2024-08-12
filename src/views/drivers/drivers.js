@@ -53,7 +53,7 @@ function Drivers() {
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
 
-    const [bookId , setBookId] = useState('')
+    const [bookId, setBookId] = useState('')
 
     useEffect(() => {
         const stateData = State.getStatesOfCountry('IN');
@@ -126,11 +126,12 @@ function Drivers() {
         }
     }
     const handleDelete = (driverID) => {
-        setDriverId(driverID)
+        setDriverId(bookId)
         setIsDelete(true)
     }
     const openPopover = Boolean(anchorEl);
-    const handleClose = () => {
+    const handleClose = (e) => {
+        e.stopPropagation();
         setAnchorEl(null);
     };
     const handleClick = (event) => {
@@ -138,7 +139,6 @@ function Drivers() {
     };
 
     const handleUpdateDriver = (data) => {
-        console.log(data, "Check Data")
         setIsUpdate(true)
         reset({
             mobile_no: data?.mobile_no,
@@ -162,6 +162,10 @@ function Drivers() {
             experience: data?.experience
         })
 
+    }
+
+    const handleViewDriver = (id) => {
+        navigate(`/profile/${id}`)
     }
 
     return (
@@ -250,7 +254,7 @@ function Drivers() {
                     <TableBody>
                         {driverListResponse?.data?.map((driver, index) => {
                             return (
-                                <TableRow>
+                                <TableRow onClick={() => handleViewDriver(driver?._id)}>
                                     <TableCell>
                                         {(params?.page - 1) * 10 + index + 1
                                         }</TableCell>
@@ -280,7 +284,7 @@ function Drivers() {
                                         {dayjs(driver?.dl_expiry_date).format('DD-MM-YYYY')}
                                     </TableCell>
                                     <TableCell className="!text-center">
-                                        {driver?.experience ? driver?.experience + " years" : ""}  
+                                        {driver?.experience ? driver?.experience + " years" : ""}
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
@@ -295,13 +299,13 @@ function Drivers() {
                                     <TableCell>
                                         <Box>
                                             <IconButton
-                                                onClick={(e) => { handleClick(e); handleUpdateDriver(driver); setBookId(driver?._id)}}
+                                                onClick={(e) => { handleClick(e); e.stopPropagation(); handleUpdateDriver(driver); setBookId(driver?._id) }}
                                             >
                                                 <FaEllipsisVertical />
                                             </IconButton>
                                             <Popover
                                                 open={openPopover}
-                                                onClose={handleClose}
+                                                onClose={(e) => handleClose(e)}
                                                 anchorEl={anchorEl}
                                                 anchorOrigin={{
                                                     vertical: "bottom",
@@ -311,20 +315,20 @@ function Drivers() {
                                                 <Box className=" flex flex-col">
                                                     <Button
                                                         className="!px-4"
-                                                        onClick={() => { setOpen(true) }}
+                                                        onClick={(e) => { setOpen(true); e.stopPropagation() }}
                                                     >
                                                         Update Driver
                                                     </Button>
                                                     <Button
                                                         className="!px-4"
-                                                        onClick={() => handleDelete(driver?._id)}
+                                                        onClick={(e) => {handleDelete(driver?._id); e.stopPropagation()}}
                                                     >
                                                         Delete Driver
                                                     </Button>
                                                     {
                                                         bookingId && <Button
                                                             className="!px-4"
-                                                            onClick={() => { handleAssign(driver?._id) }}
+                                                            onClick={(e) => { handleAssign(driver?._id); e.stopPropagation()}}
                                                         >
                                                             Assign Driver
                                                         </Button>
