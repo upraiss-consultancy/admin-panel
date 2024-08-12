@@ -35,7 +35,7 @@ const Router = [
         ),
       },
       {
-        path: "/profile",
+        path: "/profile/:id",
         exact: true,
         element: (
           <ProtectedRoute

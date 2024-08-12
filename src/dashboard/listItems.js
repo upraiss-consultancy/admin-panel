@@ -35,7 +35,9 @@ export const MainListItems = () => {
           },
         }}>
           <ListItemIcon>
-            <DashboardIcon />
+            <DashboardIcon sx={{
+                  color: location.pathname === '/dashboard' ? '#fff' : '',
+            }}/>
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItemButton>
@@ -57,7 +59,10 @@ export const MainListItems = () => {
           },
         }}>
           <ListItemIcon>
-            <PeopleIcon />
+            <PeopleIcon sx={{
+                  color: location.pathname === '/rides' ? '#fff' : '',
+                  
+            }}/>
           </ListItemIcon>
           <ListItemText primary="Ride Management" />
         </ListItemButton>
@@ -79,7 +84,9 @@ export const MainListItems = () => {
           },
         }}>
           <ListItemIcon>
-            <BarChartIcon />
+            <BarChartIcon sx={{
+                  color: location.pathname === '/drivers' ? '#fff' : '',
+            }}/>
           </ListItemIcon>
           <ListItemText primary="Drivers" />
         </ListItemButton>
@@ -101,7 +108,9 @@ export const MainListItems = () => {
           },
         }}>
           <ListItemIcon>
-            <BarChartIcon />
+            <BarChartIcon sx={{
+                  color: location.pathname === '/packages-detail' ? '#fff' : '',
+            }}/>
           </ListItemIcon>
           <ListItemText primary="Packages Detail" />
         </ListItemButton>
@@ -109,6 +118,7 @@ export const MainListItems = () => {
       <NavLink to={'/co-admin'}>
         <ListItemButton sx={{
         backgroundColor: location.pathname === '/co-admin' ? '#DD781E' : 'inherit',
+    
         '&:hover': {
           backgroundColor: '#DD781E',
           color: "#fff"
@@ -123,7 +133,9 @@ export const MainListItems = () => {
         },
       }}>
           <ListItemIcon>
-            <LayersIcon />
+            <LayersIcon sx={{
+                  color: location.pathname === '/co-admin' ? '#fff' : '',
+            }}/>
           </ListItemIcon>
           <ListItemText primary="Co-Admins" />
         </ListItemButton>
