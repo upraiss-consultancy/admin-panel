@@ -111,11 +111,11 @@ const Router = [
         ),
       },
       {
-        path: "/all-candidates",
+        path: "/all-candidates/:id",
         exact: true,
         element: (
           <ProtectedRoute
-            component={<ProtectedRoute component={<JobTable />} />}
+            component={<ProtectedRoute component={<JobDetailScreen />} />}
           />
         ),
       }
