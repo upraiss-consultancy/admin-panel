@@ -10,8 +10,9 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { FaUserCircle } from "react-icons/fa";
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { NavLink, useLocation } from 'react-router-dom';
-
+import WorkIcon from '@mui/icons-material/Work';
 export const MainListItems = () => {
   const location = useLocation()
   return (
@@ -36,8 +37,8 @@ export const MainListItems = () => {
         }}>
           <ListItemIcon>
             <DashboardIcon sx={{
-                  color: location.pathname === '/dashboard' ? '#fff' : '',
-            }}/>
+              color: location.pathname === '/dashboard' ? '#fff' : '',
+            }} />
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItemButton>
@@ -60,9 +61,9 @@ export const MainListItems = () => {
         }}>
           <ListItemIcon>
             <PeopleIcon sx={{
-                  color: location.pathname === '/rides' ? '#fff' : '',
-                  
-            }}/>
+              color: location.pathname === '/rides' ? '#fff' : '',
+
+            }} />
           </ListItemIcon>
           <ListItemText primary="Ride Management" />
         </ListItemButton>
@@ -85,10 +86,34 @@ export const MainListItems = () => {
         }}>
           <ListItemIcon>
             <BarChartIcon sx={{
-                  color: location.pathname === '/drivers' ? '#fff' : '',
-            }}/>
+              color: location.pathname === '/drivers' ? '#fff' : '',
+            }} />
           </ListItemIcon>
           <ListItemText primary="Drivers" />
+        </ListItemButton>
+      </NavLink>
+      <NavLink to={'/payment-detail'}>
+        <ListItemButton sx={{
+          backgroundColor: location.pathname === '/payment-detail' ? '#DD781E' : 'inherit',
+          '&:hover': {
+            backgroundColor: '#DD781E',
+            color: "#fff"
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#DD781E',
+            color: "#fff",
+            '&:hover': {
+              backgroundColor: '#DD781E',
+              color: "#fff"
+            },
+          },
+        }}>
+          <ListItemIcon>
+            <ReceiptLongIcon sx={{
+              color: location.pathname === '/payment-detail' ? '#fff' : '',
+            }} />
+          </ListItemIcon>
+          <ListItemText primary="Payment" />
         </ListItemButton>
       </NavLink>
       <NavLink to={'/packages-detail'}>
@@ -109,35 +134,60 @@ export const MainListItems = () => {
         }}>
           <ListItemIcon>
             <BarChartIcon sx={{
-                  color: location.pathname === '/packages-detail' ? '#fff' : '',
-            }}/>
+              color: location.pathname === '/packages-detail' ? '#fff' : '',
+            }} />
           </ListItemIcon>
           <ListItemText primary="Packages Detail" />
         </ListItemButton>
       </NavLink>
       <NavLink to={'/co-admin'}>
         <ListItemButton sx={{
-        backgroundColor: location.pathname === '/co-admin' ? '#DD781E' : 'inherit',
-    
-        '&:hover': {
-          backgroundColor: '#DD781E',
-          color: "#fff"
-        },
-        '&.Mui-selected': {
-          backgroundColor: '#DD781E',
-          color: "#fff",
+          backgroundColor: location.pathname === '/co-admin' ? '#DD781E' : 'inherit',
+
           '&:hover': {
             backgroundColor: '#DD781E',
             color: "#fff"
           },
-        },
-      }}>
+          '&.Mui-selected': {
+            backgroundColor: '#DD781E',
+            color: "#fff",
+            '&:hover': {
+              backgroundColor: '#DD781E',
+              color: "#fff"
+            },
+          },
+        }}>
           <ListItemIcon>
             <LayersIcon sx={{
-                  color: location.pathname === '/co-admin' ? '#fff' : '',
-            }}/>
+              color: location.pathname === '/co-admin' ? '#fff' : '',
+            }} />
           </ListItemIcon>
           <ListItemText primary="Co-Admins" />
+        </ListItemButton>
+      </NavLink>
+      <NavLink to={'/all-jobs'}>
+        <ListItemButton sx={{
+          backgroundColor: location.pathname === '/all-jobs' ? '#DD781E' : 'inherit',
+
+          '&:hover': {
+            backgroundColor: '#DD781E',
+            color: "#fff"
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#DD781E',
+            color: "#fff",
+            '&:hover': {
+              backgroundColor: '#DD781E',
+              color: "#fff"
+            },
+          },
+        }}>
+          <ListItemIcon>
+            <WorkIcon sx={{
+              color: location.pathname === '/all-jobs' ? '#fff' : '',
+            }} />
+          </ListItemIcon>
+          <ListItemText primary="Jobs" />
         </ListItemButton>
       </NavLink>
     </React.Fragment>

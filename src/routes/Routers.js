@@ -11,9 +11,13 @@ import Drivers from "../views/drivers/drivers";
 import COADMIN from "../views/co-admin/ViewCoAdmin";
 import RideDetailView from '../views/ride-management/RideDetails.js';
 import Packages from "../views/packages/Packages.js";
-import DriverPaymentHistory from "../views/payments/PaymentHistory.js";
-import JobForm from "../views/job/CreateJob.js";
+// import DriverPaymentHistory from "../views/payments/PaymentHistory.js";
+import JobDetailScreen from "../views/job/JobDetail.js";
+
+// import JobForm from "../views/job/CreateJob.js";
+import TransactionHistory from "../views/payments/PaymentHistory.js";
 import JobTable from "../views/job/JobCandidateTable.js";
+import { Job } from "../views/job/index.js";
 const Router = [
   {
     path: "/",
@@ -93,7 +97,7 @@ const Router = [
         exact: true,
         element: (
           <ProtectedRoute
-            component={<ProtectedRoute component={<DriverPaymentHistory />} />}
+            component={<ProtectedRoute component={<TransactionHistory />} />}
           />
         ),
       },
@@ -102,7 +106,7 @@ const Router = [
         exact: true,
         element: (
           <ProtectedRoute
-            component={<ProtectedRoute component={<JobForm />} />}
+            component={<ProtectedRoute component={<Job />} />}
           />
         ),
       },

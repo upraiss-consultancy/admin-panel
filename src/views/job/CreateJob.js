@@ -1,339 +1,416 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Grid, Box, Typography, Card, CardContent, Stack } from '@mui/material';
-// import 'react-quill/dist/quill.snow.css';
-// import ReactQuill from 'react-quill';
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Box, Typography, IconButton, Grid } from '@mui/material';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { createJob } from '../../api/services/job';
+import END_POINTS from '../../constants/endpoints';
+import showToast from '../../utils/toast';
+import * as yup from 'yup';
+import { State, City } from 'country-state-city';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-const JobForm = () => {
-    const [isFormVisible, setIsFormVisible] = useState(false);
-    const { handleSubmit, control } = useForm();
+const schema = yup.object().shape({
+  title: yup.string().required('Title is required'),
+  pay_from: yup.number().required('Pay from is required').min(0, 'Must be greater than or equal to 0'),
+  pay_to: yup.number().required('Pay to is required').min(yup.ref('pay_from'), 'Pay to must be greater than Pay from'),
+  job_details: yup.string().required('Job details are required'),
+  location:  yup.string().required('Address is required'),
+  working_hours: yup.string().required('Working hours are required'),
+  job_type: yup.string().required('Job type is required'),
+  shift: yup.string().required('Shift is required'),
+  car_name: yup.string().required('Car name is required'),
+  car_type: yup.string().required('Car type is required'),
+  description: yup.string().required('Description is required'),
+  pay_type: yup.string().required('Pay type is required'),
+  experience: yup.string().required('Experience is required'),
+  license: yup.string().required('License is required'),
+  city:  yup.string().required('City is required'),
+  state: yup.string().required('State is required')
+});
 
-    const onSubmit = (data) => {
-        console.log(data);
-        // Handle form submission
-    };
+const { CREATE_JOB } = END_POINTS;
 
-    const jobDetails = [
-        {
-            title: "Car Driver",
-            pay_from: 12000,
-            pay_to: 15000,
-            job_details: "Mern stack",
-            location: {
-                city: "Gurugram",
-                state: "Haryana",
-                address: "cddvgvf"
-            },
-            working_hours: "2 hr",
-            job_type: "Full Time",
-            shift: "Day Shift",
-            car_name: "Suv",
-            car_type: "Manual",
-            description: "sdfgbbfvdcx sadfbfvdcx adsfgbhfd",
-            pay_type: "noida",
-            experience: "noida",
-            license: "noida"
-        },
-        {
-            title: "Car Driver",
-            pay_from: 12000,
-            pay_to: 15000,
-            job_details: "Mern stack",
-            location: {
-                city: "Gurugram",
-                state: "Haryana",
-                address: "cddvgvf"
-            },
-            working_hours: "2 hr",
-            job_type: "Full Time",
-            shift: "Day Shift",
-            car_name: "Suv",
-            car_type: "Manual",
-            description: "sdfgbbfvdcx sadfbfvdcx adsfgbhfd",
-            pay_type: "noida",
-            experience: "noida",
-            license: "noida"
-        },
-        {
-            title: "Car Driver",
-            pay_from: 12000,
-            pay_to: 15000,
-            job_details: "Mern stack",
-            location: {
-                city: "Gurugram",
-                state: "Haryana",
-                address: "cddvgvf"
-            },
-            working_hours: "2 hr",
-            job_type: "Full Time",
-            shift: "Day Shift",
-            car_name: "Suv",
-            car_type: "Manual",
-            description: "sdfgbbfvdcx sadfbfvdcx adsfgbhfd",
-            pay_type: "noida",
-            experience: "noida",
-            license: "noida"
-        },
-        {
-            title: "Car Driver",
-            pay_from: 12000,
-            pay_to: 15000,
-            job_details: "Mern stack",
-            location: {
-                city: "Gurugram",
-                state: "Haryana",
-                address: "cddvgvf"
-            },
-            working_hours: "2 hr",
-            job_type: "Full Time",
-            shift: "Day Shift",
-            car_name: "Suv",
-            car_type: "Manual",
-            description: "sdfgbbfvdcx sadfbfvdcx adsfgbhfd",
-            pay_type: "noida",
-            experience: "noida",
-            license: "noida"
-        }
-    ];
+export default function JobForm({ setOpen }) {
+  const { control, handleSubmit, formState: { errors }, reset, watch } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-    return (
-        <Box >
-            {isFormVisible ? (
-                <>
-                    <Typography variant="h4" gutterBottom>Create Job</Typography>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="title"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Job Title" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  
+  const onSubmit = async (data) => {
+    const response = await createJob(CREATE_JOB, data);
+    if (response?.responseCode === 200) {
+      reset();
+      showToast(response?.message, 'success');
+    }
+  };
 
-                            <Grid item xs={6}>
-                                <Controller
-                                    name="pay_from"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Pay From" type="number" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+  const stateValue = watch('state');
 
-                            <Grid item xs={6}>
-                                <Controller
-                                    name="pay_to"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Pay To" type="number" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+  useEffect(() => {
+    const stateData = State.getStatesOfCountry('IN');
+    setStates(stateData);
+  }, []);
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="job_details"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Job Details" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+  useEffect(() => {
+    if (stateValue) {
+      const cityData = City.getCitiesOfState('IN', stateValue);
+      setCities(cityData);
+    } else {
+      setCities([]);
+    }
+  }, [stateValue]);
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="location_city"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="City" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+  // const handleUpdate = () => {
+  //   reset({
+  //     title: data?.title,
+  //     pay_from: data?.pay_from,
+  //     pay_to: data?.pay_to,
+  //     job_details: data?.job_details,
+  //     location: {
+  //       ..
+  //     },
+  //     working_hours: yup.string().required('Working hours are required'),
+  //     job_type: yup.string().required('Job type is required'),
+  //     shift: yup.string().required('Shift is required'),
+  //     car_name: yup.string().required('Car name is required'),
+  //     car_type: yup.string().required('Car type is required'),
+  //     description: yup.string().required('Description is required'),
+  //     pay_type: yup.string().required('Pay type is required'),
+  //     experience: yup.string().required('Experience is required'),
+  //     license: yup.string().required('License is required'),
+  //   })
+  // }
+  return (
+    <Box className="!px-2">
+      <Box className="flex gap-2 items-center">
+        <IconButton onClick={() => setOpen(false)}>
+          <KeyboardBackspaceIcon />
+        </IconButton>
+        <Typography variant="h6" component="div">
+          Create Job
+        </Typography>
+      </Box>
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="location_state"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="State" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={3}>
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="location_address"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Address" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="working_hours"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Working Hours" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="job_type"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <FormControl fullWidth variant="outlined">
-                                            <InputLabel>Job Type</InputLabel>
-                                            <Select {...field} label="Job Type">
-                                                <MenuItem value="Full Time">Full Time</MenuItem>
-                                                <MenuItem value="Part Time">Part Time</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="shift"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <FormControl fullWidth variant="outlined">
-                                            <InputLabel>Shift</InputLabel>
-                                            <Select {...field} label="Shift">
-                                                <MenuItem value="Day Shift">Day Shift</MenuItem>
-                                                <MenuItem value="Night Shift">Night Shift</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="car_name"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Car Name" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="car_type"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Car Type" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
-
-                            {/* <Grid item xs={12}>
-                <Controller
-                  name="description"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <ReactQuill {...field} />
-                  )}
+          {/* Title */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Title"
+                  error={!!errors.title}
+                  helperText={errors.title ? errors.title.message : ''}
+                  fullWidth
                 />
-              </Grid> */}
+              )}
+            />
+          </Grid>
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="pay_type"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Pay Type" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+          {/* Job Type */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="job_type"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Job Type</InputLabel>
+                  <Select
+                    {...field}
+                    error={!!errors.job_type}
+                    label="Job Type"
+                  >
+                    <MenuItem value="Full Time">Full Time</MenuItem>
+                    <MenuItem value="Part Time">Part Time</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="experience"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="Experience" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+          {/* Shift */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="shift"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Shift</InputLabel>
+                  <Select
+                    {...field}
+                    error={!!errors.shift}
+                    label="Shift"
+                  >
+                    <MenuItem value="Day Shift">Day Shift</MenuItem>
+                    <MenuItem value="Night Shift">Night Shift</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="license"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField {...field} label="License" variant="outlined" fullWidth />
-                                    )}
-                                />
-                            </Grid>
+          {/* Pay From */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="pay_from"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Pay From"
+                  type="number"
+                  error={!!errors.pay_from}
+                  helperText={errors.pay_from ? errors.pay_from.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
 
-                            <Grid item xs={12}>
-                                <Button type="submit" variant="contained" color="primary" fullWidth>
-                                    Submit
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </form>
-                </>
-            ) : (
-                <>
-                    <Stack direction={'row'} justifyContent={'space-between'}> 
-                        <Typography>All Jobs</Typography>
-                        <Button variant="contained" color="primary" onClick={() => setIsFormVisible(true)}>
-                            Create Job
-                        </Button>
-                    </Stack>    
-                    <Grid container spacing={2}>
-                        {jobDetails.map((job, index) => (
-                            <Grid item  xs={4}>
-                                <Card key={index} sx={{ mt: 3 }}>
-                                    <CardContent>
-                                        <Typography variant="h5">{job.title}</Typography>
-                                        <Typography variant="body1">Pay: {job.pay_from} - {job.pay_to}</Typography>
-                                        {/* <Typography variant="body1">Job Details: {job.job_details}</Typography> */}
-                                        <Typography variant="body1">Location: {job.location.city}, {job.location.state}, {job.location.address}</Typography>
-                                        {/* <Typography variant="body1">Working Hours: {job.working_hours}</Typography> */}
-                                        <Typography variant="body1">Job Type: {job.job_type}</Typography>
-                                        <Typography variant="body1">Shift: {job.shift}</Typography>
-                                        {/* <Typography variant="body1">Car Name: {job.car_name}</Typography> */}
-                                        {/* <Typography variant="body1">Description: {job.description}</Typography> */}
-                                        {/* <Typography variant="body1">Pay Type: {job.pay_type}</Typography> */}
-                                        <Typography variant="body1">Experience: {job.experience}</Typography>
-                                        {/* <Typography variant="body1">License: {job.license}</Typography> */}
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
+          {/* Pay To */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="pay_to"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Pay To"
+                  type="number"
+                  error={!!errors.pay_to}
+                  helperText={errors.pay_to ? errors.pay_to.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
 
-                </>
-            )}
-        </Box>
-    );
-};
+          {/* Pay Type */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="pay_type"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Pay Type"
+                  error={!!errors.pay_type}
+                  helperText={errors.pay_type ? errors.pay_type.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
 
-export default JobForm;
+          {/* Working Hours */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="working_hours"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Working Hours"
+                  error={!!errors.working_hours}
+                  helperText={errors.working_hours ? errors.working_hours.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+
+          {/* Job Details */}
+          <Grid item xs={12}>
+            <Controller
+              name="job_details"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Job Details"
+                  error={!!errors.job_details}
+                  helperText={errors.job_details ? errors.job_details.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+
+          {/* Description */}
+          <Grid item xs={12}>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel shrink>Description</InputLabel>
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={field.value}
+                    onChange={(event, editor) => {
+                      const data = editor.getData();
+                      field.onChange(data);
+                    }}
+                    onBlur={(event, editor) => {
+                      field.onBlur();
+                    }}
+                  />
+                  {errors.description && (
+                    <p style={{ color: 'red', fontSize: '12px' }}>
+                      {errors.description.message}
+                    </p>
+                  )}
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          {/* Experience */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="experience"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Experience"
+                  error={!!errors.experience}
+                  helperText={errors.experience ? errors.experience.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+
+          {/* License */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="license"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="License"
+                  error={!!errors.license}
+                  helperText={errors.license ? errors.license.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+
+          {/* Car Name */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="car_name"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Car Name"
+                  error={!!errors.car_name}
+                  helperText={errors.car_name ? errors.car_name.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+
+          {/* Car Type */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="car_type"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Car Type</InputLabel>
+                  <Select
+                    {...field}
+                    error={!!errors.car_type}
+                    label="Car Type"
+                  >
+                    <MenuItem value="Automatic">Automatic</MenuItem>
+                    <MenuItem value="Manual">Manual</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          {/* Location - State */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              control={control}
+              name="state"
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>State</InputLabel>
+                  <Select label="State" {...field} error={!!errors.location?.state}>
+                    {states.map((state) => (
+                      <MenuItem key={state.isoCode} value={state.isoCode}>
+                        {state.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          {/* Location - City */}
+          <Grid item xs={12} sm={6}>
+            <Controller
+              control={control}
+              name="city"
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>City</InputLabel>
+                  <Select label="City" {...field}>
+                    {cities.map((city) => (
+                      <MenuItem key={city.name} value={city.name}>
+                        {city.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          {/* Location - Address */}
+          <Grid item xs={12}>
+            <Controller
+              name="location"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Address"
+                  error={!!errors.location?.address}
+                  helperText={errors.location?.address ? errors.location.address.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+
+          {/* Submit Button */}
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Submit
+            </Button>
+          </Grid>
+
+        </Grid>
+      </form>
+    </Box>
+  );
+}
