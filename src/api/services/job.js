@@ -26,6 +26,23 @@ export const createJob = async (endpoint, data) => {
   } catch (error) { }
 };
 
+export const toggleShortlistStatus = async (endpoint, data) => {
+  try {
+    const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
+    if (response) {
+      if (response?.data?.responseCode === 200) {
+        showToast(response?.data?.message, 'success')
+      } else {
+        showToast(response?.data?.message, 'error')
+      }
+      return response?.data;
+    }
+  } catch (error) { 
+    showToast(error, 'error')
+  }
+};
+
+
 
 
 export const deleteJob = async (endpoint, data) => {

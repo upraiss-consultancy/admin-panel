@@ -30,10 +30,11 @@ const END_POINTS = {
     GET_USER_DRIVER: "v0/admin/user-profile_detail",
     CREATE_JOB: "v0/admin/job/create",
     GET_ALL_JOB: "v0/admin/job/list",
-    CANCEL_JOB: "/v0/admin/job/cancel",
+    CANCEL_JOB: "v0/admin/job/cancel",
     PAYMENT_REQUEST_LIST: "v0/admin/wallet/transaction/fetch_request_list_or_all",
     PAYMENT_ACTION: "v0/admin/wallet/request_approved_or_cancel",
     SHORTLIST: "v0/admin/job/shortlisted_or_not_shortlisted_applied",
-    USER_APPLIED_JOB_LIST: "v0/admin/job/user_applied_job_list"
+    USER_APPLIED_JOB_LIST: "v0/admin/job/user_applied_job_list",
+    JOB_ACTION: "v0/admin/job/shortlisted_or_not_shortlisted_applied"
 }
 export default END_POINTS

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Tab, Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
 import END_POINTS from '../../constants/endpoints';
-import { allApplicantList } from '../../api/services/job';
+import { allApplicantList, toggleShortlistStatus } from '../../api/services/job';
 import { useParams } from 'react-router-dom';
-const { USER_APPLIED_JOB_LIST } = END_POINTS;
+const { USER_APPLIED_JOB_LIST, JOB_ACTION } = END_POINTS;
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div
@@ -83,28 +83,36 @@ export default function JobDetailScreen({ job }) {
       </Tabs>
 
       <TabPanel value={tabValue} index={0}>
-        {renderCandidateCards(candiDates)}
+        {renderCandidateCards(candiDates , searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {renderCandidateCards(candiDates)}
+        {renderCandidateCards(candiDates , searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {renderCandidateCards(candiDates)}
+        {renderCandidateCards(candiDates , searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
-        {renderCandidateCards(candiDates)}
+        {renderCandidateCards(candiDates , searchParams)}
       </TabPanel>
     </Box>
   );
 }
 
-function renderCandidateCards(candidates) {
-  const onShortlist = () => {
-
+function renderCandidateCards(candidates , searchParams) {
+  const onShortlist = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: true,
+      remark: "string"
+    })
   }
 
-  const onReject = () => {
-
+  const onReject = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: false,
+      remark: "string"
+    })
   }
 
   const onSelect = () => {
@@ -116,14 +124,15 @@ function renderCandidateCards(candidates) {
   }
 
   const renderButtons = (candidate) => {
+    console.log(candidate , "Candidate")
     switch (candidate.status) {
       case 'applied':
         return (
           <>
-            <Button variant="contained" color="primary" onClick={onShortlist}>
+            <Button variant="contained" color="primary" onClick={() => onShortlist(candidate?._id)}>
               Shortlist
             </Button>
-            <Button variant="contained" color="secondary" onClick={onReject}>
+            <Button variant="contained" color="secondary" onClick={() => onReject(candidate?._id)}>
               Reject
             </Button>
           </>
