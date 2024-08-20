@@ -2,9 +2,16 @@ import React from 'react';
 import { IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+
+
 export default function JobTable({ jobs }) {
+    const navigate = useNavigate()
     function timeAgo(timestamp) {
         return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+    }
+    const handleNavigate = (id) => {
+        navigate(`/all-candidates/${id}`)
     }
     return (
         <TableContainer>
@@ -32,6 +39,7 @@ export default function JobTable({ jobs }) {
                 <TableBody>
                     {jobs?.map((job, index) => (
                         <TableRow key={job._id}>
+                            {console.log(job , "job")}
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{job.title}</TableCell>
                             <TableCell>{job.job_type}</TableCell>
@@ -50,7 +58,7 @@ export default function JobTable({ jobs }) {
                                     <Typography>
                                         {job?.request_count}
                                     </Typography>
-                                    <IconButton>
+                                    <IconButton onClick={() => handleNavigate(job?._id)}> 
                                         <RemoveRedEyeIcon />
                                     </IconButton>
                                 </Stack>
