@@ -26,18 +26,32 @@ export default function JobDetailScreen({ job }) {
   const [jobDetail, setJobDetail] = useState([]);
   const [candiDates, setCandidates] = useState([])
   const [params, setParams] = useState({
-
+    page: 1,
+    limit: '',
+    search: '',
+    status: ''
   })
   const handleTabChange = (event, newValue) => {
+    console.log(newValue, 'newValue')
+    switch (newValue) {
+      case 0:
+        setParams({ ...params, status: "" })
+        break;
+      case 1:
+        setParams({ ...params, status: "shortlisted" })
+        break;
+      case 2:
+        setParams({ ...params, status: "selected" })
+        break;
+      case 3:
+        setParams({ ...params, status: "not shortlisted" })
+        break;
+      default:
+        setParams({ ...params, status: "" })
+    }
     setTabValue(newValue);
   };
 
-  const filterCandidates = (status) => {
-    // if (status === 'All') {
-    //   return job.candidates;
-    // }
-    // return job.candidates.filter(candidate => candidate.status === status);
-  };
 
   const fetchJobs = async () => {
     const response = await allApplicantList(USER_APPLIED_JOB_LIST, {
@@ -54,8 +68,7 @@ export default function JobDetailScreen({ job }) {
 
   useEffect(() => {
     fetchJobs()
-  }, []);
-  console.log(jobDetail, "jobDetail")
+  }, [tabValue]);
   return (
     <Box>
       <Typography variant="h4">{jobDetail[0]?.jobDetail?.title}</Typography>
@@ -73,13 +86,13 @@ export default function JobDetailScreen({ job }) {
         {renderCandidateCards(candiDates)}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {/* {renderCandidateCards(filterCandidates('Shortlisted'))} */}
+        {renderCandidateCards(candiDates)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {/* {renderCandidateCards(filterCandidates('Selected'))} */}
+        {renderCandidateCards(candiDates)}
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
-        {/* {renderCandidateCards(filterCandidates('Unselected'))} */}
+        {renderCandidateCards(candiDates)}
       </TabPanel>
     </Box>
   );
@@ -97,8 +110,8 @@ function renderCandidateCards(candidates) {
   const onSelect = () => {
 
   }
-  
-  const onUnselect =() => {
+
+  const onUnselect = () => {
 
   }
 
@@ -127,7 +140,7 @@ function renderCandidateCards(candidates) {
           </>
         );
       case 'selected':
-      case 'rejected':
+      case 'not shortlisted':
       default:
         return null; // No buttons displayed for 'selected' or 'rejected' status
     }
