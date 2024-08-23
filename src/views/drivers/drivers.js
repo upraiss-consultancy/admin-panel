@@ -207,12 +207,12 @@ function Drivers() {
                         }
                     />
 
-                    {/* <Select defaultValue={'live'} className=" min-w-36 !max-h-10"
-                         onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}
+                    <Select defaultValue={'Online'} className=" min-w-36 !max-h-10"
+                        //  onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}
                         >
-                            <MenuItem value={'live'}>Live</MenuItem>
-                            <MenuItem value={'out-station'}>Out Station</MenuItem>
-                        </Select> */}
+                            <MenuItem value={'Online'}>Online</MenuItem>
+                            <MenuItem value={'Offline'}>Offline</MenuItem>
+                        </Select>
                     {/* <Select defaultValue={'local'} className=" min-w-36 !max-h-10"
                         onChange={(e) => setAllParams(prevState => ({ ...prevState, area_type: e.target.value }))}
                         >

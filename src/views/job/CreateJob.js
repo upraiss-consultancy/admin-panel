@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Box, Typography, IconButton, Grid } from '@mui/material';
+import { TextField, Button, MenuItem, Slider, Select, InputLabel, FormControl, Box, Typography, IconButton, Grid } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createJob } from '../../api/services/job';
 import END_POINTS from '../../constants/endpoints';
@@ -15,18 +15,18 @@ const schema = yup.object().shape({
   title: yup.string().required('Title is required'),
   pay_from: yup.number().required('Pay from is required').min(0, 'Must be greater than or equal to 0'),
   pay_to: yup.number().required('Pay to is required').min(yup.ref('pay_from'), 'Pay to must be greater than Pay from'),
-  job_details: yup.string().required('Job details are required'),
-  location:  yup.string().required('Address is required'),
+  // job_details: yup.string().required('Job details are required'),
+  location: yup.string().required('Address is required'),
   working_hours: yup.string().required('Working hours are required'),
   job_type: yup.string().required('Job type is required'),
   shift: yup.string().required('Shift is required'),
   car_name: yup.string().required('Car name is required'),
   car_type: yup.string().required('Car type is required'),
   description: yup.string().required('Description is required'),
-  pay_type: yup.string().required('Pay type is required'),
+  // pay_type: yup.string().required('Pay type is required'),
   experience: yup.string().required('Experience is required'),
   license: yup.string().required('License is required'),
-  city:  yup.string().required('City is required'),
+  city: yup.string().required('City is required'),
   state: yup.string().required('State is required')
 });
 
@@ -39,7 +39,7 @@ export default function JobForm({ setOpen }) {
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  
+
   const onSubmit = async (data) => {
     const response = await createJob(CREATE_JOB, data);
     if (response?.responseCode === 200) {
@@ -196,12 +196,12 @@ export default function JobForm({ setOpen }) {
           {/* Pay Type */}
           <Grid item xs={12} sm={6}>
             <Controller
-              name="pay_type"
+              name="duration"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Pay Type"
+                  label="Duration"
                   error={!!errors.pay_type}
                   helperText={errors.pay_type ? errors.pay_type.message : ''}
                   fullWidth
@@ -228,7 +228,7 @@ export default function JobForm({ setOpen }) {
           </Grid>
 
           {/* Job Details */}
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Controller
               name="job_details"
               control={control}
@@ -242,7 +242,7 @@ export default function JobForm({ setOpen }) {
                 />
               )}
             />
-          </Grid>
+          </Grid> */}
 
           {/* Description */}
           <Grid item xs={12}>
@@ -279,19 +279,31 @@ export default function JobForm({ setOpen }) {
               name="experience"
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Experience"
-                  error={!!errors.experience}
-                  helperText={errors.experience ? errors.experience.message : ''}
-                  fullWidth
-                />
+                <>
+                  <Typography gutterBottom>Experience (years)</Typography>
+                  <Slider
+                    {...field}
+                    value={field.value || 0} // Default value
+                    onChange={(_, value) => field.onChange(value)}
+                    aria-labelledby="experience-slider"
+                    valueLabelDisplay="auto"
+                    step={1}
+                    marks
+                    min={0}
+                    max={10}
+                  />
+                  {errors.experience && (
+                    <Typography color="error" variant="caption">
+                      {errors.experience.message}
+                    </Typography>
+                  )}
+                </>
               )}
             />
           </Grid>
 
           {/* License */}
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <Controller
               name="license"
               control={control}
@@ -305,7 +317,7 @@ export default function JobForm({ setOpen }) {
                 />
               )}
             />
-          </Grid>
+          </Grid> */}
 
           {/* Car Name */}
           <Grid item xs={12} sm={6}>
@@ -339,6 +351,7 @@ export default function JobForm({ setOpen }) {
                   >
                     <MenuItem value="Automatic">Automatic</MenuItem>
                     <MenuItem value="Manual">Manual</MenuItem>
+                    <MenuItem value="Both">Both</MenuItem>
                   </Select>
                 </FormControl>
               )}
@@ -381,6 +394,22 @@ export default function JobForm({ setOpen }) {
                     ))}
                   </Select>
                 </FormControl>
+              )}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="area"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Area"
+                  error={!!errors.car_name}
+                  helperText={errors.car_name ? errors.car_name.message : ''}
+                  fullWidth
+                />
               )}
             />
           </Grid>
