@@ -20,7 +20,7 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-export default function JobDetailScreen({ job }) {
+export default function JobDetailScreen() {
   const [tabValue, setTabValue] = useState(0);
   const searchParams = useParams();
   const [jobDetail, setJobDetail] = useState([]);
@@ -69,12 +69,21 @@ export default function JobDetailScreen({ job }) {
   useEffect(() => {
     fetchJobs()
   }, [tabValue]);
+
+  console.log(jobDetail, "Job Detail")
   return (
     <Box>
-      <Typography variant="h4">{jobDetail[0]?.jobDetail?.title}</Typography>
-      <Typography variant="subtitle1">Location: {jobDetail[0]?.jobDetail?.city}, {jobDetail[0]?.jobDetail?.state}</Typography>
+      <Typography variant="subtitle1">Titile {jobDetail[0]?.jobDetail?.title}</Typography>
+      <Typography variant="subtitle1">Location: {jobDetail[0]?.jobDetail?.city} {jobDetail[0]?.jobDetail?.state}</Typography>
       <Typography variant="subtitle2">Pay: {jobDetail[0]?.jobDetail?.pay_from} - {jobDetail[0]?.jobDetail?.pay_to}</Typography>
-
+      <Typography variant="subtitle2">Shift: {jobDetail[0]?.jobDetail?.shift}</Typography>
+      <Typography variant="subtitle1">Working Hours: {jobDetail[0]?.jobDetail?.working_hours}</Typography>
+      <Typography variant="subtitle2">Experience: {jobDetail[0]?.jobDetail?.shift}</Typography>
+      <Typography variant="subtitle1">License: {jobDetail[0]?.jobDetail?.license}</Typography>
+      <Typography variant="subtitle1">Car Name: {jobDetail[0]?.jobDetail?.car_name}</Typography>
+      <Typography variant="subtitle2">Car Type: {jobDetail[0]?.jobDetail?.car_type}</Typography>
+      <Typography variant="subtitle1">Job Details: {jobDetail[0]?.jobDetail?.job_details}</Typography>
+      <Typography variant="subtitle1">Description: {jobDetail[0]?.jobDetail?.job_details}</Typography>
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="All" />
         <Tab label="Shortlisted" />
@@ -83,22 +92,22 @@ export default function JobDetailScreen({ job }) {
       </Tabs>
 
       <TabPanel value={tabValue} index={0}>
-        {renderCandidateCards(candiDates , searchParams)}
+        {renderCandidateCards(candiDates, searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {renderCandidateCards(candiDates , searchParams)}
+        {renderCandidateCards(candiDates, searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {renderCandidateCards(candiDates , searchParams)}
+        {renderCandidateCards(candiDates, searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
-        {renderCandidateCards(candiDates , searchParams)}
+        {renderCandidateCards(candiDates, searchParams)}
       </TabPanel>
     </Box>
   );
 }
 
-function renderCandidateCards(candidates , searchParams) {
+function renderCandidateCards(candidates, searchParams) {
   const onShortlist = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
@@ -124,7 +133,7 @@ function renderCandidateCards(candidates , searchParams) {
   }
 
   const renderButtons = (candidate) => {
-    console.log(candidate , "Candidate")
+    console.log(candidate, "Candidate")
     switch (candidate.status) {
       case 'applied':
         return (

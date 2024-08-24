@@ -30,7 +30,7 @@ export default function JobTable({ jobs }) {
                         <TableCell>Car Type</TableCell>
                         <TableCell>Job Details</TableCell>
                         <TableCell>Address</TableCell>
-                        <TableCell>Description</TableCell>
+                        {/* <TableCell>Description</TableCell> */}
                         <TableCell>Applicants</TableCell>
                         <TableCell>Post Time</TableCell>
                         <TableCell>Status</TableCell>
@@ -52,7 +52,7 @@ export default function JobTable({ jobs }) {
                             <TableCell>{job.car_type}</TableCell>
                             <TableCell>{job.job_details}</TableCell>
                             <TableCell>{job?.location + "," + job?.city + "," + job?.state}</TableCell>
-                            <TableCell><div dangerouslySetInnerHTML={{ __html: job.description }} /></TableCell>
+                            {/* <TableCell><div dangerouslySetInnerHTML={{ __html: job.description }} /></TableCell> */}
                             <TableCell className='text-center'>
                                 <Stack direction={'row'} alignItems={'center'}>
                                     <Typography>

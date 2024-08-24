@@ -15,8 +15,10 @@ import {
     Typography,
     Box,
     IconButton,
+    Drawer
 
 } from '@mui/material';
+import PaymentForm from './CreatePayment';
 import END_POINTS from '../../constants/endpoints';
 import { getPaymentRequestList, paymentRequestAction } from '../../api/services/payment';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
@@ -82,76 +84,99 @@ const TransactionTable = ({ transactionData }) => {
 
         }
     }
+
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+    // const toggleDrawer = (open) => {
+    //     // if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    //     //     return;
+    //     // }
+
+    //     setDrawerOpen(open);
+    // };
     useEffect(() => {
         fetchPaymentRequests()
     }, []);
     return (
-        <Paper>
-            <Box className="flex gap-2 items-center">
-                {/* <IconButton >
+        <>
+
+            <Paper>
+                <Box className="flex gap-2 items-center  justify-between">
+                    {/* <IconButton >
                     <KeyboardBackspaceIcon />
                 </IconButton> */}
-                <Typography variant="h6" component="div" className=' pl-2'>
-                    Payment History
-                </Typography>
-            </Box>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Profile</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Amount</TableCell>
-                            <TableCell>Transaction Type</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Request Date</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {paymentRequest?.map((transaction) => (
-                            <TableRow key={transaction._id}>
-                                <TableCell>
-                                    <Avatar src={transaction.user.profile_img} alt={transaction.user.full_name} />
-                                </TableCell>
-                                <TableCell>{transaction.user.full_name}</TableCell>
-                                <TableCell>{transaction.amount}</TableCell>
-                                <TableCell>{transaction.transaction_type}</TableCell>
-                                <TableCell>{transaction.status}</TableCell>
-                                <TableCell>{new Date(transaction.request_date).toLocaleString()}</TableCell>
-                                <TableCell>
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        onClick={() => handleApprove(transaction._id)}
-                                        sx={{ marginRight: 1 }}
-                                    >
-                                        Approve
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => handleReject(transaction._id)}
-                                    >
-                                        Reject
-                                    </Button>
-                                </TableCell>
+                    <Typography variant="h6" component="div" className=' pl-2'>
+                        Payment History
+                    </Typography>
+                    <Button>
+                        Create Payment
+                    </Button>
+                </Box>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Profile</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Amount</TableCell>
+                                <TableCell>Transaction Type</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell>Request Date</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {paymentRequest?.map((transaction) => (
+                                <TableRow key={transaction._id}>
+                                    <TableCell>
+                                        <Avatar src={transaction.user.profile_img} alt={transaction.user.full_name} />
+                                    </TableCell>
+                                    <TableCell>{transaction.user.full_name}</TableCell>
+                                    <TableCell>{transaction.amount}</TableCell>
+                                    <TableCell>{transaction.transaction_type}</TableCell>
+                                    <TableCell>{transaction.status}</TableCell>
+                                    <TableCell>{new Date(transaction.request_date).toLocaleString()}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="contained"
+                                            color="success"
+                                            onClick={() => handleApprove(transaction._id)}
+                                            sx={{ marginRight: 1 }}
+                                        >
+                                            Approve
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            onClick={() => handleReject(transaction._id)}
+                                        >
+                                            Reject
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={metaData[0]?.total}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </Paper>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={metaData[0]?.total}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Paper>
+            <Drawer
+                anchor="right"
+                open={true}
+                // onClose={toggleDrawer(false)}
+            >
+                <PaymentForm />
+            </Drawer>
+        </>
     );
 };
 
