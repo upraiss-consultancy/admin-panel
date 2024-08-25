@@ -56,7 +56,7 @@ function AllRides() {
     reset,
     watch,
     formState: { errors },
-
+    setValue
   } = useForm({
     defaultValues: {
       _id: null,
@@ -260,6 +260,36 @@ function AllRides() {
   const [search, setSearch] = useState('');
   const wayType = watch('way_type', 'One Way');
   const date = new Date();
+  const handleRideNumberChange = (value) => {
+    // setRideNumber(value);
+    const existingRide = allRides.find(ride => ride.pass_mobile_no === value);
+
+    if (existingRide) {
+      setValue('booking_type', existingRide.booking_type);
+      setValue('way_type', existingRide.way_type);
+      setValue('pass_name', existingRide.pass_name);
+      setValue('pass_mobile_no', existingRide.pass_mobile_no);
+      setValue('pickup_time', dayjs(existingRide.pickup_time));
+      setValue('return_time', dayjs(existingRide.return_time));
+      setValue('return_date', dayjs(existingRide.return_date));
+      setValue('pickup_date', dayjs(existingRide.pickup_date));
+      setValue('pickup_address', existingRide.pickup_address);
+      setValue('pickup_state', existingRide.pickup_state);
+      setValue('pickup_city', existingRide.pickup_city);
+      setValue('pickup_pin', existingRide.pickup_pin);
+      setValue('return_address', existingRide.return_address);
+      setValue('return_state', existingRide.return_state);
+      setValue('return_city', existingRide.return_city);
+      setValue('package_id', existingRide.package_id);
+      setValue('return_pin', existingRide.return_pin);
+      setValue('car_type', existingRide.car_type);
+      setValue('pass_whatsapp_no', existingRide.pass_whatsapp_no);
+    } else {
+      // setValue('driverName', '');
+      // setValue('pickupLocation', '');
+      // Reset fields if no match
+    }
+  };
   return (
     <>
       <TableContainer component={Paper}>
@@ -436,7 +466,7 @@ function AllRides() {
                             </Button>
                             <Button
                               className="!px-4"
-                              onClick={(e) => {setIsCancel(true); handleClose(); e.stopPropagation() }}
+                              onClick={(e) => { setIsCancel(true); handleClose(); e.stopPropagation() }}
                             >
                               Cancel Ride
                             </Button>
@@ -495,6 +525,7 @@ function AllRides() {
                       className="w-full"
                       error={!!errors.pass_name}
                       helperText={errors.pass_name?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -504,10 +535,15 @@ function AllRides() {
                   render={({ field }) => (
                     <TextField
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleRideNumberChange(e.target.value);
+                      }}
                       label="Mobile No."
                       className="w-full"
                       error={!!errors.pass_mobile_no}
                       helperText={errors.pass_mobile_no?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -523,6 +559,7 @@ function AllRides() {
                       className="w-full"
                       error={!!errors.pass_whatsapp_no}
                       helperText={errors.pass_whatsapp_no?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -568,6 +605,7 @@ function AllRides() {
                           variant="outlined"
                           error={!!errors.pickup_date}
                           helperText={errors.pickup_date?.message}
+                          InputLabelProps={{ shrink: true }}
                         />
                       )}
                       />
@@ -633,6 +671,7 @@ function AllRides() {
                       className="w-full"
                       error={!!errors.pickup_address}
                       helperText={errors.pickup_address?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -646,6 +685,7 @@ function AllRides() {
                       className="w-full"
                       error={!!errors.pickup_pin}
                       helperText={errors.pickup_pin?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -666,6 +706,7 @@ function AllRides() {
                                 className="w-full"
                                 error={!!errors.return_date}
                                 helperText={errors.return_date?.message}
+                                InputLabelProps={{ shrink: true }}
                               />
                             )} />
                           </LocalizationProvider>
@@ -684,6 +725,7 @@ function AllRides() {
                                   className="w-full"
                                   error={!!errors.return_time}
                                   helperText={errors.return_time?.message}
+                                  InputLabelProps={{ shrink: true }}
                                 />
                               )} />
                             </DemoContainer>
@@ -737,6 +779,7 @@ function AllRides() {
                             className="w-full"
                             error={!!errors.return_address}
                             helperText={errors.return_address?.message}
+                            InputLabelProps={{ shrink: true }}
                           />
                         )}
                       />
