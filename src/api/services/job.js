@@ -59,7 +59,7 @@ export const allApplicantList = async (endpoint, params) => {
   try {
     const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
     if (response?.data?.responseCode === 200) {
-      console.log(response, "RESPSPS")
+      console.log(response, "RESPSPS" , response?.data?.responseData[0])
       showToast(response?.data?.message, 'success')
       return response?.data?.responseData[0];
     } else {
@@ -69,4 +69,6 @@ export const allApplicantList = async (endpoint, params) => {
     showToast(error, 'error')
   }
 };
+
+
 

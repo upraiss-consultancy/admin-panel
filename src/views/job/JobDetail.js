@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Tab, Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Button , Divider } from '@mui/material';
 import END_POINTS from '../../constants/endpoints';
-import { allApplicantList, toggleShortlistStatus } from '../../api/services/job';
+import { allApplicantList, toggleShortlistStatus  } from '../../api/services/job';
 import { useParams } from 'react-router-dom';
 const { USER_APPLIED_JOB_LIST, JOB_ACTION } = END_POINTS;
 function TabPanel({ children, value, index, ...other }) {
@@ -60,9 +60,12 @@ export default function JobDetailScreen() {
         ...params
       }
     });
+
+
+    console.log(response, " >>?>? ")
     if (response) {
-      setJobDetail(response?.metadata)
-      setCandidates(response?.data)
+      setJobDetail(response)
+      // setCandidates(response)
     }
   }
 
@@ -70,20 +73,48 @@ export default function JobDetailScreen() {
     fetchJobs()
   }, [tabValue]);
 
-  console.log(jobDetail, "Job Detail")
+  console.log(jobDetail, "Job Detailvjlajdl")
   return (
     <Box>
-      <Typography variant="subtitle1">Titile {jobDetail[0]?.jobDetail?.title}</Typography>
-      <Typography variant="subtitle1">Location: {jobDetail[0]?.jobDetail?.city} {jobDetail[0]?.jobDetail?.state}</Typography>
-      <Typography variant="subtitle2">Pay: {jobDetail[0]?.jobDetail?.pay_from} - {jobDetail[0]?.jobDetail?.pay_to}</Typography>
-      <Typography variant="subtitle2">Shift: {jobDetail[0]?.jobDetail?.shift}</Typography>
-      <Typography variant="subtitle1">Working Hours: {jobDetail[0]?.jobDetail?.working_hours}</Typography>
-      <Typography variant="subtitle2">Experience: {jobDetail[0]?.jobDetail?.shift}</Typography>
-      <Typography variant="subtitle1">License: {jobDetail[0]?.jobDetail?.license}</Typography>
-      <Typography variant="subtitle1">Car Name: {jobDetail[0]?.jobDetail?.car_name}</Typography>
-      <Typography variant="subtitle2">Car Type: {jobDetail[0]?.jobDetail?.car_type}</Typography>
-      <Typography variant="subtitle1">Job Details: {jobDetail[0]?.jobDetail?.job_details}</Typography>
-      <Typography variant="subtitle1">Description: {jobDetail[0]?.jobDetail?.job_details}</Typography>
+      <Box sx={{ padding: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          {jobDetail?.title}
+        </Typography>
+        <Divider />
+
+        <Box sx={{ marginTop: 2 }}>
+          <Typography variant="body1" gutterBottom>
+            <strong>Location:</strong> {jobDetail?.city}, {jobDetail?.state}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Pay:</strong> ₹{jobDetail?.pay_from} - ₹{jobDetail?.pay_to}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Shift:</strong> {jobDetail?.shift}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Working Hours:</strong> {jobDetail?.working_hours}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Experience:</strong> {jobDetail?.experience} years
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Car Name:</strong> {jobDetail?.car_name}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Car Type:</strong> {jobDetail?.car_type}
+          </Typography>
+        </Box>
+
+        <Box sx={{ marginTop: 2 }}>
+          <Typography variant="body1" gutterBottom>
+            <strong>Description:</strong>
+          </Typography>
+          <Typography variant="body2" component="div">
+            <div dangerouslySetInnerHTML={{ __html: jobDetail?.description }} />
+          </Typography>
+        </Box>
+      </Box>
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="All" />
         <Tab label="Shortlisted" />
@@ -92,16 +123,16 @@ export default function JobDetailScreen() {
       </Tabs>
 
       <TabPanel value={tabValue} index={0}>
-        {renderCandidateCards(candiDates, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {renderCandidateCards(candiDates, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {renderCandidateCards(candiDates, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
-        {renderCandidateCards(candiDates, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
       </TabPanel>
     </Box>
   );
@@ -165,7 +196,7 @@ function renderCandidateCards(candidates, searchParams) {
   };
   return (
     <Grid container spacing={3}>
-      {candidates.map(candidate => (
+      {candidates?.map(candidate => (
         <Grid item xs={12} sm={6} md={4} key={candidate.id}>
           <Card>
             <Box display="flex" p={2}>
@@ -177,13 +208,13 @@ function renderCandidateCards(candidates, searchParams) {
                   borderRadius: '50%',
                   objectFit: 'cover',
                 }}
-                image={candidate?.users?.profile_img || '/default-image.jpg'}
-                alt={`${candidate?.users?.full_name} profile`}
+                image={candidate?.profile_img || '/default-image.jpg'}
+                alt={`${candidate?.user_name} profile`}
               />
               <CardContent className='!pt-0'>
-                <Typography variant="h6">{candidate?.users?.full_name}</Typography>
-                <Typography variant="body2">{candidate?.users?.email}</Typography>
-                <Typography variant="body2">{candidate?.users?.mobile_no}</Typography>
+                <Typography variant="h6">{candidate?.user_name}</Typography>
+                <Typography variant="body2">{candidate?.email}</Typography>
+                <Typography variant="body2">{candidate?.mobile_no}</Typography>
                 <Typography variant="body2">Status: {candidate.status}</Typography>
               </CardContent>
             </Box>

@@ -87,20 +87,20 @@ const TransactionTable = ({ transactionData }) => {
 
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    // const toggleDrawer = (open) => {
-    //     // if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-    //     //     return;
-    //     // }
+    const toggleDrawer = (open) => {
+        // if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+        //     return;
+        // }
 
-    //     setDrawerOpen(open);
-    // };
+        setDrawerOpen(open);
+    };
     useEffect(() => {
         fetchPaymentRequests()
     }, []);
     return (
         <>
 
-            <Paper>
+            <Paper className="!pt-2 !pr-2">
                 <Box className="flex gap-2 items-center  justify-between">
                     {/* <IconButton >
                     <KeyboardBackspaceIcon />
@@ -108,7 +108,8 @@ const TransactionTable = ({ transactionData }) => {
                     <Typography variant="h6" component="div" className=' pl-2'>
                         Payment History
                     </Typography>
-                    <Button>
+                    <Button onClick={() => toggleDrawer(true)} variant="contained"
+                        className="!bg-[#DD781E]">
                         Create Payment
                     </Button>
                 </Box>
@@ -171,8 +172,8 @@ const TransactionTable = ({ transactionData }) => {
             </Paper>
             <Drawer
                 anchor="right"
-                open={true}
-                // onClose={toggleDrawer(false)}
+                open={drawerOpen}
+                onClose={() => toggleDrawer(false)}
             >
                 <PaymentForm />
             </Drawer>

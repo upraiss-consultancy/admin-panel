@@ -12,28 +12,30 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const schema = yup.object().shape({
+  _id: yup.string()
+    .nullable()
+    .notRequired(),
   title: yup.string().required('Title is required'),
   pay_from: yup.number().required('Pay from is required').min(0, 'Must be greater than or equal to 0'),
   pay_to: yup.number().required('Pay to is required').min(yup.ref('pay_from'), 'Pay to must be greater than Pay from'),
-  // job_details: yup.string().required('Job details are required'),
+  duration: yup.string().required('Duration are required'),
   location: yup.string().required('Address is required'),
-  working_hours: yup.string().required('Working hours are required'),
+  // working_hours: yup.string().required('Working hours are required'),
   job_type: yup.string().required('Job type is required'),
   shift: yup.string().required('Shift is required'),
   car_name: yup.string().required('Car name is required'),
   car_type: yup.string().required('Car type is required'),
   description: yup.string().required('Description is required'),
-  // pay_type: yup.string().required('Pay type is required'),
+  area: yup.string().required('Area is required'),
   experience: yup.string().required('Experience is required'),
-  license: yup.string().required('License is required'),
   city: yup.string().required('City is required'),
   state: yup.string().required('State is required')
 });
 
 const { CREATE_JOB } = END_POINTS;
 
-export default function JobForm({ setOpen }) {
-  const { control, handleSubmit, formState: { errors }, reset, watch } = useForm({
+export default function JobForm({ setOpen, updateJobData }) {
+  const { control, handleSubmit, formState: { errors }, reset, watch, getValues, } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -45,6 +47,7 @@ export default function JobForm({ setOpen }) {
     if (response?.responseCode === 200) {
       reset();
       showToast(response?.message, 'success');
+      setOpen(false)
     }
   };
 
@@ -63,27 +66,28 @@ export default function JobForm({ setOpen }) {
       setCities([]);
     }
   }, [stateValue]);
-
-  // const handleUpdate = () => {
-  //   reset({
-  //     title: data?.title,
-  //     pay_from: data?.pay_from,
-  //     pay_to: data?.pay_to,
-  //     job_details: data?.job_details,
-  //     location: {
-  //       ..
-  //     },
-  //     working_hours: yup.string().required('Working hours are required'),
-  //     job_type: yup.string().required('Job type is required'),
-  //     shift: yup.string().required('Shift is required'),
-  //     car_name: yup.string().required('Car name is required'),
-  //     car_type: yup.string().required('Car type is required'),
-  //     description: yup.string().required('Description is required'),
-  //     pay_type: yup.string().required('Pay type is required'),
-  //     experience: yup.string().required('Experience is required'),
-  //     license: yup.string().required('License is required'),
-  //   })
-  // }
+  const handleUpdate = () => {
+    reset({
+      _id: updateJobData?._id,
+      title: updateJobData?.title,
+      pay_from: updateJobData?.pay_from,
+      pay_to: updateJobData?.pay_to,
+      duration: updateJobData?.duration,
+      job_type: updateJobData?.job_type,
+      shift: updateJobData?.shift,
+      car_name: updateJobData?.car_name,
+      car_type: updateJobData?.car_type,
+      description: updateJobData?.description,
+      area: updateJobData?.area,
+      experience: updateJobData?.experience,
+      job_type: updateJobData?.job_type
+    })
+  }
+  useEffect(() => {
+    if (Object.keys(updateJobData).length > 0) {
+      handleUpdate()
+    }
+  }, [updateJobData, reset]);
   return (
     <Box className="!px-2">
       <Box className="flex gap-2 items-center">
@@ -121,11 +125,11 @@ export default function JobForm({ setOpen }) {
               name="job_type"
               control={control}
               render={({ field }) => (
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.job_type}>
                   <InputLabel>Job Type</InputLabel>
                   <Select
                     {...field}
-                    error={!!errors.job_type}
+
                     label="Job Type"
                   >
                     <MenuItem value="Full Time">Full Time</MenuItem>
@@ -142,11 +146,10 @@ export default function JobForm({ setOpen }) {
               name="shift"
               control={control}
               render={({ field }) => (
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.shift}>
                   <InputLabel>Shift</InputLabel>
                   <Select
                     {...field}
-                    error={!!errors.shift}
                     label="Shift"
                   >
                     <MenuItem value="Day Shift">Day Shift</MenuItem>
@@ -194,7 +197,7 @@ export default function JobForm({ setOpen }) {
           </Grid>
 
           {/* Pay Type */}
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <Controller
               name="duration"
               control={control}
@@ -208,19 +211,19 @@ export default function JobForm({ setOpen }) {
                 />
               )}
             />
-          </Grid>
+          </Grid> */}
 
           {/* Working Hours */}
           <Grid item xs={12} sm={6}>
             <Controller
-              name="working_hours"
+              name="duration"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Working Hours"
-                  error={!!errors.working_hours}
-                  helperText={errors.working_hours ? errors.working_hours.message : ''}
+                  label="Duration"
+                  error={!!errors.duration}
+                  helperText={errors.duration ? errors.duration.message : ''}
                   fullWidth
                 />
               )}
@@ -254,7 +257,7 @@ export default function JobForm({ setOpen }) {
                   <InputLabel shrink>Description</InputLabel>
                   <CKEditor
                     editor={ClassicEditor}
-                    data={field.value}
+                    data={field.value || ''}
                     onChange={(event, editor) => {
                       const data = editor.getData();
                       field.onChange(data);
@@ -434,7 +437,7 @@ export default function JobForm({ setOpen }) {
           {/* Submit Button */}
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary" fullWidth>
-              Submit
+              {Object.keys(updateJobData).length > 0 ? 'Update' : 'Submit'}
             </Button>
           </Grid>
 

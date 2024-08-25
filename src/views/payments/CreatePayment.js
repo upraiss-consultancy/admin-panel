@@ -11,8 +11,8 @@ const PaymentForm = ({ driver }) => {
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: '20px' }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Container maxWidth="sm" style={{ marginTop: '80px' }}>
+      <Typography variant="h5" align="left" gutterBottom>
         Payment Request Form
       </Typography>
       
@@ -70,6 +70,8 @@ const PaymentForm = ({ driver }) => {
                   variant="outlined"
                   required
                 >
+                  <MenuItem value="Credit">Credit</MenuItem>
+                  <MenuItem value="Debit">Debit</MenuItem>
                   <MenuItem value="Cash">Cash</MenuItem>
                   <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
                   <MenuItem value="Cheque">Cheque</MenuItem>
@@ -99,7 +101,7 @@ const PaymentForm = ({ driver }) => {
 
           {/* Submit Button */}
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
+            <Button type="submit" variant="contained" color="primary" fullWidth  className="!bg-[#DD781E]">
               Raise Payment
             </Button>
           </Grid>

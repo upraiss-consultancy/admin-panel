@@ -67,14 +67,14 @@ function Loginform() {
                 <Typography>Remember Me</Typography>
               </Box>
               <Typography>
-                <NavLink>
+                <NavLink to={'/auth/forgot-password'}>
                   Forgot Password
                 </NavLink>
               </Typography>
             </Stack>
             <Button variant="contained" className='w-full !bg-[#DD781E] !mt-2 h-10' type='submit'>Next</Button>
             <Typography className='text-center'>
-              Do you have account? <NavLink className={''}>Register</NavLink>
+              Do you have account? <NavLink className={''} to={'/auth/register'}>Register</NavLink>
             </Typography>
           </Box>
         </Box>
