@@ -11,9 +11,11 @@ import Drivers from "../views/drivers/drivers";
 import COADMIN from "../views/co-admin/ViewCoAdmin";
 import RideDetailView from '../views/ride-management/RideDetails.js';
 import Packages from "../views/packages/Packages.js";
+import { RegisterAdmin } from "../Authentication/register/register.js";
 // import DriverPaymentHistory from "../views/payments/PaymentHistory.js";
 import JobDetailScreen from "../views/job/JobDetail.js";
-
+import ForgotPassword from "../Authentication/ForgotPassword/ForgotPassword.js";
+import ResetPassword from "../Authentication/ForgotPassword/ResetPassword.js";
 // import JobForm from "../views/job/CreateJob.js";
 import TransactionHistory from "../views/payments/PaymentHistory.js";
 import JobTable from "../views/job/JobCandidateTable.js";
@@ -124,7 +126,7 @@ const Router = [
   {
     path: "/auth",
     element: <Outlet />,
-    children: [{ path: "/auth/login", element: <Loginform /> }],
+    children: [{ path: "/auth/login", element: <Loginform /> }, { path: "/auth/forgot-password", element: <ForgotPassword /> }, { path: "/auth/reset-password", element: <ResetPassword /> } , { path: "/auth/register", element: <RegisterAdmin /> }],
   },
 ];
 

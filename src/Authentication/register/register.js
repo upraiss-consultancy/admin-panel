@@ -6,17 +6,20 @@ import { useForm } from 'react-hook-form';
 import { CheckBox } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { AdminRegisterSchema } from '../../validations/AuthValidation';
-// import { adminRegister } from '../../api/services/user-auth';
+import { adminRegister } from '../../api/services/auth';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { yupResolver } from '@hookform/resolvers/yup';
+import END_POINTS from '../../constants/endpoints';
+const { REGISTER_ADMIN } = END_POINTS;
 export const RegisterAdmin = () => {
-    const { handleSubmit, control, reset,watch, formState: { errors }  } = useForm({
+    const { handleSubmit, control, reset, watch, formState: { errors } } = useForm({
         resolver: yupResolver(AdminRegisterSchema)
     });
     const watchValue = watch();
     const onSubmit = async (data) => {
-        // const response = await adminRegister('v0/admin/register-admin',data)
+        const response = await adminRegister(REGISTER_ADMIN, data);
+        console.log(response , "response")
     };
     return (
         <Container>
@@ -71,9 +74,9 @@ export const RegisterAdmin = () => {
                                 <MenuItem value={'Manager'}>Manager</MenuItem>
                             </Select>} />
                         </Box>
-                        <Button type='submit' variant="contained" className='w-full !mt-2 h-10'>Signup</Button>
+                        <Button type='submit' variant="contained" className='w-full !bg-[#DD781E] !mt-2 h-10'>Signup</Button>
                         <Typography className='text-center'>
-                            Already have an account? <NavLink className={''}>Login</NavLink>
+                            Already have an account? <NavLink className={''} to={'/auth/login'}>Login</NavLink>
                         </Typography>
                     </Box>
                 </Box>

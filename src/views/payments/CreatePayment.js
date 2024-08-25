@@ -70,6 +70,8 @@ const PaymentForm = ({ driver }) => {
                   variant="outlined"
                   required
                 >
+                  <MenuItem value="Credit">Credit</MenuItem>
+                  <MenuItem value="Debit">Debit</MenuItem>
                   <MenuItem value="Cash">Cash</MenuItem>
                   <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
                   <MenuItem value="Cheque">Cheque</MenuItem>

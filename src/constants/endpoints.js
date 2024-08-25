@@ -1,6 +1,6 @@
 const END_POINTS = {
     LOGIN_ADMIN: '/v0/admin/login',
-    REGISTER_ADMIN: '/v0/admin/register-admin',
+    REGISTER_ADMIN: 'v0/admin/register-admin',
     LOGOUT_ADMIN: "v0/admin/log_out",
     ALL_USER_ADMIN: 'v0/admin/user-list',
     ALL_ADMIN_USER: "/v0/admin/update-admin_user",
