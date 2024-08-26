@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Box, TextField, InputAdornment, IconButton } from '@mui/material';
 import { getTransactionHistoryList } from '../../api/services/payment';
 import END_POINTS from '../../constants/endpoints';
+import SearchIcon from '@mui/icons-material/Search';
 const { TRANSACTION_HISTORY_LIST } = END_POINTS;
 
 // Sample data for demonstration
@@ -26,7 +27,10 @@ const TransactionHistoryList = () => {
     const [data, setData] = useState(sampleData);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
+    const [search, setSearch] = useState('')
+    const [params, setAllParams] = useState({
+        search: ""
+    })
     useEffect(() => {
         // Fetch data from API or database here and update state
         // For demonstration, we're using static data
@@ -46,7 +50,7 @@ const TransactionHistoryList = () => {
         try {
             const response = await getTransactionHistoryList(TRANSACTION_HISTORY_LIST, {
                 params: {
-
+                    ...params
                 }
             })
         } catch (error) {
@@ -55,16 +59,33 @@ const TransactionHistoryList = () => {
     }
 
     useEffect(() => {
-
+        fetchTransactionHistory()
     }, [])
 
     return (
         <Paper style={{ padding: 16 }}>
-            <Box>
+            <Box className="flex justify-between items-center">
                 <Typography variant="h6" gutterBottom>
                     Transaction History
                 </Typography>
-            
+                <TextField placeholder="Search Transaction..." sx={{
+                    '& .MuiInputBase-root': {
+                        height: 40,  // Set the height you need
+                    },
+                }} InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton onClick={() => {
+                                // if (search.trim() !== "") {
+                                setAllParams(prevState => ({ ...prevState, search: search }))
+                                // }
+                            }}>
+                                <SearchIcon />
+                            </IconButton>
+                        </InputAdornment>
+
+                    )
+                }} onChange={(e) => setSearch(e.target.value)} />
             </Box>
             <TableContainer>
                 <Table>
