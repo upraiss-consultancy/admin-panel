@@ -12,6 +12,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import { FaUserCircle } from "react-icons/fa";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { NavLink, useLocation } from 'react-router-dom';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import WorkIcon from '@mui/icons-material/Work';
 export const MainListItems = () => {
   const location = useLocation()
@@ -114,6 +115,30 @@ export const MainListItems = () => {
             }} />
           </ListItemIcon>
           <ListItemText primary="Payment" />
+        </ListItemButton>
+      </NavLink>
+      <NavLink to={'/transaction-history'}>
+        <ListItemButton sx={{
+          backgroundColor: location.pathname === '/transaction-history' ? '#DD781E' : 'inherit',
+          '&:hover': {
+            backgroundColor: '#DD781E',
+            color: "#fff"
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#DD781E',
+            color: "#fff",
+            '&:hover': {
+              backgroundColor: '#DD781E',
+              color: "#fff"
+            },
+          },
+        }}>
+          <ListItemIcon>
+            <ReceiptIcon sx={{
+              color: location.pathname === '/transaction-history' ? '#fff' : '',
+            }} />
+          </ListItemIcon>
+          <ListItemText primary="Transaction History" />
         </ListItemButton>
       </NavLink>
       <NavLink to={'/packages-detail'}>

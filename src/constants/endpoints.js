@@ -36,6 +36,7 @@ const END_POINTS = {
     SHORTLIST: "v0/admin/job/shortlisted_or_not_shortlisted_applied",
     USER_APPLIED_JOB_LIST: "v0/admin/job/user_applied_job_list",
     JOB_ACTION: "v0/admin/job/shortlisted_or_not_shortlisted_applied",
-    DELETE_JOB: "v0/admin/job/delete_job"
+    DELETE_JOB: "v0/admin/job/delete_job",
+    TRANSACTION_HISTORY_LIST: "v0/admin/wallet/transaction/fetch_list"
 }
 export default END_POINTS

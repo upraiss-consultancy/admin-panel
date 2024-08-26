@@ -20,6 +20,7 @@ import ResetPassword from "../Authentication/ForgotPassword/ResetPassword.js";
 import TransactionHistory from "../views/payments/PaymentHistory.js";
 import JobTable from "../views/job/JobCandidateTable.js";
 import { Job } from "../views/job/index.js";
+import TransactionHistoryList from "../views/payments/TransactionHistory.js";
 const Router = [
   {
     path: "/",
@@ -118,6 +119,15 @@ const Router = [
         element: (
           <ProtectedRoute
             component={<ProtectedRoute component={<JobDetailScreen />} />}
+          />
+        ),
+      },
+      {
+        path: "/transaction-history",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<TransactionHistoryList />} />}
           />
         ),
       }
