@@ -26,3 +26,17 @@ export const paymentRequestAction = async (endpoint, data) => {
   };
   
   
+  export const getTransactionHistoryList = async (endpoint, params) => {
+    try {
+      const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
+      if (response?.data?.responseCode === 200) {
+        console.log(response, "RESPSPS")
+        showToast(response?.data?.message, 'success')
+        return response?.data?.responseData[0];
+      } else {
+        showToast(response?.data?.message, 'error')
+      }
+    } catch (error) {
+      showToast(error, 'error')
+    }
+  };
