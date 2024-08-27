@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Tab, Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Button , Divider } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Button, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar } from '@mui/material';
 import END_POINTS from '../../constants/endpoints';
-import { allApplicantList, toggleShortlistStatus  } from '../../api/services/job';
+import { allApplicantList, toggleShortlistStatus } from '../../api/services/job';
 import { useParams } from 'react-router-dom';
 const { USER_APPLIED_JOB_LIST, JOB_ACTION } = END_POINTS;
 function TabPanel({ children, value, index, ...other }) {
@@ -195,35 +195,43 @@ function renderCandidateCards(candidates, searchParams) {
     }
   };
   return (
-    <Grid container spacing={3}>
-      {candidates?.map(candidate => (
-        <Grid item xs={12} sm={6} md={4} key={candidate.id}>
-          <Card>
-            <Box display="flex" p={2}>
-              <CardMedia
-                component="img"
-                sx={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-                image={candidate?.profile_img || '/default-image.jpg'}
-                alt={`${candidate?.user_name} profile`}
-              />
-              <CardContent className='!pt-0'>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Profile</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Mobile No</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {candidates?.map(candidate => (
+            <TableRow key={candidate.id}>
+              <TableCell>
+                <Avatar
+                  src={candidate?.profile_img || '/default-image.jpg'}
+                  alt={`${candidate?.user_name} profile`}
+                  sx={{ width: 50, height: 50 }}
+                />
+              </TableCell>
+              <TableCell>
                 <Typography variant="h6">{candidate?.user_name}</Typography>
-                <Typography variant="body2">{candidate?.email}</Typography>
-                <Typography variant="body2">{candidate?.mobile_no}</Typography>
-                <Typography variant="body2">Status: {candidate.status}</Typography>
-              </CardContent>
-            </Box>
-            <Box display="flex" justifyContent="space-between" p={2}>
-              {renderButtons(candidate)}
-            </Box>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+              </TableCell>
+              <TableCell>{candidate?.email}</TableCell>
+              <TableCell>{candidate?.mobile_no}</TableCell>
+              <TableCell>{candidate?.status}</TableCell>
+              <TableCell>
+                <Box display="flex" justifyContent="flex-start" className="!gap-4">
+                  {renderButtons(candidate)}
+                </Box>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
