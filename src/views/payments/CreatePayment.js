@@ -64,7 +64,7 @@ const PaymentForm = ({ driver }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Payment Type"
+                  label="Payment Method"
                   select
                   fullWidth
                   variant="outlined"
@@ -72,6 +72,24 @@ const PaymentForm = ({ driver }) => {
                 >
                   <MenuItem value="Credit">Credit</MenuItem>
                   <MenuItem value="Debit">Debit</MenuItem>
+                </TextField>
+              )}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name="paymentType"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Payment Type"
+                  select
+                  fullWidth
+                  variant="outlined"
+                  required
+                >
                   <MenuItem value="Cash">Cash</MenuItem>
                   <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
                   <MenuItem value="Cheque">Cheque</MenuItem>
