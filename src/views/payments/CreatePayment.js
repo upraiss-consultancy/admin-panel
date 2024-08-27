@@ -1,9 +1,24 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Container, TextField, Button, Grid, Typography, MenuItem } from '@mui/material';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
+const validationSchema = Yup.object().shape({
+  driverName: Yup.string().required('Driver name is required'),
+  amount: Yup.number()
+    .required('Payment Amount is required')
+    .min(0, 'Amount should be greater than 0'),
+  paymentType: Yup.string().required('Payment Type is required'),
+  paymentMethod: Yup.string().required('Payment Method is required'),
+  description: Yup.string()
+    .required('Payment Description is required')
+    .min(10, 'Description should be at least 10 characters long'),
+});
 const PaymentForm = ({ driver }) => {
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, errors } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
   const onSubmit = (data) => {
     // Handle the form submission, e.g., sending data to your backend
@@ -15,7 +30,7 @@ const PaymentForm = ({ driver }) => {
       <Typography variant="h5" align="left" gutterBottom>
         Payment Request Form
       </Typography>
-      
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
           {/* Driver's Name */}
@@ -23,14 +38,15 @@ const PaymentForm = ({ driver }) => {
             <Controller
               name="driverName"
               control={control}
-            //   defaultValue={driver.name}
+              //   defaultValue={driver.name}
               render={({ field }) => (
                 <TextField
                   {...field}
                   label="Driver Name"
                   fullWidth
                   variant="outlined"
-                  disabled
+                  error={!!errors?.driverName}
+                  helperText={errors?.driverName?.message}
                 />
               )}
             />
@@ -50,6 +66,9 @@ const PaymentForm = ({ driver }) => {
                   fullWidth
                   variant="outlined"
                   required
+                  error={!!errors?.amount}
+                  helperText={errors?.amount?.message}
+
                 />
               )}
             />
@@ -64,11 +83,13 @@ const PaymentForm = ({ driver }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Payment Method"
+                  label="Payment Type"
                   select
                   fullWidth
                   variant="outlined"
                   required
+                  error={!!errors?.paymentType}
+                  helperText={errors?.paymentType?.message}
                 >
                   <MenuItem value="Credit">Credit</MenuItem>
                   <MenuItem value="Debit">Debit</MenuItem>
@@ -84,11 +105,13 @@ const PaymentForm = ({ driver }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Payment Type"
+                  label="Payment Method"
                   select
                   fullWidth
                   variant="outlined"
                   required
+                  error={!!errors?.paymentMethod}
+                  helperText={errors?.paymentMethod?.message}
                 >
                   <MenuItem value="Cash">Cash</MenuItem>
                   <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
@@ -112,6 +135,8 @@ const PaymentForm = ({ driver }) => {
                   rows={4}
                   fullWidth
                   variant="outlined"
+                  error={!!errors?.description}
+                  helperText={errors?.description?.message}
                 />
               )}
             />
@@ -119,7 +144,7 @@ const PaymentForm = ({ driver }) => {
 
           {/* Submit Button */}
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary" fullWidth  className="!bg-[#DD781E]">
+            <Button type="submit" variant="contained" color="primary" fullWidth className="!bg-[#DD781E]">
               Raise Payment
             </Button>
           </Grid>

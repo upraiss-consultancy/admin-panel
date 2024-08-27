@@ -24,18 +24,13 @@ const columns = [
 ];
 
 const TransactionHistoryList = () => {
-    const [data, setData] = useState(sampleData);
+    const [data, setData] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [search, setSearch] = useState('')
     const [params, setAllParams] = useState({
         search: ""
     })
-    useEffect(() => {
-        // Fetch data from API or database here and update state
-        // For demonstration, we're using static data
-        // setData(fetchedData);
-    }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -53,6 +48,7 @@ const TransactionHistoryList = () => {
                     ...params
                 }
             })
+            setData(response?.data)
         } catch (error) {
 
         }

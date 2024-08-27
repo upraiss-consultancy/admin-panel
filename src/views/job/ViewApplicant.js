@@ -15,7 +15,6 @@ const ApplicantDetailView = () => {
         additionalInfo: 'John has extensive experience in city driving and long-haul trips.'
       };
   return (
-    <Container maxWidth="md" style={{ marginTop: '20px' }}>
       <Paper elevation={3} style={{ padding: '20px' }}>
         <Grid container spacing={3}>
           {/* Applicant Basic Info */}
@@ -66,7 +65,7 @@ const ApplicantDetailView = () => {
           {applicant.additionalInfo || 'No additional information provided.'}
         </Typography>
       </Paper>
-    </Container>
+
   );
 };
 

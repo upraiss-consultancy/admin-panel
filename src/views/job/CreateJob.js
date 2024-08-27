@@ -20,7 +20,7 @@ const schema = yup.object().shape({
   pay_to: yup.number().required('Pay to is required').min(yup.ref('pay_from'), 'Pay to must be greater than Pay from'),
   duration: yup.string().required('Duration are required'),
   location: yup.string().required('Address is required'),
-  // working_hours: yup.string().required('Working hours are required'),
+  working_hours: yup.string().required('Working hours are required'),
   job_type: yup.string().required('Job type is required'),
   shift: yup.string().required('Shift is required'),
   car_name: yup.string().required('Car name is required'),
@@ -80,7 +80,8 @@ export default function JobForm({ setOpen, updateJobData }) {
       description: updateJobData?.description,
       area: updateJobData?.area,
       experience: updateJobData?.experience,
-      job_type: updateJobData?.job_type
+      job_type: updateJobData?.job_type,
+      working_hours: updateJobData?.working_hours
     })
   }
   useEffect(() => {
@@ -159,6 +160,36 @@ export default function JobForm({ setOpen, updateJobData }) {
               )}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="working_hours"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Working Hours"
+                  error={!!errors.working_hours}
+                  helperText={errors.working_hours ? errors.working_hours.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="duration"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Duration"
+                  error={!!errors.duration}
+                  helperText={errors.duration ? errors.duration.message : ''}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
 
           {/* Pay From */}
           <Grid item xs={12} sm={6}>
@@ -214,21 +245,7 @@ export default function JobForm({ setOpen, updateJobData }) {
           </Grid> */}
 
           {/* Working Hours */}
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="duration"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Duration"
-                  error={!!errors.duration}
-                  helperText={errors.duration ? errors.duration.message : ''}
-                  fullWidth
-                />
-              )}
-            />
-          </Grid>
+
 
           {/* Job Details */}
           {/* <Grid item xs={12}>
