@@ -152,25 +152,44 @@ function renderCandidateCards(candidates, searchParams, navigate) {
   const onShortlist = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: true,
+      type: 'shortlist',
       remark: "string"
     })
+    console.log(response, "Response")
   }
 
   const onReject = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: false,
+      type: 'unselected',
+      remark: "string"
+    });
+    console.log(response , "response")
+  }
+
+  const onTrials = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'trails',
+      remark: "string"
+    })
+    console.log(response , "response")
+  }
+
+  const onSelect = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'selected',
       remark: "string"
     })
   }
 
-  const onSelect = () => {
-
-  }
-
-  const onUnselect = () => {
-
+  const onUnselect = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'unselected',
+      remark: "string"
+    })
   }
 
   const handleAction = async (id, status) => {
@@ -186,10 +205,10 @@ function renderCandidateCards(candidates, searchParams, navigate) {
       case 'applied':
         return (
           <>
-            <Button variant="contained" color="primary" onClick={() => onShortlist(candidate?._id)}>
+            <Button variant="contained" color="primary" onClick={(e) => { onShortlist(candidate?._id); e.stopPropagation() }}>
               Shortlist
             </Button>
-            <Button variant="contained" color="secondary" onClick={() => onReject(candidate?._id)}>
+            <Button variant="contained" color="secondary" onClick={(e) => { onReject(candidate?._id); e.stopPropagation() }}>
               Reject
             </Button>
           </>
@@ -197,21 +216,21 @@ function renderCandidateCards(candidates, searchParams, navigate) {
       case 'shortlisted':
         return (
           <>
-            <Button variant="contained" color="primary" onClick={onSelect}>
+            <Button variant="contained" color="primary" onClick={(e) => { onTrials(candidate?._id); e.stopPropagation() }}>
               Select For Trials
             </Button>
-            <Button variant="contained" color="secondary" onClick={onUnselect}>
+            <Button variant="contained" color="secondary" onClick={(e) => { onUnselect(candidate?._id); e.stopPropagation() }}>
               Unselect
             </Button>
           </>
         );
-      case 'trials':
+      case 'trails':
         return (
           <>
-            <Button variant="contained" color="primary" onClick={onSelect}>
+            <Button variant="contained" color="primary" onClick={(e) => { onSelect(candidate?._id); e.stopPropagation() }}>
               Select
             </Button>
-            <Button variant="contained" color="secondary" onClick={onUnselect}>
+            <Button variant="contained" color="secondary" onClick={(e) => { onUnselect(); e.stopPropagation() }}>
               Unselect
             </Button>
           </>
@@ -239,7 +258,11 @@ function renderCandidateCards(candidates, searchParams, navigate) {
         </TableHead>
         <TableBody>
           {candidates?.map(candidate => (
-            <TableRow key={candidate.id} onClick={() => navigate('/applicant')}>
+            <TableRow key={candidate.id} onClick={() => navigate('/applicant', {
+              state: {
+                candidate
+              }
+            })}>
               {
                 console.log(candidate, 'candidate hain ??')
               }

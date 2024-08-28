@@ -103,7 +103,7 @@ export const Job = () => {
                                 Create Job
                             </Button>
                         </Box>
-                        <JobTable jobs={jobData} handleUpdate={handleUpdate} />
+                        <JobTable jobs={jobData} handleUpdate={handleUpdate} fetchJobs={fetchJobs}/>
                         <TablePagination
                             component="div"
                             count={100}
