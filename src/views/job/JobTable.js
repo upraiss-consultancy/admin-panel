@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';
 import END_POINTS from '../../constants/endpoints';
-import { deleteJob } from '../../api/services/job';
-const { DELETE_JOB } = END_POINTS;
-export default function JobTable({ jobs , handleUpdate}) {
+import { deleteJob , closeJob } from '../../api/services/job';
+import CloseIcon from '@mui/icons-material/Close';
+const { DELETE_JOB , CLOSE_JOB} = END_POINTS;
+export default function JobTable({ jobs , handleUpdate , fetchJobs}) {
     const navigate = useNavigate()
     function timeAgo(timestamp) {
         return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
@@ -21,6 +22,18 @@ export default function JobTable({ jobs , handleUpdate}) {
             const response = await deleteJob(DELETE_JOB, {
                 data: { jobId: jobId }
             });
+            console.log(response , "response")
+            fetchJobs()
+        } catch (error) {
+            console.log(error, "Error")
+        }
+    }
+    const handleClose = async (jobId) => {
+        try {
+            const response = await closeJob(CLOSE_JOB, {
+                data: { jobId: jobId }
+            });
+            fetchJobs()
         } catch (error) {
             console.log(error, "Error")
         }
@@ -78,6 +91,9 @@ export default function JobTable({ jobs , handleUpdate}) {
                                     </IconButton>
                                     <IconButton onClick={() => handleDelete(job._id)}>
                                         <DeleteIcon />
+                                    </IconButton>
+                                    <IconButton onClick={() => handleClose(job._id)}>
+                                        <CloseIcon />
                                     </IconButton>
                                 </Box>
                             </TableCell>

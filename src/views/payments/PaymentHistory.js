@@ -15,13 +15,15 @@ import {
     Typography,
     Box,
     IconButton,
-    Drawer
+    Drawer,
+    InputAdornment
 
 } from '@mui/material';
 import PaymentForm from './CreatePayment';
 import END_POINTS from '../../constants/endpoints';
 import { getPaymentRequestList, paymentRequestAction } from '../../api/services/payment';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import SearchIcon from '@mui/icons-material/Search';
 const { PAYMENT_REQUEST_LIST, PAYMENT_ACTION } = END_POINTS;
 const TransactionTable = ({ transactionData }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -108,6 +110,22 @@ const TransactionTable = ({ transactionData }) => {
                     <Typography variant="h6" component="div" className=' pl-2'>
                         Payment History
                     </Typography>
+                    <TextField placeholder="Search Ride..." sx={{
+                        '& .MuiInputBase-root': {
+                            height: 40,  // Set the height you need
+                        },
+                    }} InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => {
+                                    handleSearch()
+                                }}>
+                                    <SearchIcon />
+                                </IconButton>
+                            </InputAdornment>
+
+                        )
+                    }} onChange={(e) => setSearchTerm(e.target.value)} />
                     <Button onClick={() => toggleDrawer(true)} variant="contained"
                         className="!bg-[#DD781E]">
                         Create Payment

@@ -71,4 +71,14 @@ export const allApplicantList = async (endpoint, params) => {
 };
 
 
+export const closeJob = async (endpoint, data) => {
+  try {
+    const response = await api.delete(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
+    if (response) {
+      return response?.data;
+    }
+  } catch (error) { }
+};
+
+
 

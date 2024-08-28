@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, Tab, Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Button, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar } from '@mui/material';
 import END_POINTS from '../../constants/endpoints';
 import { allApplicantList, toggleShortlistStatus } from '../../api/services/job';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 const { USER_APPLIED_JOB_LIST, JOB_ACTION } = END_POINTS;
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -21,6 +21,7 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 export default function JobDetailScreen() {
+  const navigate = useNavigate()
   const [tabValue, setTabValue] = useState(0);
   const searchParams = useParams();
   const [jobDetail, setJobDetail] = useState([]);
@@ -41,11 +42,15 @@ export default function JobDetailScreen() {
         setParams({ ...params, status: "shortlisted" })
         break;
       case 2:
-        setParams({ ...params, status: "selected" })
+        setParams({ ...params, status: "trails" })
         break;
       case 3:
+        setParams({ ...params, status: "selected" })
+        break;
+      case 4:
         setParams({ ...params, status: "not shortlisted" })
         break;
+
       default:
         setParams({ ...params, status: "" })
     }
@@ -118,36 +123,76 @@ export default function JobDetailScreen() {
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="All" />
         <Tab label="Shortlisted" />
+        <Tab label="Trials" />
         <Tab label="Selected" />
         <Tab label="Unselected" />
       </Tabs>
 
       <TabPanel value={tabValue} index={0}>
-        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams, navigate)}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams, navigate)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams, navigate)}
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
-        {renderCandidateCards(jobDetail?.jobhistory, searchParams)}
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams, navigate)}
+      </TabPanel>
+      <TabPanel value={tabValue} index={4}>
+        {renderCandidateCards(jobDetail?.jobhistory, searchParams, navigate)}
       </TabPanel>
     </Box>
   );
 }
 
-function renderCandidateCards(candidates, searchParams) {
+function renderCandidateCards(candidates, searchParams, navigate) {
+
   const onShortlist = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: true,
+      type: 'shortlist',
+      remark: "string"
+    })
+    console.log(response, "Response")
+  }
+
+  const onReject = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'unselected',
+      remark: "string"
+    });
+    console.log(response , "response")
+  }
+
+  const onTrials = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'trails',
+      remark: "string"
+    })
+    console.log(response , "response")
+  }
+
+  const onSelect = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'selected',
       remark: "string"
     })
   }
 
-  const onReject = async (id) => {
+  const onUnselect = async (id) => {
+    const response = await toggleShortlistStatus(JOB_ACTION, {
+      jobId: id,
+      type: 'unselected',
+      remark: "string"
+    })
+  }
+
+  const handleAction = async (id, status) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
       type: false,
@@ -155,24 +200,15 @@ function renderCandidateCards(candidates, searchParams) {
     })
   }
 
-  const onSelect = () => {
-
-  }
-
-  const onUnselect = () => {
-
-  }
-
   const renderButtons = (candidate) => {
-    console.log(candidate, "Candidate")
     switch (candidate.status) {
       case 'applied':
         return (
           <>
-            <Button variant="contained" color="primary" onClick={() => onShortlist(candidate?._id)}>
+            <Button variant="contained" color="primary" onClick={(e) => { onShortlist(candidate?._id); e.stopPropagation() }}>
               Shortlist
             </Button>
-            <Button variant="contained" color="secondary" onClick={() => onReject(candidate?._id)}>
+            <Button variant="contained" color="secondary" onClick={(e) => { onReject(candidate?._id); e.stopPropagation() }}>
               Reject
             </Button>
           </>
@@ -180,10 +216,21 @@ function renderCandidateCards(candidates, searchParams) {
       case 'shortlisted':
         return (
           <>
-            <Button variant="contained" color="primary" onClick={onSelect}>
+            <Button variant="contained" color="primary" onClick={(e) => { onTrials(candidate?._id); e.stopPropagation() }}>
+              Select For Trials
+            </Button>
+            <Button variant="contained" color="secondary" onClick={(e) => { onUnselect(candidate?._id); e.stopPropagation() }}>
+              Unselect
+            </Button>
+          </>
+        );
+      case 'trails':
+        return (
+          <>
+            <Button variant="contained" color="primary" onClick={(e) => { onSelect(candidate?._id); e.stopPropagation() }}>
               Select
             </Button>
-            <Button variant="contained" color="secondary" onClick={onUnselect}>
+            <Button variant="contained" color="secondary" onClick={(e) => { onUnselect(); e.stopPropagation() }}>
               Unselect
             </Button>
           </>
@@ -194,6 +241,8 @@ function renderCandidateCards(candidates, searchParams) {
         return null; // No buttons displayed for 'selected' or 'rejected' status
     }
   };
+
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -209,7 +258,14 @@ function renderCandidateCards(candidates, searchParams) {
         </TableHead>
         <TableBody>
           {candidates?.map(candidate => (
-            <TableRow key={candidate.id}>
+            <TableRow key={candidate.id} onClick={() => navigate('/applicant', {
+              state: {
+                candidate
+              }
+            })}>
+              {
+                console.log(candidate, 'candidate hain ??')
+              }
               <TableCell>
                 <Avatar
                   src={candidate?.profile_img || '/default-image.jpg'}
@@ -218,10 +274,10 @@ function renderCandidateCards(candidates, searchParams) {
                 />
               </TableCell>
               <TableCell>
-                <Typography variant="h6">{candidate?.user_name}</Typography>
+                <Typography variant="h6">{candidate?.userDetails[0]?.full_name}</Typography>
               </TableCell>
-              <TableCell>{candidate?.email}</TableCell>
-              <TableCell>{candidate?.mobile_no}</TableCell>
+              <TableCell>{candidate?.userDetails[0]?.email}</TableCell>
+              <TableCell>{candidate?.userDetails[0]?.mobile_no}</TableCell>
               <TableCell>{candidate?.status}</TableCell>
               <TableCell>
                 <Box display="flex" justifyContent="flex-start" className="!gap-4">

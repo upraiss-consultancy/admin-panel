@@ -21,6 +21,7 @@ import TransactionHistory from "../views/payments/PaymentHistory.js";
 import JobTable from "../views/job/JobCandidateTable.js";
 import { Job } from "../views/job/index.js";
 import TransactionHistoryList from "../views/payments/TransactionHistory.js";
+import ApplicantDetailView from "../views/job/ViewApplicant.js";
 const Router = [
   {
     path: "/",
@@ -130,13 +131,22 @@ const Router = [
             component={<ProtectedRoute component={<TransactionHistoryList />} />}
           />
         ),
+      },
+      {
+        path: "/applicant",
+        exact: true,
+        element: (
+          <ProtectedRoute
+            component={<ProtectedRoute component={<ApplicantDetailView />} />}
+          />
+        ),
       }
     ],
   },
   {
     path: "/auth",
     element: <Outlet />,
-    children: [{ path: "/auth/login", element: <Loginform /> }, { path: "/auth/forgot-password", element: <ForgotPassword /> }, { path: "/auth/reset-password", element: <ResetPassword /> } , { path: "/auth/register", element: <RegisterAdmin /> }],
+    children: [{ path: "/auth/login", element: <Loginform /> }, { path: "/auth/forgot-password", element: <ForgotPassword /> }, { path: "/auth/reset-password", element: <ResetPassword /> }, { path: "/auth/register", element: <RegisterAdmin /> }],
   },
 ];
 
