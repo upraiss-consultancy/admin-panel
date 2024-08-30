@@ -25,6 +25,7 @@ import { getPaymentRequestList, paymentRequestAction } from '../../api/services/
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import SearchIcon from '@mui/icons-material/Search';
 import PhoneNumberDialog from './PhoneDialog';
+import showToast from '../../utils/toast';
 const { PAYMENT_REQUEST_LIST, PAYMENT_ACTION } = END_POINTS;
 const TransactionTable = ({ transactionData }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +33,7 @@ const TransactionTable = ({ transactionData }) => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [paymentRequest, setPaymentRequest] = useState([]);
     const [metaData, setMetaData] = useState([]);
-    const [driverData , setDeriverData] = useState({})
+    const [driverData, setDeriverData] = useState({})
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
         setPage(0); // Reset to the first page when search term changes
@@ -61,7 +62,11 @@ const TransactionTable = ({ transactionData }) => {
             remarks: "565",
             status: "approved"
         })
-        console.log(response, "transactionId  ")
+        if (response?.responseCode === 200) {
+            showToast('Payment approved successfully', 'success');
+        } else {
+            showToast('Please check something went wrong', 'error');
+        }
     };
 
     const handleReject = async (transactionId) => {
@@ -71,7 +76,11 @@ const TransactionTable = ({ transactionData }) => {
             remarks: "565",
             status: "cancel"
         })
-        console.log('Rejected transaction ID:', response, transactionId);
+        if (response?.responseCode === 200) {
+            showToast('Payment rejected successfully', 'success');
+        } else {
+            showToast('Please check something went wrong', 'error');
+        }
     };
     const fetchPaymentRequests = async () => {
         const response = await getPaymentRequestList(PAYMENT_REQUEST_LIST, {
@@ -214,9 +223,9 @@ const TransactionTable = ({ transactionData }) => {
                 open={drawerOpen}
                 onClose={() => toggleDrawer(false)}
             >
-                <PaymentForm driverData={driverData} toggleDrawer={toggleDrawer}/>
+                <PaymentForm driverData={driverData} toggleDrawer={toggleDrawer} />
             </Drawer>
-            <PhoneNumberDialog open={open} handleClose={handleClose} setOpen={setOpen} toggleDrawer={toggleDrawer} getHandleDriverData={getHandleDriverData}/>
+            <PhoneNumberDialog open={open} handleClose={handleClose} setOpen={setOpen} toggleDrawer={toggleDrawer} getHandleDriverData={getHandleDriverData} />
         </>
     );
 };
