@@ -64,6 +64,7 @@ const TransactionTable = ({ transactionData }) => {
         })
         if (response?.responseCode === 200) {
             showToast('Payment approved successfully', 'success');
+            fetchPaymentRequests()
         } else {
             showToast('Please check something went wrong', 'error');
         }
@@ -78,6 +79,7 @@ const TransactionTable = ({ transactionData }) => {
         })
         if (response?.responseCode === 200) {
             showToast('Payment rejected successfully', 'success');
+            fetchPaymentRequests()
         } else {
             showToast('Please check something went wrong', 'error');
         }
