@@ -24,13 +24,15 @@ import END_POINTS from '../../constants/endpoints';
 import { getPaymentRequestList, paymentRequestAction } from '../../api/services/payment';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import SearchIcon from '@mui/icons-material/Search';
+import PhoneNumberDialog from './PhoneDialog';
 const { PAYMENT_REQUEST_LIST, PAYMENT_ACTION } = END_POINTS;
 const TransactionTable = ({ transactionData }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [paymentRequest, setPaymentRequest] = useState([]);
-    const [metaData, setMetaData] = useState([])
+    const [metaData, setMetaData] = useState([]);
+    const [driverData , setDeriverData] = useState({})
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
         setPage(0); // Reset to the first page when search term changes
@@ -89,13 +91,30 @@ const TransactionTable = ({ transactionData }) => {
 
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const toggleDrawer = (open) => {
-        // if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        //     return;
-        // }
+    const [open, setOpen] = useState(false);
 
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleNext = () => {
+        // Handle the next button action
+        //   console.log('Phone Number:', phoneNumber);
+        setOpen(false); // Close the dialog
+    };
+
+
+    const toggleDrawer = (open) => {
         setDrawerOpen(open);
     };
+    const getHandleDriverData = (data) => {
+        setDeriverData(data)
+    }
     useEffect(() => {
         fetchPaymentRequests()
     }, []);
@@ -126,7 +145,9 @@ const TransactionTable = ({ transactionData }) => {
 
                         )
                     }} onChange={(e) => setSearchTerm(e.target.value)} />
-                    <Button onClick={() => toggleDrawer(true)} variant="contained"
+                    <Button
+                        onClick={handleClickOpen}
+                        variant="contained"
                         className="!bg-[#DD781E]">
                         Create Payment
                     </Button>
@@ -193,8 +214,9 @@ const TransactionTable = ({ transactionData }) => {
                 open={drawerOpen}
                 onClose={() => toggleDrawer(false)}
             >
-                <PaymentForm />
+                <PaymentForm driverData={driverData} toggleDrawer={toggleDrawer}/>
             </Drawer>
+            <PhoneNumberDialog open={open} handleClose={handleClose} setOpen={setOpen} toggleDrawer={toggleDrawer} getHandleDriverData={getHandleDriverData}/>
         </>
     );
 };

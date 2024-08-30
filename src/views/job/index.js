@@ -14,7 +14,7 @@ export const Job = () => {
         page: 0,
         limit: 10,
         search: '',
-        status: 'active'
+        status: ''
     });
     const [jobData, setJobData] = useState([]);
     const [updateJobData, setUpdateJobData] = useState({})
@@ -86,16 +86,14 @@ export const Job = () => {
                                     // labelId="job-filter-label"
                                     id="job-filter"
                                     // value={filter}
-                                    onChange={(e) => setAllParams({...params , status: e.target.value})}
-                                    defaultValue={''}
+                                    onChange={(e) => setAllParams({ ...params, status: e.target.value === 'All' ? '' : e.target.value })}
+                                    defaultValue={'All'}
                                     className="!min-w-24 !h-10"
                                     label="Filter Jobs"
                                 >
-                                    <MenuItem value="">All</MenuItem>
+                                    <MenuItem value="All">All</MenuItem>
                                     <MenuItem value="active">Active</MenuItem>
                                     <MenuItem value="closed">Closed</MenuItem>
-                                    <MenuItem value="cancel">Cancel</MenuItem>
-                                    <MenuItem value="poushed">Paused</MenuItem>
                                 </Select>
                             </FormControl>
                             <Button
@@ -106,7 +104,7 @@ export const Job = () => {
                                 Create Job
                             </Button>
                         </Box>
-                        <JobTable jobs={jobData} handleUpdate={handleUpdate} fetchJobs={fetchJobs}/>
+                        <JobTable jobs={jobData} handleUpdate={handleUpdate} fetchJobs={fetchJobs} />
                         <TablePagination
                             component="div"
                             count={100}

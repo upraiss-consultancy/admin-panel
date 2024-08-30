@@ -3,8 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { Container, Typography, Grid, Paper, Avatar, Divider, List, ListItem, ListItemText, Button, Box,  } from '@mui/material';
 import END_POINTS from '../../constants/endpoints';
 import { allApplicantList, toggleShortlistStatus } from '../../api/services/job'
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 const { USER_APPLIED_JOB_LIST, JOB_ACTION } = END_POINTS;
-
 const ApplicantDetailView = () => {
   const { state } = useLocation();
   console.log(state, "state")
@@ -151,7 +153,7 @@ const ApplicantDetailView = () => {
             </ListItem>
             <Divider />
             <ListItem>
-              <ListItemText primary="Application Date" secondary={state?.candidate?.userDetails[0]?.createdAt} />
+              <ListItemText primary="Application Date" secondary={dayjs(state?.candidate?.userDetails[0]?.createdAt).format('YYYY-MM-DD')} />
             </ListItem>
             <ListItem>
               <ListItemText primary="Actions" secondary={<Box className=" flex gap-2">{renderButtons(state?.candidate)}</Box>} />
@@ -160,7 +162,6 @@ const ApplicantDetailView = () => {
         </Grid>
       </Grid>
       
-{}
       {/* Additional Details */}
       <Divider style={{ margin: '20px 0' }} />
       <Typography variant="h6">Additional Information</Typography>
