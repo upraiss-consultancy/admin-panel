@@ -294,30 +294,29 @@ export default function JobForm({ setOpen, updateJobData }) {
           </Grid>
 
           {/* Experience */}
+
+
           <Grid item xs={12} sm={6}>
             <Controller
               name="experience"
               control={control}
+              defaultValue="" // Set a default value, like an empty string
               render={({ field }) => (
-                <>
-                  <Typography gutterBottom>Experience (years)</Typography>
-                  <Slider
-                    {...field}
-                    value={field.value || 0} // Default value
-                    onChange={(_, value) => field.onChange(value)}
-                    aria-labelledby="experience-slider"
-                    valueLabelDisplay="auto"
-                    step={1}
-                    marks
-                    min={0}
-                    max={10}
-                  />
-                  {errors.experience && (
-                    <Typography color="error" variant="caption">
-                      {errors.experience.message}
-                    </Typography>
-                  )}
-                </>
+                <TextField
+                  {...field}
+                  label="Experience (years)"
+                  select
+                  fullWidth
+                  variant="outlined"
+                  error={!!errors.experience}
+                  helperText={errors.experience?.message}
+                >
+                  <MenuItem value="0-2">0-2 years</MenuItem>
+                  <MenuItem value="2-4">2-4 years</MenuItem>
+                  <MenuItem value="4-6">4-6 years</MenuItem>
+                  <MenuItem value="6-8">6-8 years</MenuItem>
+                  <MenuItem value="8-10">8-10 years</MenuItem>
+                </TextField>
               )}
             />
           </Grid>

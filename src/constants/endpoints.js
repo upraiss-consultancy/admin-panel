@@ -38,6 +38,8 @@ const END_POINTS = {
     JOB_ACTION: "v0/admin/job/shortlisted_or_not_shortlisted_applied",
     DELETE_JOB: "v0/admin/job/delete_job",
     TRANSACTION_HISTORY_LIST: "v0/admin/wallet/transaction/fetch_list",
-    CLOSE_JOB: "v0/admin/job/closedJobs"
+    CLOSE_JOB: "v0/admin/job/closedJobs",
+    GET_USER_BY_PHONE: "v0/admin/provide_phone_get_userId",
+    CREATE_PAYMENT_BY_ADMIN: "v0/admin/wallet/create_payment"
 }
 export default END_POINTS

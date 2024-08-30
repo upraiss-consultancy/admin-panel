@@ -13,7 +13,8 @@ export const Job = () => {
     const [params, setAllParams] = useState({
         page: 0,
         limit: 10,
-        search: ''
+        search: '',
+        status: ''
     });
     const [jobData, setJobData] = useState([]);
     const [updateJobData, setUpdateJobData] = useState({})
@@ -85,14 +86,14 @@ export const Job = () => {
                                     // labelId="job-filter-label"
                                     id="job-filter"
                                     // value={filter}
-                                    // onChange={handleFilterChange}
-                                    defaultValue={'all'}
+                                    onChange={(e) => setAllParams({ ...params, status: e.target.value === 'All' ? '' : e.target.value })}
+                                    defaultValue={'All'}
                                     className="!min-w-24 !h-10"
                                     label="Filter Jobs"
                                 >
-                                    <MenuItem value="all">All</MenuItem>
+                                    <MenuItem value="All">All</MenuItem>
                                     <MenuItem value="active">Active</MenuItem>
-                                    <MenuItem value="inactive">Inactive</MenuItem>
+                                    <MenuItem value="closed">Closed</MenuItem>
                                 </Select>
                             </FormControl>
                             <Button
@@ -103,7 +104,7 @@ export const Job = () => {
                                 Create Job
                             </Button>
                         </Box>
-                        <JobTable jobs={jobData} handleUpdate={handleUpdate} fetchJobs={fetchJobs}/>
+                        <JobTable jobs={jobData} handleUpdate={handleUpdate} fetchJobs={fetchJobs} />
                         <TablePagination
                             component="div"
                             count={100}

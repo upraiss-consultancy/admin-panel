@@ -40,3 +40,27 @@ export const paymentRequestAction = async (endpoint, data) => {
       showToast(error, 'error')
     }
   };
+
+  export const getUserPhoneByNumber = async (endpoint, params) => {
+    try {
+      const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
+      if (response?.data?.responseCode === 200) {
+        showToast(response?.data?.message, 'success')
+        return response?.data;
+      } else {
+        showToast(response?.data?.message, 'error')
+      }
+    } catch (error) {
+      showToast(error, 'error')
+    }
+  };
+
+  export const createPayment = async (endpoint, data) => {
+    try {
+      const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
+      if (response) {
+        return response?.data;
+      }
+    } catch (error) { }
+  };
+  
