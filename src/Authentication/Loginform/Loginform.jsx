@@ -4,20 +4,25 @@ import { Controller } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import EmailIcon from '@mui/icons-material/Email';
 import { CheckBox } from '@mui/icons-material';
-import {  NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { adminLogin } from '../../api/services/auth';
 import { AdminLoginSchema } from '../../validations/AuthValidation';
 import showToast from '../../utils/toast';
+import { useEffect } from 'react';
+import { generateToken, messaging } from '../../views/notification';
+import { onMessage } from 'firebase/messaging';
 import "./Loginform.css";
 
 function Loginform() {
   const { handleSubmit, control, reset, watch, formState: { errors } } = useForm({
     resolver: yupResolver(AdminLoginSchema)
   });
+  // const [token , setToken] = useEffect('')
   const navigate = useNavigate()
   const onSubmit = async (data) => {
-    const response = await adminLogin('v0/admin/login', data);
+    const notificationToken = localStorage.getItem('notificationToken')
+    const response = await adminLogin('v0/admin/login', { ...data, device_token: notificationToken });
     if (response) {
       const { statusText, data: { responseData: { adminUserId, token } } } = response;
       if (statusText === 'OK') {
@@ -33,6 +38,12 @@ function Loginform() {
       navigate('/')
     }
   }
+  useEffect(() => {
+    generateToken()
+    onMessage(messaging, (payload) => {
+      showToast(payload.notification.body, 'success');
+    })
+  }, [])
   return (
     <Container>
       <Box className="relative h-[100vh]">
