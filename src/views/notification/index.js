@@ -8,14 +8,14 @@ import { getMessaging, getToken } from "firebase/messaging";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyC-wVAgRJqhsxGZgLZjCoLmcW8JBVMFZPo",
-    authDomain: "driveassist-f3067.firebaseapp.com",
-    projectId: "driveassist-f3067",
-    storageBucket: "driveassist-f3067.appspot.com",
-    messagingSenderId: "381124830666",
-    appId: "1:381124830666:web:c5927b4ce050d3a901db33",
-    measurementId: "G-PFP0PFC9LP"
-};
+    apiKey: "AIzaSyB6x0_m2TjMHjh1U7i_Fhwdug5xSQOlTyU",
+    authDomain: "upraiss-6be1e.firebaseapp.com",
+    projectId: "upraiss-6be1e",
+    storageBucket: "upraiss-6be1e.appspot.com",
+    messagingSenderId: "824054677081",
+    appId: "1:824054677081:web:4997c2b3f73edcd52cbb48",
+    measurementId: "G-CT25SPT54E"
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -27,7 +27,7 @@ export const generateToken = async () => {
     console.log(permission, "permission")
     if (permission === 'granted') {
         const token = await getToken(messaging, {
-            vapidKey: 'BJ_M7TJXEH5I2KWrG2OWMFt9DtV1LfzmAxfv_JUhaKdZn-uQaKLAflX2-j-j1MC7nx0Yc05Ee1LbLfPAzwKa79w'
+            vapidKey: 'BHSFvpTk9fAWRev_yer3Z_KSOA7D5deQCqcZYAGmmebC6W8vVqbT3vTitaSVZL4eOtCeBFrOJ7SYDLJ86tD2zr0'
         });
         localStorage.setItem('notificationToken', token)
     }
