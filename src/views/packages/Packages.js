@@ -141,7 +141,6 @@ function Packages() {
     };
 
     const handleUpdatePackage = (data) => {
-        console.log(data, "Data")
         reset({
             _id: data?._id,
             package_name: data?.package_name,
@@ -155,14 +154,15 @@ function Packages() {
             hours_package: data?.hours_package,
             days_package: data?.days_package,
             max_distance: data?.max_distance,
-            extra_charge: data?.extra_charge?.$numberDecimal,
-            driver_charge: data?.driver_charge?.$numberDecimal,
-            other_charge: data?.other_charge?.$numberDecimal,
-            company_charge: data?.company_charge?.$numberDecimal,
-            convience_charge: data?.convience_charge?.$numberDecimal,
-            gst: data?.gst?.$numberDecimal,
-            basic_total: data?.basic_price?.$numberDecimal,
-            total: data?.basic_price?.$numberDecimal,
+            extra_charge: data?.extra_charge,
+            driver_charge: data?.driver_charge,
+            other_charge: data?.other_charge,
+            company_charge: data?.company_charge,
+            convience_charge: data?.convience_charge,
+            gst: data?.gst,
+            basic_total: data?.basic_price,
+            total: data?.basic_price,
+            night_charge: data?.night_charge,
         })
         setIsUpdate(true)
         setOpen(true);
@@ -333,19 +333,19 @@ function Packages() {
                                     </TableCell>
                                     <TableCell
                                     >
-                                        {data?.driver_charge?.$numberDecimal ? data?.driver_charge?.$numberDecimal : 'N.A.'}
+                                        {data?.driver_charge ? data?.driver_charge : 'N.A.'}
                                     </TableCell>
                                     <TableCell>
-                                        {data?.night_charge?.$numberDecimal ? data?.night_charge?.$numberDecimal : "N.A."}
+                                        {data?.night_charge ? data?.night_charge : "N.A."}
                                     </TableCell>
 
 
                                     <TableCell>
-                                        {data?.convience_charge?.$numberDecimal ? data?.convience_charge?.$numberDecimal : "N.A."}
+                                        {data?.convience_charge ? data?.convience_charge : "N.A."}
                                     </TableCell>
-                                    <TableCell>{data?.gst?.$numberDecimal ? data?.gst?.$numberDecimal : "N.A."}</TableCell>
-                                    <TableCell>{data?.basic_total?.$numberDecimal ? data?.basic_total?.$numberDecimal : "N.A."}</TableCell>
-                                    <TableCell>{data?.total?.$numberDecimal ? data?.total?.$numberDecimal : "N.A."}</TableCell>
+                                    <TableCell>{data?.gst?.$numberDecimal ? data?.gst : "N.A."}</TableCell>
+                                    <TableCell>{data?.basic_total ? data?.basic_total : "N.A."}</TableCell>
+                                    <TableCell>{data?.total ? data?.total : "N.A."}</TableCell>
                                     <TableCell>
                                         <Box>
                                             <IconButton
@@ -573,7 +573,7 @@ function Packages() {
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        label="Convenience Charge"
+                                        label="Travel Allowance"
                                         className="w-full"
                                         error={!!errors.convience_charge}
                                         helperText={errors.convience_charge?.message}
@@ -609,19 +609,22 @@ function Packages() {
 
                         </Stack>
                         <Stack>
-                            <Controller
-                                control={control}
-                                name="night_charge"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Night Charge"
-                                        className="w-full"
-                                        error={!!errors.night_charge}
-                                        helperText={errors.night_charge?.message}
+                            {
+                                (bookingType === "Outstation" && tripType !== "Round Trip") ? null :
+                                    <Controller
+                                        control={control}
+                                        name="night_charge"
+                                        render={({ field }) => (
+                                            <TextField
+                                                {...field}
+                                                label="Night Charge"
+                                                className="w-full"
+                                                error={!!errors.night_charge}
+                                                helperText={errors.night_charge?.message}
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
+                            }
                         </Stack>
                         {
                             (bookingType === "Local" && tripType === "One Way") && (
@@ -677,7 +680,7 @@ function Packages() {
 
                         <Stack direction={"row"} className="!mb-4" gap={2}>
                             {
-                                bookingType === "Local" ? <Controller
+                                (bookingType === "Local" && tripType === "One Way") && <Controller
                                     control={control}
                                     name="hours_package"
                                     render={({ field }) => (
@@ -689,7 +692,10 @@ function Packages() {
                                             helperText={errors.hours_package?.message}
                                         />
                                     )}
-                                /> : <Controller
+                                />
+                            }
+                            {
+                                (bookingType === "Outstation" && tripType === "Round Trip") && <Controller
                                     control={control}
                                     name="days_package"
                                     render={({ field }) => (
@@ -728,7 +734,7 @@ function Packages() {
                                             helperText={errors.extra_charge?.message}
                                         />
                                     )}
-                                /> : (bookingType === "Outstation" && tripType === "One Way") ? <Controller
+                                /> : (bookingType === "Outstation" && tripType === "Round Trip") ? <Controller
                                     control={control}
                                     name="extra_charge"
                                     render={({ field }) => (
@@ -757,19 +763,22 @@ function Packages() {
 
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
-                            <Controller
-                                control={control}
-                                name="travelling_charge"
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Other Charges"
-                                        className="w-full"
-                                        error={!!errors.travelling_charge}
-                                        helperText={errors.travelling_charge?.message}
-                                    />
-                                )}
-                            />
+                            {
+                                (bookingType !== "Outstation" && tripType !== "Round Trip") && <Controller
+                                    control={control}
+                                    name="other_charge"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Other Charges"
+                                            className="w-full"
+                                            error={!!errors.other_charge}
+                                            helperText={errors.other_charge?.message}
+                                        />
+                                    )}
+                                />
+                            }
+
 
                             <TextField
                                 InputProps={{
