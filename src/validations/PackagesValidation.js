@@ -31,4 +31,6 @@ export const CreatePackageSchema = Yup.object().shape({
     basic_total: Yup.number(),
     gst: Yup.number().required('GST is required.'),
     total: Yup.string(),
+    night_charge: Yup.number(),
+    other_charge: Yup.number()
 })
