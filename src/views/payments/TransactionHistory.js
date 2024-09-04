@@ -96,7 +96,7 @@ const TransactionHistoryList = () => {
                         {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                             <TableRow key={index}>
                                 {columns.map((column) => (
-                                    <TableCell key={column.id}>{row[column.id]?.toString() || 'N/A'}</TableCell>
+                                    <TableCell key={column.id}>{row[column.id]?.toString() || 'N/A' }</TableCell>
                                 ))}
                             </TableRow>
                         ))}

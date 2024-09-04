@@ -476,7 +476,7 @@ function Packages() {
                             />
                         </Stack>
                         {
-                            ((bookingType === 'Local' || bookingType === "Outstation") && tripType === "One Way") && <>
+                          
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
@@ -511,11 +511,11 @@ function Packages() {
                                         )}
                                     />
                                 </Stack>
-                            </>
+                           
                         }
 
                         {
-                            ((bookingType === 'Local' || bookingType === "Outstation") && tripType === "One Way") && <>
+                  
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
@@ -550,7 +550,7 @@ function Packages() {
                                         )}
                                     />
                                 </Stack>
-                            </>
+                            
                         }
 
                         <Stack direction={"row"} gap={2} className="!mb-4">
@@ -610,7 +610,7 @@ function Packages() {
                         </Stack>
                         <Stack>
                             {
-                                (bookingType === "Outstation" && tripType !== "Round Trip") ? null :
+                                (bookingType === "Outstation" && tripType === "Round Trip") ? null :
                                     <Controller
                                         control={control}
                                         name="night_charge"
@@ -800,7 +800,7 @@ function Packages() {
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        label="Company Charges"
+                                        label="Platform fee"
                                         className="w-full"
                                         error={!!errors.company_charge}
                                         helperText={errors.company_charge?.message}

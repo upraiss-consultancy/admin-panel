@@ -182,6 +182,7 @@ const TransactionTable = ({ transactionData }) => {
                                     <TableCell>
                                         <Avatar src={transaction.user.profile_img} alt={transaction.user.full_name} />
                                     </TableCell>
+                                    {console.log(transaction , "transaction1212")}
                                     <TableCell>{transaction.user.full_name}</TableCell>
                                     <TableCell>{transaction.amount}</TableCell>
                                     <TableCell>{transaction.transaction_type}</TableCell>

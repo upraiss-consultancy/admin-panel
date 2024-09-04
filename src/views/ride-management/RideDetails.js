@@ -48,7 +48,7 @@ function RideDetailView() {
     }, [allParams]);
 
     const handleAssignRide = async (id) => {
-        console.log(id  , "ID ??")
+        console.log(id, "ID ??")
         const responseCode = await AssignInterestedDrivers(USER_INTERESTED_ASSIGN_RIDE, { bookingId: id });
         if (responseCode) {
             if (responseCode === 200) {
@@ -136,6 +136,7 @@ function RideDetailView() {
                         }
 
                     </Box>
+                    
                 </Grid>
                 <TableContainer component={Paper}>
                     <Box className="flex my-2 justify-between px-4">
@@ -214,13 +215,15 @@ function RideDetailView() {
                                             {data?.status}
                                         </TableCell>
                                         {
-                                            console.log(data , data?._id)                                        }
+                                            console.log(data, data?._id)}
                                         <TableCell className="!text-center">
+                                            <Box className="flex">
 
-                                            {
-                                                data?.status !== "approved" && <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2'>Assign Ride</Button>
-                                            }
-                                            <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)}>Unassign Ride</Button>
+                                                {
+                                                    data?.status !== "approved" && <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2 text-nowrap'>Assign Ride</Button>
+                                                }
+                                                <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)} className='text-nowrap'>Unassign Ride</Button>
+                                            </Box>
 
 
                                         </TableCell>
