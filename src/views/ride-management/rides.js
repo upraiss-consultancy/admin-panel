@@ -241,7 +241,9 @@ function AllRides() {
       package_id: data['package_id'],
       return_pin: data['return_pin'],
       car_type: data['car_type'],
-      pass_whatsapp_no: data['pass_whatsapp_no']
+      pass_whatsapp_no: data['pass_whatsapp_no'],
+      payment_type: data['payment_type'],
+      alreadypaid_amount: data['alreadypaid_amount']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -259,6 +261,7 @@ function AllRides() {
 
   const [search, setSearch] = useState('');
   const wayType = watch('way_type', 'One Way');
+  const paymentType = watch('payment_type')
   const date = new Date();
   const handleRideNumberChange = (value) => {
     // setRideNumber(value);
@@ -284,6 +287,8 @@ function AllRides() {
       setValue('return_pin', existingRide.return_pin);
       setValue('car_type', existingRide.car_type);
       setValue('pass_whatsapp_no', existingRide.pass_whatsapp_no);
+      setValue('payment_type', existingRide.payment_type);
+      setValue('alreadypaid_amount', existingRide.alreadypaid_amount);
     } else {
       // setValue('driverName', '');
       // setValue('pickupLocation', '');
@@ -293,7 +298,7 @@ function AllRides() {
   return (
     <>
       <TableContainer component={Paper}>
-        <Box className="flex my-2 justify-between px-4">
+        <Box className="flex my-2 justify-between px-4 flex-wrap gap-4">
           <Typography variant="h6" component="div">
             Ride Bookings
           </Typography>
@@ -591,6 +596,39 @@ function AllRides() {
                     </FormControl>
                   )}
                 />
+              </Stack>
+              <Stack direction={"row"} gap={2} className="!mb-4">
+                <Controller
+                  control={control}
+                  name="payment_type"
+                  render={({ field }) => (
+                    <FormControl fullWidth>
+                      <InputLabel>Payment Type</InputLabel>
+                      <Select {...field} className="w-full" defaultValue="Local" label="Booking Type">
+                        <MenuItem value={'Prepaid'}>Prepaid</MenuItem>
+                        <MenuItem value={'Postpaid'}>Postpaid</MenuItem>
+                        <MenuItem value={'Partially Paid'}>Partially Paid</MenuItem>
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                {
+                  (paymentType === "Prepaid" || paymentType === "Partially Paid") &&
+                  <Controller
+                    control={control}
+                    name="alreadypaid_amount"
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Payment Amount"
+                        className="w-full"
+                        error={!!errors.alreadypaid_amount}
+                        helperText={errors.alreadypaid_amount?.message}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                  />
+                }
               </Stack>
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller

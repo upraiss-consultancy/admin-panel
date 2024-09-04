@@ -51,7 +51,7 @@ const Profile = () => {
     <Paper className="px-5 py-5 ">
     {Object.keys(driverDetail?.userDetail).length !== 0 ? (
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={4}>
           <Box mt={2}>
             <Avatar
               src={driverDetail?.userDetail?.profile_img}
@@ -155,7 +155,7 @@ const Profile = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={8} className="h-[calc(100vh-160px)] overflow-y-scroll">
+        <Grid item xs={12} md={8} className="h-[calc(100vh-160px)] overflow-y-scroll">
           <Paper className="px-5 py-5">
             <Typography variant="h6" gutterBottom>
               All Rides

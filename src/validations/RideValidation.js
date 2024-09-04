@@ -11,6 +11,11 @@ export const CreateRideSchema = Yup.object().shape({
         is: 'One Way',
         then: () => Yup.string().required('Return time is required'),
     }),
+    payment_type: Yup.string().required('Payment type is required'),
+    alreadypaid_amount: Yup.string().when('payment_type', {
+        is: (payment_type) => payment_type === 'Partially Paid' || payment_type === 'Prepaid',
+        then: () => Yup.string().required('Payment amount is required'),
+    }),
     pickup_date: Yup.string().required('Pick-up date is required'),
     return_date: Yup.string().when('way_type', {
         is: 'One Way',
