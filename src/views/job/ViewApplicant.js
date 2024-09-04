@@ -25,7 +25,7 @@ const ApplicantDetailView = () => {
   const onShortlist = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: 'shortlist',
+      type: 'shortlisted',
       remark: "string"
     })
     console.log(response, "Response")
