@@ -8,7 +8,7 @@ export const getAllRides = async (endpoint, params) => {
         statusText,
         data: { responseData: responseData },
       } = response;
-      if (statusText === "OK") {
+      if (response?.status === 200) {
         return { data: responseData[0]?.data, metadata: responseData[0]?.metadata };
       }
     }

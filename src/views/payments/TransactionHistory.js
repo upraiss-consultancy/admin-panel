@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Box, TextField, InputAdornment, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Box, TextField, InputAdornment, IconButton, Avatar } from '@mui/material';
 import { getTransactionHistoryList } from '../../api/services/payment';
 import END_POINTS from '../../constants/endpoints';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,14 +12,12 @@ const sampleData = [
 ];
 
 const columns = [
+    { id: 'user_name', label: 'Profile' },
     { id: 'user_name', label: 'User Name' },
-    { id: 'walletId', label: 'Wallet Address' },
-    { id: 'amount', label: 'Amount' },
-    { id: 'balance', label: 'Balance' },
-    { id: 'userId', label: 'User ID' },
+    { id: 'transaction_type', label: 'Mobile No.' },
     { id: 'transaction_type', label: 'Transaction Type' },
-    { id: 'created_by', label: 'Created By' },
-    { id: 'updated_by', label: 'Updated By' },
+    { id: 'transaction_type', label: 'Payment Method' },
+    { id: 'amount', label: 'Amount' },
     { id: 'status', label: 'Status' },
 ];
 
@@ -29,16 +27,17 @@ const TransactionHistoryList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [search, setSearch] = useState('')
     const [params, setAllParams] = useState({
-        search: ""
+        search: "",
+        limit: 10,
+        page: 1
     })
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), page: newPage }));
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), page: 0 }));
     };
 
     const fetchTransactionHistory = async () => {
@@ -93,28 +92,41 @@ const TransactionHistoryList = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                            <TableRow key={index}>
-                                {columns.map((column) => (
-                                    <>
-                                        {
-                                            column.id === 'user_name' ? <TableCell>
-                                                {row['user']?.full_name}
-                                            </TableCell> : <TableCell key={column.id}>{row[column.id]?.toString() || 'N/A'}</TableCell>
-                                        }
+                        {data?.map((row, index) => (
 
-                                    </>
-                                ))}
+                            <TableRow key={index}>
+                                <TableCell>
+                                    <Avatar src={row?.user?.profile_img} />
+                                </TableCell>
+                                <TableCell>
+                                    {row?.user?.full_name}
+                                </TableCell>
+                                <TableCell>
+                                    {row?.user?.mobile_number || 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                    {row?.type || 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                    {row?.transaction_type || 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                    {row?.amount || 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                    {row?.status || 'N/A'}
+                                </TableCell>
                             </TableRow>
+
                         ))}
                     </TableBody>
                 </Table>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
+                    count={data?.length}
+                    rowsPerPage={params?.limit}
+                    page={params?.page - 1}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />

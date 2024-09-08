@@ -110,6 +110,7 @@ function AllRides() {
         }
       }
     );
+    console.log(data, "data 12121")
     if (data?.data?.length > 0) {
       setAllRides(data?.data);
       setPaginationData(data?.metadata)
@@ -365,8 +366,18 @@ function AllRides() {
 
 
 
+          <Button
+            variant="contained"
+            className="!bg-[#DD781E]"
+            onClick={() => setOpen(true)}
+          >
+            Create Ride
+          </Button>
+        </Box>
+        <Box className="flex justify-between flex-wrap !my-8 !px-4">
+
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker label="From" sx={{
+            <DatePicker label="From" className="min-w-32" sx={{
               '& .MuiInputBase-root': {
                 height: 40,  // Set the height you need
               },
@@ -379,7 +390,6 @@ function AllRides() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  fullWidth
                   variant="outlined"
                   sx={{
                     // Set height here
@@ -404,10 +414,10 @@ function AllRides() {
               onChange={(value) => {
                 setAllParams({ ...allParams, endDate: dayjs(value).format('YYYY-MM-DD') })
               }}
+              
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  fullWidth
                   variant="outlined"
                   sx={{
                     // Set height here
@@ -425,8 +435,8 @@ function AllRides() {
           </LocalizationProvider>
 
           <FormControl>
-            <InputLabel>Drop-off State</InputLabel>
-            <Select label="Drop-off State" className=" min-w-32 !h-10" >
+            <InputLabel>State</InputLabel>
+            <Select label="State" >
               {dropOffStates.map((state) => (
                 <MenuItem key={state.name} value={state.isoCode} onClick={(e) => { setAllParams({ ...allParams, state: state.name }); handleCity(state.isoCode) }}>
                   {state.name}
@@ -437,8 +447,8 @@ function AllRides() {
 
 
           <FormControl>
-            <InputLabel>Drop-off City</InputLabel>
-            <Select label="Drop-off City" className="min-w-32 !h-10">
+            <InputLabel>City</InputLabel>
+            <Select label="City" >
               {dropOffCity.map((city) => (
                 <MenuItem key={city.name} value={city.name} onClick={(e) => { setAllParams({ ...allParams, city: city.name }) }}>
                   {city.name}
@@ -451,7 +461,7 @@ function AllRides() {
           </Select> */}
           <FormControl>
             <InputLabel>Booking Type</InputLabel>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label="Booking Type">
+            <Select defaultValue={'All'}  label="Booking Type">
               <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: '' }))}>All</MenuItem>
               <MenuItem value={'Local'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Local' }))}>Local</MenuItem>
               <MenuItem value={'Outstation'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Outstation' }))}>Out Station</MenuItem>
@@ -459,7 +469,7 @@ function AllRides() {
           </FormControl>
           <FormControl>
             <InputLabel>Way Type</InputLabel>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label='Way Type'>
+            <Select defaultValue={'All'}  label='Way Type'>
               <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
               <MenuItem value={'One Way'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'One Way' }))}>One Way</MenuItem>
               <MenuItem value={'Round Trip'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'Round Trip' }))}>Round Trip</MenuItem>
@@ -467,7 +477,7 @@ function AllRides() {
           </FormControl>
           <FormControl>
             <InputLabel>Status</InputLabel>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label="Status">
+            <Select defaultValue={'All'}  label="Status">
               <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, status: '' }))}>All</MenuItem>
               <MenuItem value={'complete'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'complete' }))}>Complete</MenuItem>
               <MenuItem value={'interested'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'interested' }))}>Interested</MenuItem>
@@ -476,13 +486,6 @@ function AllRides() {
               <MenuItem value={'cancel'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'cancel' }))}>Cancel</MenuItem>
             </Select>
           </FormControl>
-          <Button
-            variant="contained"
-            className="!bg-[#DD781E]"
-            onClick={() => setOpen(true)}
-          >
-            Create Ride
-          </Button>
         </Box>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -756,13 +759,13 @@ function AllRides() {
                   />
                 }
               </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
+              <Stack direction={"row"} gap={2} alignItems={'center'}>
                 <Controller
                   control={control}
                   name="pickup_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date" {...field} renderInput={(params) => (
+                      <DatePicker label="Pick-up Date"  {...field} renderInput={(params) => (
                         <TextField
                           {...params}
                           fullWidth
@@ -782,7 +785,7 @@ function AllRides() {
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DemoContainer components={['TimePicker']}>
-                        <TimePicker label="Pick-up Time" {...field} />
+                        <TimePicker label="Pick-up Time" {...field} className=" !mb-2" />
                       </DemoContainer>
                     </LocalizationProvider>
                   )}
