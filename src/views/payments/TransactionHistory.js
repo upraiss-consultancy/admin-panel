@@ -32,7 +32,9 @@ const TransactionHistoryList = () => {
     const [params, setAllParams] = useState({
         search: "",
         limit: 10,
-        page: 1
+        page: 1,
+        startDate: "",
+        endDate: ''
     })
 
     const handleChangePage = (event, newPage) => {
@@ -71,7 +73,7 @@ const TransactionHistoryList = () => {
                     <DatePicker
                         label="From"
                         // value={fromDate}  
-                        // onChange={(newValue) => setFromDate(newValue)}  
+                        onChange={(newValue) =>  setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), startDate: newValue }))}   
                         sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,  // Set the height you need
@@ -91,7 +93,7 @@ const TransactionHistoryList = () => {
                     <DatePicker
                         label="To"
                         // value={toDate} 
-                        // onChange={(newValue) => setToDate(newValue)}  
+                        onChange={(newValue) =>  setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), endDate: newValue }))}  
                         sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,  // Set the height you need
