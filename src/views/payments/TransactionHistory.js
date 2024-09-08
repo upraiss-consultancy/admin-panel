@@ -73,7 +73,7 @@ const TransactionHistoryList = () => {
                     <DatePicker
                         label="From"
                         // value={fromDate}  
-                        onChange={(newValue) =>  setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), startDate: newValue }))}   
+                        onChange={(newValue) =>  setAllParams(prevState => ({ ...prevState, startDate: newValue }))}   
                         sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,  // Set the height you need
@@ -93,7 +93,7 @@ const TransactionHistoryList = () => {
                     <DatePicker
                         label="To"
                         // value={toDate} 
-                        onChange={(newValue) =>  setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), endDate: newValue }))}  
+                        onChange={(newValue) =>  setAllParams(prevState => ({ ...prevState,  endDate: newValue }))}  
                         sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,  // Set the height you need
