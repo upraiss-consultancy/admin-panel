@@ -24,7 +24,8 @@ import {
   TablePagination,
   FormControl,
   InputLabel,
-  Avatar
+  Avatar,
+  Grid
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -110,6 +111,7 @@ function AllRides() {
         }
       }
     );
+    console.log(data, "data 12121")
     if (data?.data?.length > 0) {
       setAllRides(data?.data);
       setPaginationData(data?.metadata)
@@ -340,150 +342,158 @@ function AllRides() {
   return (
     <>
       <TableContainer component={Paper}>
-        <Box className="flex my-2 justify-between px-4 flex-wrap gap-4">
+        <Box className="flex my-2 justify-between px-4  gap-4">
           <Typography variant="h6" component="div">
             Ride Bookings
           </Typography>
-          <TextField placeholder="Search Ride..." sx={{
-            '& .MuiInputBase-root': {
-              height: 40,  // Set the height you need
-            },
-          }} InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => {
-                  // if (search.trim() !== "") {
-                  setAllParams(prevState => ({ ...prevState, search: search }))
-                  // }
-                }}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-
-            )
-          }} onChange={(e) => setSearch(e.target.value)} />
-
-
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker label="From" sx={{
-              '& .MuiInputBase-root': {
-                height: 40,  // Set the height you need
-              },
-            }}
-
-              onChange={(value) => {
-                setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })
-              }}
-
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  fullWidth
-                  variant="outlined"
-                  sx={{
-                    // Set height here
-                    '& .MuiInputBase-root': {
-                      height: '40px' // Adjust height here (px)
-                    }
-                  }}
-
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
-          </LocalizationProvider>
-
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker label="To" sx={{
-              '& .MuiInputBase-root': {
-                height: 40,  // Set the height you need
-              },
-            }}
-              onChange={(value) => {
-                setAllParams({ ...allParams, endDate: dayjs(value).format('YYYY-MM-DD') })
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  fullWidth
-                  variant="outlined"
-                  sx={{
-                    // Set height here
-                    '& .MuiInputBase-root': {
-                      height: '40px' // Adjust height here (px)
-                    }
-                  }}
-
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-
-            />
-
-          </LocalizationProvider>
-
-          <FormControl>
-            <InputLabel>Drop-off State</InputLabel>
-            <Select label="Drop-off State" className=" min-w-32 !h-10" >
-              {dropOffStates.map((state) => (
-                <MenuItem key={state.name} value={state.isoCode} onClick={(e) => { setAllParams({ ...allParams, state: state.name }); handleCity(state.isoCode) }}>
-                  {state.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-
-          <FormControl>
-            <InputLabel>Drop-off City</InputLabel>
-            <Select label="Drop-off City" className="min-w-32 !h-10">
-              {dropOffCity.map((city) => (
-                <MenuItem key={city.name} value={city.name} onClick={(e) => { setAllParams({ ...allParams, city: city.name }) }}>
-                  {city.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <Select defaultValue={'live'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}>
-            <MenuItem value={'live'}>Live</MenuItem>
-          </Select> */}
-          <FormControl>
-            <InputLabel>Booking Type</InputLabel>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label="Booking Type">
-              <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: '' }))}>All</MenuItem>
-              <MenuItem value={'Local'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Local' }))}>Local</MenuItem>
-              <MenuItem value={'Outstation'} onClick={() => setAllParams(prevState => ({ ...prevState, booking_type: 'Outstation' }))}>Out Station</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl>
-            <InputLabel>Way Type</InputLabel>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label='Way Type'>
-              <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: '' }))}>All</MenuItem>
-              <MenuItem value={'One Way'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'One Way' }))}>One Way</MenuItem>
-              <MenuItem value={'Round Trip'} onClick={() => setAllParams(prevState => ({ ...prevState, way_type: 'Round Trip' }))}>Round Trip</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl>
-            <InputLabel>Status</InputLabel>
-            <Select defaultValue={'All'} className=" min-w-36 !max-h-10" label="Status">
-              <MenuItem value={'All'} onClick={() => setAllParams(prevState => ({ ...prevState, status: '' }))}>All</MenuItem>
-              <MenuItem value={'complete'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'complete' }))}>Complete</MenuItem>
-              <MenuItem value={'interested'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'interested' }))}>Interested</MenuItem>
-              <MenuItem value={'approved'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'approved' }))}>Approved</MenuItem>
-              <MenuItem value={'pending'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'pending' }))}>Pending</MenuItem>
-              <MenuItem value={'cancel'} onClick={() => setAllParams(prevState => ({ ...prevState, status: 'cancel' }))}>Cancel</MenuItem>
-            </Select>
-          </FormControl>
           <Button
             variant="contained"
-            className="!bg-[#DD781E]"
+            sx={{ backgroundColor: '#DD781E', height: 40 }}
             onClick={() => setOpen(true)}
           >
             Create Ride
           </Button>
         </Box>
+        <Grid container spacing={2} alignItems="center" justifyContent="space-between" sx={{ flexWrap: 'wrap' }} className=" !px-4 !my-4">
+
+          {/* Search Field */}
+          <Grid item xs={12} sm={4} md={3}>
+            <TextField
+              placeholder="Search Ride..."
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setAllParams(prevState => ({ ...prevState, search }))}
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </Grid>
+
+          {/* From Date */}
+          <Grid item xs={12} sm={4} md={3}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="From"
+                value={dayjs(allParams.startDate || null)}
+                onChange={(value) => setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    fullWidth
+                    sx={{ '& .MuiInputBase-root': { height: 40 } }} // Adjust height
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+
+          {/* To Date */}
+          <Grid item xs={12} sm={4} md={3}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="To"
+                value={dayjs(allParams.endDate || null)}
+                onChange={(value) => setAllParams({ ...allParams, endDate: dayjs(value).format('YYYY-MM-DD') })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    fullWidth
+                    sx={{ '& .MuiInputBase-root': { height: 40 } }} // Adjust height
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+
+          {/* State Dropdown */}
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>State</InputLabel>
+              <Select label="State" >
+                {dropOffStates.map((state) => (
+                  <MenuItem key={state.name} value={state.isoCode} onClick={(e) => { setAllParams({ ...allParams, state: state.name }); handleCity(state.isoCode) }}>
+                    {state.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {/* City Dropdown */}
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>City</InputLabel>
+              <Select label="City" >
+                {dropOffCity.map((city) => (
+                  <MenuItem key={city.name} value={city.name} onClick={(e) => { setAllParams({ ...allParams, city: city.name }) }}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+          </Grid>
+
+          {/* Booking Type Dropdown */}
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>Booking Type</InputLabel>
+              <Select
+                label="Booking Type"
+                value={allParams.booking_type || 'All'}
+                onChange={(e) => setAllParams({ ...allParams, booking_type: e.target.value })}
+              >
+                <MenuItem value={'All'}>All</MenuItem>
+                <MenuItem value={'Local'}>Local</MenuItem>
+                <MenuItem value={'Outstation'}>Outstation</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {/* Way Type Dropdown */}
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>Way Type</InputLabel>
+              <Select
+                label="Way Type"
+                value={allParams.way_type || 'All'}
+                onChange={(e) => setAllParams({ ...allParams, way_type: e.target.value })}
+              >
+                <MenuItem value={'All'}>All</MenuItem>
+                <MenuItem value={'One Way'}>One Way</MenuItem>
+                <MenuItem value={'Round Trip'}>Round Trip</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {/* Status Dropdown */}
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                label="Status"
+                value={allParams.status || 'All'}
+                onChange={(e) => setAllParams({ ...allParams, status: e.target.value })}
+              >
+                <MenuItem value={'All'}>All</MenuItem>
+                <MenuItem value={'complete'}>Complete</MenuItem>
+                <MenuItem value={'interested'}>Interested</MenuItem>
+                <MenuItem value={'approved'}>Approved</MenuItem>
+                <MenuItem value={'pending'}>Pending</MenuItem>
+                <MenuItem value={'cancel'}>Cancel</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+        </Grid>
+
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -756,13 +766,13 @@ function AllRides() {
                   />
                 }
               </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
+              <Stack direction={"row"} gap={2} alignItems={'center'}>
                 <Controller
                   control={control}
                   name="pickup_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date" {...field} renderInput={(params) => (
+                      <DatePicker label="Pick-up Date"  {...field} renderInput={(params) => (
                         <TextField
                           {...params}
                           fullWidth
@@ -782,7 +792,7 @@ function AllRides() {
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DemoContainer components={['TimePicker']}>
-                        <TimePicker label="Pick-up Time" {...field} />
+                        <TimePicker label="Pick-up Time" {...field} className=" !mb-2" />
                       </DemoContainer>
                     </LocalizationProvider>
                   )}

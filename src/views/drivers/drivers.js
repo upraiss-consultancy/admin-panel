@@ -194,7 +194,7 @@ function Drivers() {
                 <Typography>{bookingId ? "Suggestions" : "Drivers"}</Typography>
             </Stack>
             <TableContainer component={Paper}>
-                <Box className="flex my-2 justify-between px-4">
+                {/* <Box className="flex my-2 justify-between px-4">
                     <Typography variant="h6" component="div">
                         All Drivers
                     </Typography>
@@ -259,7 +259,222 @@ function Drivers() {
                             ))}
                         </Select>
                     </FormControl>
+                </Box> */}
+                <Box sx={{ py: 3, px: { xs: 2, md: 4 }, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {/* Top Section: Search and Filters */}
+                    {/* <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="h6" component="div" sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' }, flexGrow: 1 }}>
+            All Drivers
+        </Typography>
+
+        <Box sx={{ display: 'flex', gap: 2, flexGrow: 2, justifyContent: 'flex-end', alignItems: 'center' }}>
+            <TextField
+                placeholder="Search Drivers..."
+                variant="outlined"
+                sx={{
+                    maxWidth: { xs: '100%', sm: '300px' },
+                    '& .MuiInputBase-root': {
+                        height: 40,
+                        borderRadius: 2,
+                    },
+                }}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton onClick={() => setAllParams(prevState => ({ ...prevState, search }))}>
+                                <SearchIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+                onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <Select
+                defaultValue=""
+                displayEmpty
+                sx={{
+                    width: { xs: '100%', sm: '150px' },
+                    height: 40,
+                    borderRadius: 2,
+                    '& .MuiSelect-select': {
+                        padding: '8px',
+                    },
+                }}
+                onChange={(e) => setAllParams(prevState => ({ ...prevState, active_status: e.target.value }))}
+            >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="online">Online</MenuItem>
+                <MenuItem value="offline">Offline</MenuItem>
+            </Select>
+
+            <Button
+                variant="contained"
+                sx={{
+                    height: 40,
+                    backgroundColor: '#DD781E',
+                    textTransform: 'none',
+                    '&:hover': {
+                        backgroundColor: '#c16a1a',
+                    },
+                }}
+                onClick={() => setOpen(true)}
+            >
+                Create Driver
+            </Button>
+        </Box>
+    </Box> */}
+                    <Box sx={{ px: { xs: 2, md: 1 }, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" component="div" sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' }, flexGrow: 1 }}>
+                            All Drivers
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', flexGrow: 2 }}>
+                            {/* Search Bar */}
+                            <TextField
+                                placeholder="Search Drivers..."
+                                variant="outlined"
+                                sx={{
+                                    maxWidth: { xs: '100%', md: '220px' },
+                                    flexGrow: 1,
+                                    '& .MuiInputBase-root': {
+                                        height: 40,
+                                        borderRadius: 2,
+                                    },
+                                }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={() => setAllParams(prevState => ({ ...prevState, search }))}>
+                                                <SearchIcon />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+
+                            {/* State Dropdown */}
+                            <FormControl sx={{ minWidth: 150 }}>
+                                <InputLabel>State</InputLabel>
+                                <Select
+                                    label="State"
+                                    onChange={(e) => handleCities(e.target.value)}
+                                    sx={{
+                                        height: 40,  // Consistent height for dropdown
+                                        '& .MuiSelect-select': {
+
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        },
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    {states.map((state) => (
+                                        <MenuItem key={state.isoCode} value={state.isoCode}>
+                                            {state.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            {/* City Dropdown */}
+                            <FormControl sx={{ minWidth: 150 }}>
+                                <InputLabel>City</InputLabel>
+                                <Select
+                                    label="City"
+                                    onChange={(e) => setAllParams(prevState => ({ ...prevState, city: e.target.value }))}
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    {cities.map((city) => (
+                                        <MenuItem key={city.name} value={city.name}>
+                                            {city.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            {/* Status Dropdown */}
+                            <FormControl sx={{ minWidth: 150 }}>
+                                <InputLabel>Status</InputLabel>
+                                <Select
+                                    defaultValue=""
+                                    label="Status"
+                                    onChange={(e) => setAllParams(prevState => ({ ...prevState, active_status: e.target.value }))}
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    <MenuItem value="">All</MenuItem>
+                                    <MenuItem value="online">Online</MenuItem>
+                                    <MenuItem value="offline">Offline</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+
+                        {/* Create Driver Button */}
+                        <Button
+                            variant="contained"
+                            sx={{
+                                height: 40,
+                                backgroundColor: '#DD781E',
+                                textTransform: 'none',
+                                borderRadius: 2,
+                                '&:hover': {
+                                    backgroundColor: '#c16a1a',
+                                },
+                            }}
+                            onClick={() => setOpen(true)}
+                        >
+                            Create Driver
+                        </Button>
+                    </Box>
+
+
+                    {/* Second Section: State and City Select */}
+                    {/* <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between' }}>
+        <FormControl fullWidth sx={{ maxWidth: { xs: '100%', sm: '250px' } }}>
+            <InputLabel>State</InputLabel>
+            <Select
+                label="State"
+                onChange={(e) => handleCities(e.target.value)}
+                sx={{
+                    height: 40,
+                    borderRadius: 2,
+                }}
+            >
+                {states.map((state) => (
+                    <MenuItem key={state.isoCode} value={state.isoCode}>
+                        {state.name}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+
+        <FormControl fullWidth sx={{ maxWidth: { xs: '100%', sm: '250px' } }}>
+            <InputLabel>City</InputLabel>
+            <Select
+                label="City"
+                onChange={(e) => setAllParams(prevState => ({ ...prevState, city: e.target.value }))}
+                sx={{
+                    height: 40,
+                    borderRadius: 2,
+                }}
+            >
+                {cities.map((city) => (
+                    <MenuItem key={city.name} value={city.name}>
+                        {city.name}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    </Box> */}
                 </Box>
+
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -267,11 +482,9 @@ function Drivers() {
                             <TableCell>Profile Image</TableCell>
                             <TableCell>Name</TableCell>
                             <TableCell>Mobile No.</TableCell>
-                            <TableCell>D.O.B</TableCell>
-                            <TableCell className="!text-center">Aadhar Number</TableCell>
+
                             <TableCell className="!text-center">Driving License Number</TableCell>
-                            <TableCell className="!text-center">Issue Date</TableCell>
-                            <TableCell className="!text-center">Expiry Date</TableCell>
+
                             <TableCell>Experience</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Vehicle Type</TableCell>
@@ -295,23 +508,14 @@ function Drivers() {
                                     <TableCell>
                                         {driver?.mobile_no}
                                     </TableCell>
-                                    <TableCell className="text-nowrap">
-                                        {dayjs(driver?.dob).format('DD-MM-YYYY')}
-                                    </TableCell>
-                                    <TableCell>
-                                        {driver?.adhar_no}
-                                    </TableCell>
+
+
                                     <TableCell className="!text-center">
                                         {driver?.dl_no}
                                     </TableCell>
-                                    <TableCell className="text-nowrap">
-                                        {dayjs(driver?.dl_issue_date).format('DD-MM-YYYY')}
-                                    </TableCell>
-                                    <TableCell className="!text-center text-nowrap">
-                                        {dayjs(driver?.dl_expiry_date).format('DD-MM-YYYY')}
-                                    </TableCell>
+
                                     <TableCell className="!text-center">
-                                        {driver?.experience ? driver?.experience + " years" : ""}
+                                        {driver?.experience ? driver?.experience + " years" : "N/A"}
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {
