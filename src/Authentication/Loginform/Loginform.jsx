@@ -24,8 +24,9 @@ function Loginform() {
     const notificationToken = localStorage.getItem('notificationToken')
     const response = await adminLogin('v0/admin/login', { ...data, device_token: notificationToken });
     if (response) {
+      console.log(response , "Check Login Responsse")
       const { statusText, data: { responseData: { adminUserId, token } } } = response;
-      if (statusText === 'OK') {
+      if (response?.status === 200) {
         const expiry = new Date();
         expiry.setDate(expiry.getDate() + 1); // Set expiry date to one day from now
         localStorage.setItem('token', token);
