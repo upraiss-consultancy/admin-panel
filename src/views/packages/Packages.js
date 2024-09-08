@@ -30,7 +30,8 @@ function Packages() {
     const [params, setAllParams] = useState({
         limit: 10,
         page: 1,
-        search: ""
+        search: "",
+
     });
     const [paginationData, setPaginationData] = useState([])
     const [open, setOpen] = useState(false)
@@ -66,6 +67,7 @@ function Packages() {
     const tripType = watch('trip_type');
     let TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge'));
     let TotalAmount = TotalBasic + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
+    // const driverCharge = Number(watch('company_charge'));
 
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
@@ -476,46 +478,46 @@ function Packages() {
                             />
                         </Stack>
                         {
-                          
-                                <Stack direction={"row"} gap={2} className="!mb-4">
-                                    <Controller
-                                        control={control}
-                                        name="pickup_state"
-                                        render={({ field }) => (
-                                            <FormControl fullWidth>
-                                                <InputLabel>Pick-Up State</InputLabel>
-                                                <Select label="Pick-Up State" {...field}>
-                                                    {states.map((state) => (
-                                                        <MenuItem key={state.isoCode} value={state.isoCode}>
-                                                            {state.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        )}
-                                    />
-                                    <Controller
-                                        control={control}
-                                        name="pickup_city"
-                                        render={({ field }) => (
-                                            <FormControl fullWidth>
-                                                <InputLabel>City</InputLabel>
-                                                <Select label="Pick-Up City" {...field}>
-                                                    {cities.map((city) => (
-                                                        <MenuItem key={city.name} value={city.name}>
-                                                            {city.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        )}
-                                    />
-                                </Stack>
-                           
+
+                            <Stack direction={"row"} gap={2} className="!mb-4">
+                                <Controller
+                                    control={control}
+                                    name="pickup_state"
+                                    render={({ field }) => (
+                                        <FormControl fullWidth>
+                                            <InputLabel>Pick-Up State</InputLabel>
+                                            <Select label="Pick-Up State" {...field}>
+                                                {states.map((state) => (
+                                                    <MenuItem key={state.isoCode} value={state.isoCode}>
+                                                        {state.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                                <Controller
+                                    control={control}
+                                    name="pickup_city"
+                                    render={({ field }) => (
+                                        <FormControl fullWidth>
+                                            <InputLabel>City</InputLabel>
+                                            <Select label="Pick-Up City" {...field}>
+                                                {cities.map((city) => (
+                                                    <MenuItem key={city.name} value={city.name}>
+                                                        {city.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                            </Stack>
+
                         }
 
                         {
-                  
+                            tripType !== "Round Trip" && (
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
@@ -550,7 +552,7 @@ function Packages() {
                                         )}
                                     />
                                 </Stack>
-                            
+                            )
                         }
 
                         <Stack direction={"row"} gap={2} className="!mb-4">
@@ -610,7 +612,7 @@ function Packages() {
                         </Stack>
                         <Stack>
                             {
-                                (bookingType === "Outstation" && tripType === "Round Trip") ? null :
+                                (bookingType === "Outstation" && tripType === "Round Trip" || bookingType === "Outstation" && tripType === "One Way") ? null :
                                     <Controller
                                         control={control}
                                         name="night_charge"

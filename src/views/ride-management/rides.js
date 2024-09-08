@@ -56,12 +56,17 @@ function AllRides() {
     reset,
     watch,
     formState: { errors },
-    setValue
+    setValue,
+    getValues
   } = useForm({
     defaultValues: {
       _id: null,
       way_type: 'One Way',
       booking_type: 'Local',
+      return_state: '',
+      return_city: '',
+      pickup_state: '',
+      pickup_city: ''
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -76,19 +81,25 @@ function AllRides() {
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate();
   const [paginationData, setPaginationData] = useState([]);
-  const [packages, setAllPackages] = useState([])
+  const [packages, setAllPackages] = useState([]);
+  const [selectPackage, setSelectPackage] = useState(false)
   const [allParams, setAllParams] = useState({
     booking_type: '',
     way_type: '',
     search: '',
-    status: ''
+    status: '',
+    startDate: '',
+    endDate: "",
+    city: "",
+    state: ""
   })
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [dropOffStates, setDropOffStates] = useState([])
   const [dropOffCity, setDropOffCity] = useState([]);
   const [isLoading, setISLoading] = useState(false);
-  const [remarks, setRemarks] = useState('')
+  const [remarks, setRemarks] = useState('');
+
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -106,7 +117,11 @@ function AllRides() {
       setAllRides([]);
     }
   };
+  console.log(watch(), "Check Watch Values")
   const fetchPackage = async () => {
+    // const { booking_type, trip_type, pickup_city
+    //   , pickup_state, dropoff_city, dropoff_state } = watch();
+    // console.log(booking_type)
     const response = await getPackages(GET_ALL_PACKAGES);
     if (response?.data?.responseCode === 200) {
       setAllPackages(response?.data?.responseData)
@@ -139,14 +154,23 @@ function AllRides() {
       setDropOffCity([]);
     }
   }, [dropOffState])
+  const handleCity = (value) => {
+
+    if (value) {
+      const cityData = City.getCitiesOfState('IN', value);
+      setDropOffCity(cityData);
+    } else {
+      setDropOffCity([]);
+    }
+  }
 
   useEffect(() => {
     fetchRides();
   }, [currentPage, allParams]);
-
-  useEffect(() => {
-    fetchPackage()
-  }, [])
+  const watchAllFields = watch();
+  // useEffect(() => {
+  //   fetchPackage()
+  // }, [])
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -295,6 +319,24 @@ function AllRides() {
       // Reset fields if no match
     }
   };
+  const allValue = getValues();
+
+  const { way_type, booking_type, pickup_city, pickup_state, return_city, return_state } = allValue;
+  const handlePackage = async () => {
+    const response = await getPackages(GET_ALL_PACKAGES, {
+      params: {
+        trip_type: way_type,
+        pickup_city: pickup_city,
+        pickup_state: pickup_state,
+        dropoff_city: return_city,
+        dropoff_state: return_state,
+        booking_type: booking_type
+      }
+    });
+    if (response?.data?.responseCode === 200) {
+      setAllPackages(response?.data?.responseData)
+    }
+  }
   return (
     <>
       <TableContainer component={Paper}>
@@ -320,6 +362,90 @@ function AllRides() {
 
             )
           }} onChange={(e) => setSearch(e.target.value)} />
+
+
+
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker label="From" sx={{
+              '& .MuiInputBase-root': {
+                height: 40,  // Set the height you need
+              },
+            }}
+
+              onChange={(value) => {
+                setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })
+              }}
+
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    // Set height here
+                    '& .MuiInputBase-root': {
+                      height: '40px' // Adjust height here (px)
+                    }
+                  }}
+
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+            />
+          </LocalizationProvider>
+
+
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker label="To" sx={{
+              '& .MuiInputBase-root': {
+                height: 40,  // Set the height you need
+              },
+            }}
+              onChange={(value) => {
+                setAllParams({ ...allParams, endDate: dayjs(value).format('YYYY-MM-DD') })
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    // Set height here
+                    '& .MuiInputBase-root': {
+                      height: '40px' // Adjust height here (px)
+                    }
+                  }}
+
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+
+            />
+
+          </LocalizationProvider>
+
+          <FormControl>
+            <InputLabel>Drop-off State</InputLabel>
+            <Select label="Drop-off State" className=" min-w-32 !h-10" >
+              {dropOffStates.map((state) => (
+                <MenuItem key={state.name} value={state.isoCode} onClick={(e) => { setAllParams({ ...allParams, state: state.name }); handleCity(state.isoCode) }}>
+                  {state.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+
+          <FormControl>
+            <InputLabel>Drop-off City</InputLabel>
+            <Select label="Drop-off City" className="min-w-32 !h-10">
+              {dropOffCity.map((city) => (
+                <MenuItem key={city.name} value={city.name} onClick={(e) => { setAllParams({ ...allParams, city: city.name }) }}>
+                  {city.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           {/* <Select defaultValue={'live'} className=" min-w-36 !max-h-10" onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}>
             <MenuItem value={'live'}>Live</MenuItem>
           </Select> */}
@@ -856,22 +982,36 @@ function AllRides() {
                     </FormControl>
                   )}
                 />
-                <Controller
-                  control={control}
-                  name="package_id"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Packages</InputLabel>
-                      <Select {...field} className="w-full" label="Packages">
-                        {
-                          packages?.map((data) => <MenuItem value={data?._id}>
-                            {data?.package_name}
-                          </MenuItem>)
-                        }
-                      </Select>
-                    </FormControl>
-                  )}
-                />
+                {
+                  !selectPackage && <Button onClick={() => { setSelectPackage(true); handlePackage() }} variant="contained" disabled={
+                    (!way_type || !booking_type || !pickup_city || !pickup_state) ?
+                      true : false
+                  }>
+                    Select Package
+                  </Button>
+                }
+
+                {
+                  selectPackage && (
+
+                    <Controller
+                      control={control}
+                      name="package_id"
+                      render={({ field }) => (
+                        <FormControl fullWidth>
+                          <InputLabel>Packages</InputLabel>
+                          <Select {...field} className="w-full" label="Packages">
+                            {
+                              packages?.map((data) => <MenuItem value={data?._id}>
+                                {data?.package_name}
+                              </MenuItem>)
+                            }
+                          </Select>
+                        </FormControl>
+                      )}
+                    />
+                  )
+                }
               </Stack>
               <Box className="flex" gap={2}>
                 <Button variant="outlined" className="!w-full" type="reset">

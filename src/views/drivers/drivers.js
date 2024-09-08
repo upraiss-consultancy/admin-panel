@@ -28,7 +28,10 @@ function Drivers() {
     const [params, setAllParams] = useState({
         page: 1,
         limit: 10,
-        search: ''
+        search: '',
+        active_status: '',
+        state: '',
+        city: ""
     })
     const [searchParams] = useSearchParams()
     const bookingId = searchParams.get('bookingId');
@@ -96,6 +99,17 @@ function Drivers() {
             setCities([]);
         }
     }, [state]);
+
+    const handleCities = (StateValue, StateName) => {
+        setAllParams(prevState => ({ ...prevState, state: StateName }))
+        if (StateValue) {
+            const cityData = City.getCitiesOfState('IN', StateValue);
+            setCities(cityData);
+        } else {
+            setCities([]);
+        }
+    }
+
     const onSubmit = async (data) => {
         const response = await createDriver(CREATE_DRIVER, data);
         if (response?.responseCode === 200) {
@@ -207,24 +221,13 @@ function Drivers() {
                         }
                     />
 
-                    <Select defaultValue={'Online'} className=" min-w-36 !max-h-10"
-                        //  onChange={(e) => setAllParams(prevState => ({ ...prevState, booking_type: e.target.value }))}
-                        >
-                            <MenuItem value={'Online'}>Online</MenuItem>
-                            <MenuItem value={'Offline'}>Offline</MenuItem>
-                        </Select>
-                    {/* <Select defaultValue={'local'} className=" min-w-36 !max-h-10"
-                        onChange={(e) => setAllParams(prevState => ({ ...prevState, area_type: e.target.value }))}
-                        >
-                            <MenuItem value={'local'}>Local</MenuItem>
-                            <MenuItem value={'out-station'}>Out Station</MenuItem>
-                        </Select>
-                        <Select defaultValue={'one'} className=" min-w-36 !max-h-10"
-                         onChange={(e) => setAllParams(prevState => ({ ...prevState, way_type: e.target.value }))}
-                        >
-                            <MenuItem value={'one'}>One</MenuItem>
-                            <MenuItem value={'rounded'}>Rounded</MenuItem>
-                        </Select> */}
+                    <Select defaultValue={''} className=" min-w-36 !max-h-10"
+                        onChange={(e) => setAllParams(prevState => ({ ...prevState, active_status: e.target.value }))}
+                    >
+                        <MenuItem value="">All</MenuItem>
+                        <MenuItem value={'online'}>Online</MenuItem>
+                        <MenuItem value={'offline'}>Offline</MenuItem>
+                    </Select>
                     <Button
                         variant="contained"
                         className="!bg-[#DD781E]"
@@ -232,6 +235,30 @@ function Drivers() {
                     >
                         Create Driver
                     </Button>
+                </Box>
+                <Box className="flex">
+
+                    <FormControl fullWidth >
+                        <InputLabel>State</InputLabel>
+                        <Select label="State" className=" max-w-36 !max-h-10">
+                            {states.map((state) => (
+                                <MenuItem key={state.isoCode} value={state.isoCode} onClick={() => handleCities(state.isoCode, state.name)}>
+                                    {state.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                        <InputLabel>City</InputLabel>
+                        <Select label="city" className=" max-w-36 !max-h-10">
+                            {cities.map((city) => (
+                                <MenuItem key={city.name} value={city.name} onClick={() => setAllParams(prevState => ({ ...prevState, city: city.name }))}>
+                                    {city.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -321,14 +348,14 @@ function Drivers() {
                                                     </Button>
                                                     <Button
                                                         className="!px-4"
-                                                        onClick={(e) => {handleDelete(driver?._id); e.stopPropagation()}}
+                                                        onClick={(e) => { handleDelete(driver?._id); e.stopPropagation() }}
                                                     >
                                                         Delete Driver
                                                     </Button>
                                                     {
                                                         bookingId && <Button
                                                             className="!px-4"
-                                                            onClick={(e) => { handleAssign(driver?._id); e.stopPropagation()}}
+                                                            onClick={(e) => { handleAssign(driver?._id); e.stopPropagation() }}
                                                         >
                                                             Assign Driver
                                                         </Button>
