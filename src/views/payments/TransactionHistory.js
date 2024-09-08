@@ -13,14 +13,14 @@ const sampleData = [
 
 const columns = [
     { id: 'user_name', label: 'User Name' },
-    { id: 'wallet_address', label: 'Wallet Address' },
+    { id: 'walletId', label: 'Wallet Address' },
     { id: 'amount', label: 'Amount' },
+    { id: 'balance', label: 'Balance' },
     { id: 'userId', label: 'User ID' },
-    { id: 'bookingId', label: 'Booking ID' },
-    { id: 'is_deleted', label: 'Is Deleted' },
-    { id: 'is_blocked', label: 'Is Blocked' },
+    { id: 'transaction_type', label: 'Transaction Type' },
     { id: 'created_by', label: 'Created By' },
     { id: 'updated_by', label: 'Updated By' },
+    { id: 'status', label: 'Status' },
 ];
 
 const TransactionHistoryList = () => {
@@ -96,7 +96,14 @@ const TransactionHistoryList = () => {
                         {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                             <TableRow key={index}>
                                 {columns.map((column) => (
-                                    <TableCell key={column.id}>{row[column.id]?.toString() || 'N/A' }</TableCell>
+                                    <>
+                                        {
+                                            column.id === 'user_name' ? <TableCell>
+                                                {row['user']?.full_name}
+                                            </TableCell> : <TableCell key={column.id}>{row[column.id]?.toString() || 'N/A'}</TableCell>
+                                        }
+
+                                    </>
                                 ))}
                             </TableRow>
                         ))}
