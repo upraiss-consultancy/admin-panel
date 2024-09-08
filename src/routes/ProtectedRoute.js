@@ -20,7 +20,7 @@ const ProtectedRoute = ({ component: Component }) => {
             navigate('/auth/login')
         }
     }, [localStorage.getItem('token')])
-
+    console.log(isAuthenticated , "isAuthenticated")
 
     return isAuthenticated &&
         Component

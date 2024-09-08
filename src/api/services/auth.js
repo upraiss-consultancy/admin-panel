@@ -10,6 +10,7 @@ export const adminLogin = async (
       `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
       adminLoginInfo
     );
+    console.log(response , "1212")
     return response;
   };
 
