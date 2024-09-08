@@ -482,11 +482,9 @@ function Drivers() {
                             <TableCell>Profile Image</TableCell>
                             <TableCell>Name</TableCell>
                             <TableCell>Mobile No.</TableCell>
-                            <TableCell>D.O.B</TableCell>
-                            <TableCell className="!text-center">Aadhar Number</TableCell>
+
                             <TableCell className="!text-center">Driving License Number</TableCell>
-                            <TableCell className="!text-center">Issue Date</TableCell>
-                            <TableCell className="!text-center">Expiry Date</TableCell>
+
                             <TableCell>Experience</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Vehicle Type</TableCell>
@@ -510,23 +508,14 @@ function Drivers() {
                                     <TableCell>
                                         {driver?.mobile_no}
                                     </TableCell>
-                                    <TableCell className="text-nowrap">
-                                        {dayjs(driver?.dob).format('DD-MM-YYYY')}
-                                    </TableCell>
-                                    <TableCell>
-                                        {driver?.adhar_no}
-                                    </TableCell>
+
+
                                     <TableCell className="!text-center">
                                         {driver?.dl_no}
                                     </TableCell>
-                                    <TableCell className="text-nowrap">
-                                        {dayjs(driver?.dl_issue_date).format('DD-MM-YYYY')}
-                                    </TableCell>
-                                    <TableCell className="!text-center text-nowrap">
-                                        {dayjs(driver?.dl_expiry_date).format('DD-MM-YYYY')}
-                                    </TableCell>
+
                                     <TableCell className="!text-center">
-                                        {driver?.experience ? driver?.experience + " years" : ""}
+                                        {driver?.experience ? driver?.experience + " years" : "N/A"}
                                     </TableCell>
                                     <TableCell className="!text-center">
                                         {

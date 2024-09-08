@@ -128,7 +128,7 @@ const TransactionTable = ({ transactionData }) => {
     }
     useEffect(() => {
         fetchPaymentRequests()
-    }, []);
+    }, [rowsPerPage, page]);
     return (
         <>
 
@@ -138,9 +138,9 @@ const TransactionTable = ({ transactionData }) => {
                     <KeyboardBackspaceIcon />
                 </IconButton> */}
                     <Typography variant="h6" component="div" className=' pl-2'>
-                        Payment History
+                        Payment Request
                     </Typography>
-                    <TextField placeholder="Search Ride..." sx={{
+                    <TextField placeholder="Search Payment..." sx={{
                         '& .MuiInputBase-root': {
                             height: 40,  // Set the height you need
                         },
@@ -169,10 +169,11 @@ const TransactionTable = ({ transactionData }) => {
                             <TableRow>
                                 <TableCell>Profile</TableCell>
                                 <TableCell>Name</TableCell>
-                                <TableCell>Amount</TableCell>
+                                <TableCell>Wallet Balance</TableCell>
                                 <TableCell>Transaction Type</TableCell>
-                                <TableCell>Status</TableCell>
+                                <TableCell>Amount</TableCell>
                                 <TableCell>Request Date</TableCell>
+                                <TableCell>Status</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -182,12 +183,13 @@ const TransactionTable = ({ transactionData }) => {
                                     <TableCell>
                                         <Avatar src={transaction.user.profile_img} alt={transaction.user.full_name} />
                                     </TableCell>
-                                    {console.log(transaction , "transaction1212")}
+                                    {console.log(transaction, "transaction1212")}
                                     <TableCell>{transaction.user.full_name}</TableCell>
-                                    <TableCell>{transaction.amount}</TableCell>
+                                    <TableCell>{transaction.balance}</TableCell>
                                     <TableCell>{transaction.transaction_type}</TableCell>
-                                    <TableCell>{transaction.status}</TableCell>
+                                    <TableCell>{transaction.amount}</TableCell>
                                     <TableCell>{new Date(transaction.request_date).toLocaleString()}</TableCell>
+                                    <TableCell>{transaction.status}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="contained"

@@ -3,6 +3,9 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 import { getTransactionHistoryList } from '../../api/services/payment';
 import END_POINTS from '../../constants/endpoints';
 import SearchIcon from '@mui/icons-material/Search';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const { TRANSACTION_HISTORY_LIST } = END_POINTS;
 
 // Sample data for demonstration
@@ -63,6 +66,45 @@ const TransactionHistoryList = () => {
                 <Typography variant="h6" gutterBottom>
                     Transaction History
                 </Typography>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                        label="From"
+                        // value={fromDate}  
+                        // onChange={(newValue) => setFromDate(newValue)}  
+                        sx={{
+                            '& .MuiInputBase-root': {
+                                height: 40,  // Set the height you need
+                            },
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                sx={{ width: 150, '& .MuiInputBase-root': { height: 40 } }}
+                            />
+                        )}
+                    />
+                </LocalizationProvider>
+
+                {/* To Date Filter */}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                        label="To"
+                        // value={toDate} 
+                        // onChange={(newValue) => setToDate(newValue)}  
+                        sx={{
+                            '& .MuiInputBase-root': {
+                                height: 40,  // Set the height you need
+                            },
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                sx={{ width: 150, '& .MuiInputBase-root': { height: 40 } }}
+                            />
+                        )}
+                    />
+                </LocalizationProvider>
                 <TextField placeholder="Search Transaction..." sx={{
                     '& .MuiInputBase-root': {
                         height: 40,  // Set the height you need

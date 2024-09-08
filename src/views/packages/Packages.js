@@ -55,7 +55,8 @@ function Packages() {
             package_type: 'Day',
             driver_charge: 0,
             convience_charge: 0,
-            company_charge: 0
+            company_charge: 0,
+            gst: '18%'
         },
         resolver: yupResolver(CreatePackageSchema)
     });
@@ -65,7 +66,7 @@ function Packages() {
     const dropOffState = watch('dropoff_state');
     const bookingType = watch('booking_type');
     const tripType = watch('trip_type');
-    let TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge'));
+    let TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
     let TotalAmount = TotalBasic + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
     // const driverCharge = Number(watch('company_charge'));
 
@@ -258,15 +259,10 @@ function Packages() {
                             <TableCell className="text-nowrap">Drop-Off State</TableCell>
                             <TableCell className="text-nowrap">Drop-Off City</TableCell>
                             <TableCell>Hours Package</TableCell>
-                            <TableCell>Days Package</TableCell>
 
-                            <TableCell>Maximum Distance</TableCell>
                             <TableCell>Driver Charge</TableCell>
-                            <TableCell>Night Charge</TableCell>
 
                             <TableCell className="!text-center">Convenience Charge</TableCell>
-                            <TableCell>GST</TableCell>
-                            <TableCell>Basic Price</TableCell>
                             <TableCell>Total Price</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
@@ -321,32 +317,17 @@ function Packages() {
                                         }
 
                                     </TableCell>
-                                    <TableCell className="!text-center">
 
-                                        {
-                                            data?.days_package ? data?.days_package : 'N.A.'
-                                        }
-                                    </TableCell>
-
-                                    <TableCell className="!text-center">
-                                        {
-                                            data?.max_distance ? data?.max_distance : 'N.A.'
-                                        }
-                                    </TableCell>
                                     <TableCell
                                     >
                                         {data?.driver_charge ? data?.driver_charge : 'N.A.'}
                                     </TableCell>
-                                    <TableCell>
-                                        {data?.night_charge ? data?.night_charge : "N.A."}
-                                    </TableCell>
+
 
 
                                     <TableCell>
                                         {data?.convience_charge ? data?.convience_charge : "N.A."}
                                     </TableCell>
-                                    <TableCell>{data?.gst?.$numberDecimal ? data?.gst : "N.A."}</TableCell>
-                                    <TableCell>{data?.basic_total ? data?.basic_total : "N.A."}</TableCell>
                                     <TableCell>{data?.total ? data?.total : "N.A."}</TableCell>
                                     <TableCell>
                                         <Box>
@@ -809,7 +790,17 @@ function Packages() {
                                     />
                                 )}
                             />
-                            <Controller
+                            <TextField
+                                label="GST (18%)"
+                                variant="outlined"
+                                value={watch('company_charge') ? (parseFloat(watch('company_charge')) * 0.18).toFixed(2) : 0}
+                                type="text"
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                fullWidth
+                            />
+                            {/* <Controller
                                 control={control}
                                 name="gst"
                                 render={({ field }) => (
@@ -821,7 +812,7 @@ function Packages() {
                                         helperText={errors.gst?.message}
                                     />
                                 )}
-                            />
+                            /> */}
 
                         </Stack>
                         <Stack direction={"row"} gap={2} className="!mb-4">
