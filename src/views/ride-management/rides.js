@@ -58,7 +58,7 @@ function AllRides() {
     watch,
     formState: { errors },
     setValue,
-    getValues, 
+    getValues,
     trigger
   } = useForm({
     defaultValues: {
@@ -294,36 +294,40 @@ function AllRides() {
   const date = new Date();
   const handleRideNumberChange = async (value) => {
     if (value?.length === 10) {
-      await getAllRides(BOOKING_LIST, {
+      const response= await getAllRides(BOOKING_LIST, {
         params: {
           search: value
         }
-      }).then(async (data) => {
-        setValue('booking_type', data?.data[0]?.booking_type);
-        setValue('way_type', data?.data[0]?.way_type);
-        setValue('pass_name', data?.data[0]?.pass_name);
-        setValue('pass_mobile_no', data?.data[0]?.pass_mobile_no);
-        setValue('pickup_time', dayjs(data?.data[0]?.pickup_time));
-        setValue('return_time', dayjs(data?.data[0]?.return_time));
-        setValue('return_date', dayjs(data?.data[0]?.return_date));
-        setValue('pickup_date', dayjs(data?.data[0]?.pickup_date));
-        setValue('pickup_address', data?.data[0]?.pickup_address);
-        setValue('pickup_state', data?.data[0]?.pickup_state);
-        setValue('pickup_city', data?.data[0]?.pickup_city);
-        setValue('pickup_pin', data?.data[0]?.pickup_pin);
-        setValue('return_address', data?.data[0]?.return_address);
-        setValue('return_state', data?.data[0]?.return_state);
-        setValue('return_city', data?.data[0]?.return_city);
-        setValue('package_id', data?.data[0]?.package_id);
-        setValue('return_pin', data?.data[0]?.return_pin);
-        setValue('car_type', data?.data[0]?.car_type);
-        setValue('pass_whatsapp_no', data?.data[0]?.pass_whatsapp_no);
-        setValue('payment_type', data?.data[0]?.payment_type);
-        setValue('alreadypaid_amount', data?.data[0]?.alreadypaid_amount);
-        setValue('email', data?.data[0]?.email);
-        setValue('travel_allowance', data?.data[0]?.travel_allowance);
-        await trigger(['booking_type', 'way_type', 'pass_name', 'pass_mobile_no', 'pickup_time', 'return_time', 'return_date', 'pickup_date', 'pickup_address', 'pickup_state', 'pickup_city', 'pickup_pin', 'return_address', 'return_state', 'return_city', 'package_id', 'return_pin', 'car_type', 'pass_whatsapp_no', 'payment_type', 'alreadypaid_amount', 'email', 'travel_allowance']);
       });
+      if(response?.data?.length > 0) {
+        console.log(response?.data[0]['way_type'] , "WAY TYPE")
+        reset({
+          // _id: data['_id'],
+          booking_type: response?.data[0]['booking_type'],
+          way_type: response?.data[0]['way_type'],
+          pass_name: response?.data[0]['pass_name'],
+          pass_mobile_no: response?.data[0]['pass_mobile_no'],
+          pickup_time: dayjs(response?.data[0]['pickup_time']),
+          return_time: dayjs(response?.data[0]['return_time']),
+          return_date: dayjs(response?.data[0]['return_date']),
+          pickup_date: dayjs(response?.data[0]['pickup_date']),
+          pickup_address: response?.data[0]['pickup_address'],
+          pickup_state: response?.data[0]['pickup_state'],
+          pickup_city: response?.data[0]['pickup_city'],
+          pickup_pin: response?.data[0]['pickup_pin'],
+          return_address: response?.data[0]['return_address'],
+          return_state: response?.data[0]['return_state'],
+          return_city: response?.data[0]['return_city'],
+          package_id: response?.data[0]['package_id'],
+          return_pin: response?.data[0]['return_pin'],
+          car_type: response?.data[0]['car_type'],
+          pass_whatsapp_no: response?.data[0]['pass_whatsapp_no'],
+          payment_type: response?.data[0]['payment_type'],
+          alreadypaid_amount: response?.data[0]['alreadypaid_amount'],
+          email: response?.data[0]['email'],
+          travel_allowance: response?.data[0]['travel_allowance']
+        })
+      }
     }
   };
   const allValue = getValues();
