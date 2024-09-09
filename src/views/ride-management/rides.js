@@ -290,7 +290,7 @@ function AllRides() {
   const paymentType = watch('payment_type')
   const date = new Date();
   const handleRideNumberChange = async (value) => {
-    if(value.length === 10) {
+    if(value?.length === 10) {
       await getAllRides(BOOKING_LIST, {
         params: {
           search: value
