@@ -289,32 +289,40 @@ function AllRides() {
   const wayType = watch('way_type', 'One Way');
   const paymentType = watch('payment_type')
   const date = new Date();
-  const handleRideNumberChange = (value) => {
-    // setRideNumber(value);
-    const existingRide = allRides.find(ride => ride.pass_mobile_no === value);
+  const handleRideNumberChange = async (value) => {
+    const response = await getAllRides(BOOKING_LIST, {
+      params: {
+        search: value
+      }
+    }).then((data) => {
+      setValue('booking_type', data?.data[0]?.booking_type);
+      setValue('way_type', data?.data[0]?.way_type);
+      setValue('pass_name', data?.data[0]?.pass_name);
+      setValue('pass_mobile_no', data?.data[0]?.pass_mobile_no);
+      setValue('pickup_time', dayjs(data?.data[0]?.pickup_time));
+      setValue('return_time', dayjs(data?.data[0]?.return_time));
+      setValue('return_date', dayjs(data?.data[0]?.return_date));
+      setValue('pickup_date', dayjs(data?.data[0]?.pickup_date));
+      setValue('pickup_address', data?.data[0]?.pickup_address);
+      setValue('pickup_state', data?.data[0]?.pickup_state);
+      setValue('pickup_city', data?.data[0]?.pickup_city);
+      setValue('pickup_pin', data?.data[0]?.pickup_pin);
+      setValue('return_address', data?.data[0]?.return_address);
+      setValue('return_state', data?.data[0]?.return_state);
+      setValue('return_city', data?.data[0]?.return_city);
+      setValue('package_id', data?.data[0]?.package_id);
+      setValue('return_pin', data?.data[0]?.return_pin);
+      setValue('car_type', data?.data[0]?.car_type);
+      setValue('pass_whatsapp_no', data?.data[0]?.pass_whatsapp_no);
+      setValue('payment_type', data?.data[0]?.payment_type);
+      setValue('alreadypaid_amount', data?.data[0]?.alreadypaid_amount);
+    });
+    const existingRide = response?.data?.responseData;
+
+
 
     if (existingRide) {
-      setValue('booking_type', existingRide.booking_type);
-      setValue('way_type', existingRide.way_type);
-      setValue('pass_name', existingRide.pass_name);
-      setValue('pass_mobile_no', existingRide.pass_mobile_no);
-      setValue('pickup_time', dayjs(existingRide.pickup_time));
-      setValue('return_time', dayjs(existingRide.return_time));
-      setValue('return_date', dayjs(existingRide.return_date));
-      setValue('pickup_date', dayjs(existingRide.pickup_date));
-      setValue('pickup_address', existingRide.pickup_address);
-      setValue('pickup_state', existingRide.pickup_state);
-      setValue('pickup_city', existingRide.pickup_city);
-      setValue('pickup_pin', existingRide.pickup_pin);
-      setValue('return_address', existingRide.return_address);
-      setValue('return_state', existingRide.return_state);
-      setValue('return_city', existingRide.return_city);
-      setValue('package_id', existingRide.package_id);
-      setValue('return_pin', existingRide.return_pin);
-      setValue('car_type', existingRide.car_type);
-      setValue('pass_whatsapp_no', existingRide.pass_whatsapp_no);
-      setValue('payment_type', existingRide.payment_type);
-      setValue('alreadypaid_amount', existingRide.alreadypaid_amount);
+
     } else {
       // setValue('driverName', '');
       // setValue('pickupLocation', '');
