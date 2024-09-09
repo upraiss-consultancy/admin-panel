@@ -58,7 +58,8 @@ function AllRides() {
     watch,
     formState: { errors },
     setValue,
-    getValues
+    getValues, 
+    trigger
   } = useForm({
     defaultValues: {
       _id: null,
@@ -269,7 +270,9 @@ function AllRides() {
       car_type: data['car_type'],
       pass_whatsapp_no: data['pass_whatsapp_no'],
       payment_type: data['payment_type'],
-      alreadypaid_amount: data['alreadypaid_amount']
+      alreadypaid_amount: data['alreadypaid_amount'],
+      email: data['email'],
+      travel_allowance: data['travel_allowance']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -290,12 +293,12 @@ function AllRides() {
   const paymentType = watch('payment_type')
   const date = new Date();
   const handleRideNumberChange = async (value) => {
-    if(value?.length === 10) {
+    if (value?.length === 10) {
       await getAllRides(BOOKING_LIST, {
         params: {
           search: value
         }
-      }).then((data) => {
+      }).then(async (data) => {
         setValue('booking_type', data?.data[0]?.booking_type);
         setValue('way_type', data?.data[0]?.way_type);
         setValue('pass_name', data?.data[0]?.pass_name);
@@ -317,6 +320,9 @@ function AllRides() {
         setValue('pass_whatsapp_no', data?.data[0]?.pass_whatsapp_no);
         setValue('payment_type', data?.data[0]?.payment_type);
         setValue('alreadypaid_amount', data?.data[0]?.alreadypaid_amount);
+        setValue('email', data?.data[0]?.email);
+        setValue('travel_allowance', data?.data[0]?.travel_allowance);
+        await trigger(['booking_type', 'way_type', 'pass_name', 'pass_mobile_no', 'pickup_time', 'return_time', 'return_date', 'pickup_date', 'pickup_address', 'pickup_state', 'pickup_city', 'pickup_pin', 'return_address', 'return_state', 'return_city', 'package_id', 'return_pin', 'car_type', 'pass_whatsapp_no', 'payment_type', 'alreadypaid_amount', 'email', 'travel_allowance']);
       });
     }
   };
@@ -703,6 +709,20 @@ function AllRides() {
                     />
                   )}
                 />
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Email"
+                      className="w-full"
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
               </Stack>
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
@@ -1021,6 +1041,52 @@ function AllRides() {
                     />
                   )
                 }
+              </Stack>
+              <Stack direction={"row"} className="!mb-4" gap={2}>
+                <Controller
+                  control={control}
+                  name="travel_allowance"
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Travel Allowance"
+                      className="w-full"
+                      error={!!errors.travel_allowance}
+                      helperText={errors.travel_allowance?.message}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="increment_percentage"
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Allowance Increment (in %)"
+                      className="w-full"
+                      error={!!errors.increment_percentage}
+                      helperText={errors.increment_percentage?.message}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
+              </Stack>
+              <Stack direction={"row"} className="!mb-4">
+                <Controller
+                  control={control}
+                  name="decrement_percentage"
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Allowance decrement (in %)"
+                      className="w-full"
+                      error={!!errors.decrement_percentage}
+                      helperText={errors.decrement_percentage?.message}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
               </Stack>
               <Box className="flex" gap={2}>
                 <Button variant="outlined" className="!w-full" type="reset">
