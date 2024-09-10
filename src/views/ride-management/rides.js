@@ -68,7 +68,8 @@ function AllRides() {
       return_state: '',
       return_city: '',
       pickup_state: '',
-      pickup_city: ''
+      pickup_city: '',
+      travel_allowance: 0
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -294,13 +295,13 @@ function AllRides() {
   const date = new Date();
   const handleRideNumberChange = async (value) => {
     if (value?.length === 10) {
-      const response= await getAllRides(BOOKING_LIST, {
+      const response = await getAllRides(BOOKING_LIST, {
         params: {
           search: value
         }
       });
-      if(response?.data?.length > 0) {
-        console.log(response?.data[0]['way_type'] , "WAY TYPE")
+      if (response?.data?.length > 0) {
+        console.log(response?.data[0]['way_type'], "WAY TYPE")
         reset({
           // _id: data['_id'],
           booking_type: response?.data[0]['booking_type'],
@@ -390,7 +391,7 @@ function AllRides() {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="From"
-                value={dayjs(allParams.startDate || null)}
+
                 onChange={(value) => setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })}
                 renderInput={(params) => (
                   <TextField
@@ -408,7 +409,6 @@ function AllRides() {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="To"
-                value={dayjs(allParams.endDate || null)}
                 onChange={(value) => setAllParams({ ...allParams, endDate: dayjs(value).format('YYYY-MM-DD') })}
                 renderInput={(params) => (
                   <TextField
@@ -520,6 +520,7 @@ function AllRides() {
               <TableCell className="!text-center">Interested Driver</TableCell>
               <TableCell className="!text-center">Assigned Driver Name</TableCell>
               <TableCell className="!text-center">Assigned Driver Number</TableCell>
+              <TableCell className="!text-center">Fare</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -530,8 +531,9 @@ function AllRides() {
               {allRides?.map((data, index) => {
                 return (
                   <TableRow
-                  onClick={() => handleViewRideDetail(data?._id)}
+                    onClick={() => handleViewRideDetail(data?._id)}
                   >
+                    {console.log(data, 'data123123', index)}
                     <TableCell>{index + 1}</TableCell>
 
                     <TableCell>{data?.pass_name}</TableCell>
@@ -577,6 +579,7 @@ function AllRides() {
                     </TableCell>
                     <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.full_name : "Pending"}</TableCell>
                     <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.mobile_no : "Pending"}</TableCell>
+                    <TableCell className="!text-center">{data?.fare[0]?.amount ? parseFloat(data?.fare[0]?.amount).toFixed(2) : 'N/A'}</TableCell>
                     <TableCell
                       className={
                         data?.booking_status === "pending"
@@ -1076,7 +1079,7 @@ function AllRides() {
                   )}
                 />
               </Stack>
-              <Stack direction={"row"} className="!mb-4">
+              <Stack direction={"row"} className="!mb-4" gap={2}>
                 <Controller
                   control={control}
                   name="decrement_percentage"
@@ -1091,6 +1094,17 @@ function AllRides() {
                     />
                   )}
                 />
+
+                <TextField
+                  value={Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))}
+                  label="Total Allowance"
+                  className="w-full"
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    readOnly: true
+                  }}
+                />
+
               </Stack>
               <Box className="flex" gap={2}>
                 <Button variant="outlined" className="!w-full" type="reset">
