@@ -530,7 +530,7 @@ function AllRides() {
               {allRides?.map((data, index) => {
                 return (
                   <TableRow
-                  // onClick={() => navigate('/profile')}
+                  onClick={() => handleViewRideDetail(data?._id)}
                   >
                     <TableCell>{index + 1}</TableCell>
 
@@ -1067,7 +1067,7 @@ function AllRides() {
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Allowance Increment (in %)"
+                      label="Add Surcharge"
                       className="w-full"
                       error={!!errors.increment_percentage}
                       helperText={errors.increment_percentage?.message}
@@ -1083,7 +1083,7 @@ function AllRides() {
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Allowance decrement (in %)"
+                      label="Discount"
                       className="w-full"
                       error={!!errors.decrement_percentage}
                       helperText={errors.decrement_percentage?.message}
