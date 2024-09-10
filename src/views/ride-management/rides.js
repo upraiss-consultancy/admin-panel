@@ -69,7 +69,10 @@ function AllRides() {
       return_city: '',
       pickup_state: '',
       pickup_city: '',
-      travel_allowance: 0
+      travel_allowance: 0,
+      decrement_percentage: 0,
+      increment_percentage: 0
+
     },
     resolver: yupResolver(CreateRideSchema)
   });
