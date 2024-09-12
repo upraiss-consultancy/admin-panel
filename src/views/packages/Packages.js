@@ -56,7 +56,9 @@ function Packages() {
             driver_charge: 0,
             convience_charge: 0,
             company_charge: 0,
-            gst: '18%'
+            gst: '18%',
+            night_charge: 0,
+            extra_charge: 0
         },
         resolver: yupResolver(CreatePackageSchema)
     });

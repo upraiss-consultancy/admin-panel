@@ -1075,7 +1075,7 @@ function AllRides() {
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Add Surcharge"
+                      label="Add Surcharge (in %)"
                       className="w-full"
                       error={!!errors.increment_percentage}
                       helperText={errors.increment_percentage?.message}
@@ -1091,7 +1091,7 @@ function AllRides() {
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Discount"
+                      label="Discount (in %)"
                       className="w-full"
                       error={!!errors.decrement_percentage}
                       helperText={errors.decrement_percentage?.message}
