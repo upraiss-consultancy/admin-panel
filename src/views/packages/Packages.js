@@ -68,8 +68,9 @@ function Packages() {
     const dropOffState = watch('dropoff_state');
     const bookingType = watch('booking_type');
     const tripType = watch('trip_type');
-    let TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
-    let TotalAmount = TotalBasic + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
+    let TotalBasic = 0;
+    TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
+    let TotalAmount = Number(TotalBasic) || 0 + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
     // const driverCharge = Number(watch('company_charge'));
 
     const fetchPackages = async (paramsData) => {
@@ -821,7 +822,7 @@ function Packages() {
                             <TextField
                                 label="Total Price"
                                 className="w-full"
-                                value={TotalAmount}
+                                value={TotalAmount || 0}
                             />
                         </Stack>
 
