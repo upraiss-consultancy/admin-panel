@@ -610,7 +610,7 @@ function AllRides() {
                           <Box className=" flex flex-col">
                             <Button
                               className="!px-4"
-                              onClick={() => handleUpdateRide(data)}
+                              onClick={(e) => {handleUpdateRide(data); e.stopPropagation()}}
                             >
                               Update Ride
                             </Button>
@@ -628,8 +628,9 @@ function AllRides() {
                             </Button>
                             <Button
                               className="!px-4"
-                              onClick={async () => {
+                              onClick={async (e) => {
                                 handleNavigate(data?._id)
+                                e.stopPropagation()
                               }}
                             >
                               Assign Ride
