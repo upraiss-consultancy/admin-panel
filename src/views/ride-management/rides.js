@@ -1042,6 +1042,7 @@ function AllRides() {
                           <InputLabel>Packages</InputLabel>
                           <Select {...field} className="w-full" label="Packages">
                             {
+                              
                               packages?.map((data) => <MenuItem value={data?._id}>
                                 {data?.package_name}
                               </MenuItem>)
@@ -1101,7 +1102,7 @@ function AllRides() {
 
                 <TextField
                   value={Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))}
-                  label="Total Allowance"
+                  label="Total Fare"
                   className="w-full"
                   InputLabelProps={{ shrink: true }}
                   InputProps={{
