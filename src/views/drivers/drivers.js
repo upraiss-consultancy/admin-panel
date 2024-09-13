@@ -492,7 +492,7 @@ function Drivers() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {driverListResponse?.data?.map((driver, index) => {
+                        {driverListResponse?.data?.filter((data) => data?.iskyc_done).map((driver, index) => {
                             return (
                                 <TableRow onClick={() => handleViewDriver(driver?._id)}>
                                     <TableCell>

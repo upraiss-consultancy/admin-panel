@@ -49,5 +49,6 @@ export const CreateRideSchema = Yup.object().shape({
     travel_allowance: Yup.number().required('Travel allowance is required.'),
     decrement_percentage: Yup.number(),
     increment_percentage: Yup.number(),
+    days_package: Yup.number()
 })
 

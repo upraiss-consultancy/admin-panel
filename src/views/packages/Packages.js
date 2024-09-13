@@ -56,13 +56,16 @@ function Packages() {
             driver_charge: 0,
             convience_charge: 0,
             company_charge: 0,
-            gst: '18%',
+            gst: 18,
             night_charge: 0,
-            extra_charge: 0
+            extra_charge: 0,
+            days_package: 0
         },
         resolver: yupResolver(CreatePackageSchema)
     });
 
+    console
+        .log(errors, "ERRORS")
 
     const pickupState = watch('pickup_state');
     const dropOffState = watch('dropoff_state');
@@ -70,9 +73,10 @@ function Packages() {
     const tripType = watch('trip_type');
     let TotalBasic = 0;
     TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
-    let TotalAmount = Number(TotalBasic) || 0 + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
+    let TotalAmount = 0;
+    TotalAmount = Number(TotalBasic) + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
     // const driverCharge = Number(watch('company_charge'));
-
+    console.log(Number(watch('company_charge')) * Number(watch('gst')) / 100, "200")
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
             params: {
@@ -822,7 +826,7 @@ function Packages() {
                             <TextField
                                 label="Total Price"
                                 className="w-full"
-                                value={TotalAmount || 0}
+                                value={TotalAmount}
                             />
                         </Stack>
 
