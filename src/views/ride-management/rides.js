@@ -124,7 +124,7 @@ function AllRides() {
       setAllRides([]);
     }
   };
-  console.log(watch(), "Check Watch Values")
+
   const fetchPackage = async () => {
     // const { booking_type, trip_type, pickup_city
     //   , pickup_state, dropoff_city, dropoff_state } = watch();
@@ -219,6 +219,7 @@ function AllRides() {
       ...data,
       pickup_date: pickupformattedDate,
       return_date: returnformattedDate,
+      total_price: Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
@@ -331,7 +332,8 @@ function AllRides() {
           alreadypaid_amount: response?.data[0]['alreadypaid_amount'],
           email: response?.data[0]['email'],
           travel_allowance: response?.data[0]['travel_allowance'],
-          days_package: data['days_package']
+          days_package: response?.data[0]['days_package'],
+
         })
       }
     }
