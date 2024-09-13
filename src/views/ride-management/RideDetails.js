@@ -165,6 +165,7 @@ function RideDetailView() {
                             <TableCell className="!text-center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
+                    {/* // Commit  */}
                     <TableBody>
                         {rideData['data']?.map((data, index) => {
                             return (
