@@ -276,7 +276,8 @@ function AllRides() {
       payment_type: data['payment_type'],
       alreadypaid_amount: data['alreadypaid_amount'],
       email: data['email'],
-      travel_allowance: data['travel_allowance']
+      travel_allowance: data['travel_allowance'],
+      days_package: data['days_package']
     })
     setIsUpdate(true)
     setOpen(true);
@@ -329,7 +330,8 @@ function AllRides() {
           payment_type: response?.data[0]['payment_type'],
           alreadypaid_amount: response?.data[0]['alreadypaid_amount'],
           email: response?.data[0]['email'],
-          travel_allowance: response?.data[0]['travel_allowance']
+          travel_allowance: response?.data[0]['travel_allowance'],
+          days_package: data['days_package']
         })
       }
     }
@@ -768,14 +770,14 @@ function AllRides() {
                 <Stack direction={"row"} gap={2} className="!mb-4">
                   <Controller
                     control={control}
-                    name=""
+                    name="days_package"
                     render={({ field }) => (
                       <TextField
                         {...field}
                         label="Number of Days"
                         className="w-full"
-                        error={!!errors.alreadypaid_amount}
-                        helperText={errors.alreadypaid_amount?.message}
+                        error={!!errors.days_package}
+                        helperText={errors.days_package?.message}
                         InputLabelProps={{ shrink: true }}
                       />
                     )}
