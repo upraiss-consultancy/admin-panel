@@ -287,9 +287,9 @@ function AllRides() {
     setCurrentPage(event.currentTarget.textContent)
   }
 
-  const handleViewRideDetail = (_booking_id , data) => {
+  const handleViewRideDetail = (_booking_id, data) => {
     const queryParams = new URLSearchParams({ bookingId: _booking_id });
-    navigate(`/ride-detail?${queryParams.toString()}` , {state: data});
+    navigate(`/ride-detail?${queryParams.toString()}`, { state: data });
   }
 
   const [search, setSearch] = useState('');
@@ -534,7 +534,7 @@ function AllRides() {
               {allRides?.map((data, index) => {
                 return (
                   <TableRow
-                    onClick={() => handleViewRideDetail(data?._id , data)}
+                    onClick={() => handleViewRideDetail(data?._id, data)}
                   >
                     {console.log(data, 'data123123', index)}
                     <TableCell>{index + 1}</TableCell>
@@ -577,7 +577,7 @@ function AllRides() {
                     </TableCell>
                     <TableCell className="!text-center">
                       {
-                        data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id , data); e.stopPropagation(); }} >{data?.request_count}</Button> : <Button endIcon={<VisibilityIcon />} disabled={true}>0</Button>
+                        data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id, data); e.stopPropagation(); }} >{data?.request_count}</Button> : <Button endIcon={<VisibilityIcon />} disabled={true}>0</Button>
                       }
                     </TableCell>
                     <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.full_name : "Pending"}</TableCell>
@@ -610,7 +610,7 @@ function AllRides() {
                           <Box className=" flex flex-col">
                             <Button
                               className="!px-4"
-                              onClick={(e) => {handleUpdateRide(data); e.stopPropagation()}}
+                              onClick={(e) => { handleUpdateRide(data); e.stopPropagation() }}
                             >
                               Update Ride
                             </Button>
@@ -763,6 +763,25 @@ function AllRides() {
                   )}
                 />
               </Stack>
+              {
+                watch('booking_type') === "Outstation" &&
+                <Stack direction={"row"} gap={2} className="!mb-4">
+                  <Controller
+                    control={control}
+                    name=""
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Number of Days"
+                        className="w-full"
+                        error={!!errors.alreadypaid_amount}
+                        helperText={errors.alreadypaid_amount?.message}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                  />
+                </Stack>
+              }
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
                   control={control}
@@ -1042,7 +1061,7 @@ function AllRides() {
                           <InputLabel>Packages</InputLabel>
                           <Select {...field} className="w-full" label="Packages">
                             {
-                              
+
                               packages?.map((data) => <MenuItem value={data?._id}>
                                 {data?.package_name}
                               </MenuItem>)
