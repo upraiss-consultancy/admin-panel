@@ -18,7 +18,7 @@ import {
     Divider
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
 import utc from 'dayjs/plugin/utc';
@@ -26,7 +26,9 @@ dayjs.extend(utc);
 function RideDetailView() {
     const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE, UNASSIGN_DRIVER } = END_POINTS;
     const [searchParams] = useSearchParams()
-    const bookingId = searchParams.get('bookingId')
+    const bookingId = searchParams.get('bookingId');
+    const { state } = useLocation();
+    console.log(state, "STATES VALUES")
     const [rideData, setRideData] = useState({
         data: [],
         rideData: []
@@ -82,40 +84,40 @@ function RideDetailView() {
                 </Typography>
                 <Divider />
                 <Typography variant="body1" gutterBottom className='!mt-4'>
-                    <strong>Passeneger Name</strong> {rideData['rideData'][0]?.bookingData?.pass_name}
+                    <strong>Passeneger Name</strong> {state?.pass_name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Passeneger Mobile No.</strong> {rideData['rideData'][0]?.bookingData?.pass_mobile_no}
+                    <strong>Passeneger Mobile No.</strong> {state?.pass_mobile_no}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Car Type:</strong> {rideData['rideData'][0]?.bookingData?.car_type}
+                    <strong>Car Type:</strong> {state?.car_type}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Booking Type:</strong> {rideData['rideData'][0]?.bookingData?.booking_type}
+                    <strong>Booking Type:</strong> {state?.booking_type}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Way Type:</strong> {rideData['rideData'][0]?.bookingData?.way_type}
+                    <strong>Way Type:</strong> {state?.way_type}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Pick-Up Address:</strong> {rideData['rideData'][0]?.bookingData?.pickup_address + ", " + rideData['rideData'][0]?.bookingData?.pickup_city + ", " + rideData['rideData'][0]?.bookingData?.pickup_state + " " + rideData['rideData'][0]?.bookingData?.pickup_pin}
+                    <strong>Pick-Up Address:</strong> {state?.pickup_address + ", " + state?.pickup_city + ", " + state?.pickup_state + " " + state?.pickup_pin}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Pick-Up Date:</strong> {dayjs(rideData['rideData'][0]?.bookingData?.pickup_date).format('MM-DD-YYYY')}
+                    <strong>Pick-Up Date:</strong> {dayjs(state?.pickup_date).format('MM-DD-YYYY')}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Pick-Up Time:</strong> {dayjs(rideData['rideData'][0]?.bookingData?.pickup_time).utc().format('HH:mm:ss')}
+                    <strong>Pick-Up Time:</strong> {dayjs(state?.pickup_time).utc().format('HH:mm:ss')}
                 </Typography>
                 {
-                    rideData['rideData'][0]?.bookingData?.way_type === "One Way" && (
+                    state?.way_type === "One Way" && (
                         <>
                             <Typography variant="body1" gutterBottom>
-                                <strong>Return Address:</strong>{rideData['rideData'][0]?.bookingData?.return_address + ", " + rideData['rideData'][0]?.bookingData?.return_city + ", " + rideData['rideData'][0]?.bookingData?.return_state + " " + rideData['rideData'][0]?.bookingData?.return_pin}
+                                <strong>Return Address:</strong>{state?.return_address + ", " + state?.return_city + ", " + state?.return_state + " " + state?.return_pin}
                             </Typography>
                             <Typography variant="body1" gutterBottom>
-                                <strong>Return Date:</strong>{dayjs(rideData['rideData'][0]?.bookingData?.return_date).format('MM-DD-YYYY')}
+                                <strong>Return Date:</strong>{dayjs(state?.return_date).format('MM-DD-YYYY')}
                             </Typography>
                             <Typography variant="body1" gutterBottom>
-                                <strong>Return Time:</strong> {dayjs(rideData['rideData'][0]?.bookingData?.return_time).utc().format('HH:mm:ss')}
+                                <strong>Return Time:</strong> {dayjs(state?.return_time).utc().format('HH:mm:ss')}
                             </Typography>
                         </>
                     )

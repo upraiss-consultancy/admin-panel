@@ -287,9 +287,9 @@ function AllRides() {
     setCurrentPage(event.currentTarget.textContent)
   }
 
-  const handleViewRideDetail = (_booking_id) => {
+  const handleViewRideDetail = (_booking_id , data) => {
     const queryParams = new URLSearchParams({ bookingId: _booking_id });
-    navigate(`/ride-detail?${queryParams.toString()}`);
+    navigate(`/ride-detail?${queryParams.toString()}` , {state: data});
   }
 
   const [search, setSearch] = useState('');
@@ -534,7 +534,7 @@ function AllRides() {
               {allRides?.map((data, index) => {
                 return (
                   <TableRow
-                    onClick={() => handleViewRideDetail(data?._id)}
+                    onClick={() => handleViewRideDetail(data?._id , data)}
                   >
                     {console.log(data, 'data123123', index)}
                     <TableCell>{index + 1}</TableCell>
@@ -577,7 +577,7 @@ function AllRides() {
                     </TableCell>
                     <TableCell className="!text-center">
                       {
-                        data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id); e.stopPropagation(); }} >{data?.request_count}</Button> : <Button endIcon={<VisibilityIcon />} disabled={true}>0</Button>
+                        data?.request_count > 0 ? <Button endIcon={<VisibilityIcon />} onClick={(e) => { handleViewRideDetail(data?._id , data); e.stopPropagation(); }} >{data?.request_count}</Button> : <Button endIcon={<VisibilityIcon />} disabled={true}>0</Button>
                       }
                     </TableCell>
                     <TableCell className="!text-center">{data?.user?.full_name ? data?.user?.full_name : "Pending"}</TableCell>
