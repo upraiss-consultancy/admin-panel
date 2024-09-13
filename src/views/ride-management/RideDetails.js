@@ -202,11 +202,11 @@ function RideDetailView() {
                                         console.log(data, data?._id)}
                                     <TableCell className="!text-center">
                                         <Box className="flex">
-
+                                            {console.log(data?.status , 'STATUSKKK')}
                                             {
-                                                data?.status !== "approved" && <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2 text-nowrap'>Assign Ride</Button>
+                                                data?.status !== "approved" && <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2 text-nowrap' disabled={data?.status === "complete"}>Assign Ride</Button>
                                             }
-                                            <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)} className='text-nowrap'>Unassign Ride</Button>
+                                            <Button variant="outlined" onClick={() => handleUnAssignRide(data?._id)} className='text-nowrap' disabled={data?.status === "complete"}>Unassign Ride</Button>
                                         </Box>
 
 
