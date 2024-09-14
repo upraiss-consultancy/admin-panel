@@ -34,7 +34,7 @@ const schema = yup.object().shape({
 
 const { CREATE_JOB } = END_POINTS;
 
-export default function JobForm({ setOpen, updateJobData }) {
+export default function JobForm({ setOpen, updateJobData , fetchJobs}) {
   const { control, handleSubmit, formState: { errors }, reset, watch, getValues, } = useForm({
     resolver: yupResolver(schema),
   });
@@ -47,7 +47,8 @@ export default function JobForm({ setOpen, updateJobData }) {
     if (response?.responseCode === 200) {
       reset();
       showToast(response?.message, 'success');
-      setOpen(false)
+      fetchJobs()
+      setOpen(false);
     }
   };
 

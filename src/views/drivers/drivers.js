@@ -487,12 +487,13 @@ function Drivers() {
 
                             <TableCell>Experience</TableCell>
                             <TableCell>Status</TableCell>
+                            <TableCell>Active Status</TableCell>
                             <TableCell>Vehicle Type</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {driverListResponse?.data?.filter((data) => data?.iskyc_done).map((driver, index) => {
+                        {driverListResponse?.data?.map((driver, index) => {
                             return (
                                 <TableRow onClick={() => handleViewDriver(driver?._id)}>
                                     <TableCell>
@@ -520,6 +521,11 @@ function Drivers() {
                                     <TableCell className="!text-center">
                                         {
                                             driver?.status
+                                        }
+                                    </TableCell>
+                                    <TableCell className="!text-center">
+                                        {
+                                            driver?.active_status || 'N/A'
                                         }
                                     </TableCell>
                                     <TableCell
@@ -586,7 +592,7 @@ function Drivers() {
                         <Typography variant="h6" component="div">
                             {isUpdate ? 'Update Driver' : 'Create Driver'}
                         </Typography>
-                        <IconButton onClick={() => setOpen(false)}>
+                        <IconButton onClick={() => {setOpen(false); reset()}}>
                             <CloseIcon />
                         </IconButton>
                     </Box>

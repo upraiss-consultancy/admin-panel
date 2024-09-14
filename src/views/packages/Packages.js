@@ -54,7 +54,7 @@ function Packages() {
             _id: null,
             package_type: 'Day',
             driver_charge: 0,
-            convience_charge: 0,
+            travel_allowance: 0,
             company_charge: 0,
             gst: 18,
             night_charge: 0,
@@ -72,11 +72,9 @@ function Packages() {
     const bookingType = watch('booking_type');
     const tripType = watch('trip_type');
     let TotalBasic = 0;
-    TotalBasic = Number(watch('driver_charge')) + Number(watch('convience_charge')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
+    TotalBasic = Number(watch('driver_charge')) + Number(watch('travel_allowance')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
     let TotalAmount = 0;
-    TotalAmount = Number(TotalBasic) + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
-    // const driverCharge = Number(watch('company_charge'));
-    console.log(Number(watch('company_charge')) * Number(watch('gst')) / 100, "200")
+    TotalAmount = Number(TotalBasic) + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100) + Number(watch('other_charge'));
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
             params: {
@@ -168,7 +166,7 @@ function Packages() {
             driver_charge: data?.driver_charge,
             other_charge: data?.other_charge,
             company_charge: data?.company_charge,
-            convience_charge: data?.convience_charge,
+            travel_allowance: data?.travel_allowance,
             gst: data?.gst,
             basic_total: data?.basic_price,
             total: data?.basic_price,
@@ -269,7 +267,7 @@ function Packages() {
 
                             <TableCell>Driver Charge</TableCell>
 
-                            <TableCell className="!text-center">Convenience Charge</TableCell>
+                            <TableCell className="!text-center">Travel Allowance</TableCell>
                             <TableCell>Total Price</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
@@ -333,7 +331,7 @@ function Packages() {
 
 
                                     <TableCell>
-                                        {data?.convience_charge ? data?.convience_charge : "N.A."}
+                                        {data?.travel_allowance ? data?.travel_allowance : "N.A."}
                                     </TableCell>
                                     <TableCell>{data?.total ? data?.total : "N.A."}</TableCell>
                                     <TableCell>
@@ -387,7 +385,7 @@ function Packages() {
                         <Typography variant="h6" component="div">
                             {isUpdate ? 'Update' : 'Create'} Package
                         </Typography>
-                        <IconButton onClick={() => setOpen(false)}>
+                        <IconButton onClick={() => { setOpen(false); reset() }}>
                             <CloseIcon />
                         </IconButton>
                     </Box>
@@ -559,14 +557,14 @@ function Packages() {
                             />
                             <Controller
                                 control={control}
-                                name="convience_charge"
+                                name="travel_allowance"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
                                         label="Travel Allowance"
                                         className="w-full"
-                                        error={!!errors.convience_charge}
-                                        helperText={errors.convience_charge?.message}
+                                        error={!!errors.travel_allowance}
+                                        helperText={errors.travel_allowance?.message}
                                     />
                                 )}
                             />
