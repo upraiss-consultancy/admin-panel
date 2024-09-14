@@ -213,8 +213,8 @@ function AllRides() {
   };
   const onSubmit = async (data) => {
     setISLoading(true)
-    const pickupformattedDate = dayjs(data.pickup_date).format('YYYY-MM-DD');
-    const returnformattedDate = dayjs(data.return_date).format('YYYY-MM-DD');
+    const pickupformattedDate = dayjs(data.pickup_date);
+    const returnformattedDate = dayjs(data.return_date);
     const transformedData = {
       ...data,
       pickup_date: pickupformattedDate,
@@ -665,7 +665,7 @@ function AllRides() {
               <Typography variant="h6" component="div">
                 Create Ride
               </Typography>
-              <IconButton onClick={() => setOpen(false)}>
+              <IconButton onClick={() => {setOpen(false); reset()}}>
                 <CloseIcon />
               </IconButton>
             </Box>

@@ -56,7 +56,7 @@ export const Job = () => {
 
 
                 {
-                    open ? <JobForm setOpen={setOpen} updateJobData={updateJobData} /> : <Box>
+                    open ? <JobForm setOpen={setOpen} updateJobData={updateJobData} fetchJobs={fetchJobs}/> : <Box>
 
                         <Box className="flex my-2 mt-2 justify-between px-4">
                             <Typography variant="h6" component="div">

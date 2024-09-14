@@ -26,7 +26,7 @@ export const CreatePackageSchema = Yup.object().shape({
     max_distance: Yup.number(),
     driver_charge: Yup.number().required('Driver Charge is required'),
     extra_charge: Yup.number(),
-    convience_charge: Yup.number(),
+    // convience_charge: Yup.number(),
     company_charge: Yup.number(),
     basic_total: Yup.number(),
     gst: Yup.number().required('GST is required.'),
