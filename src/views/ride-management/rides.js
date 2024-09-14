@@ -71,8 +71,8 @@ function AllRides() {
       pickup_city: '',
       travel_allowance: 0,
       decrement_percentage: 0,
-      increment_percentage: 0
-
+      increment_percentage: 0,
+      total_price: 0
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -105,6 +105,7 @@ function AllRides() {
   const [dropOffCity, setDropOffCity] = useState([]);
   const [isLoading, setISLoading] = useState(false);
   const [remarks, setRemarks] = useState('');
+  const [traveAllowance , setTravelAllowance] = useState(0)
 
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
@@ -331,7 +332,7 @@ function AllRides() {
           payment_type: response?.data[0]['payment_type'],
           alreadypaid_amount: response?.data[0]['alreadypaid_amount'],
           email: response?.data[0]['email'],
-          travel_allowance: response?.data[0]['travel_allowance'],
+          travel_allowance: Number(response?.data[0]['travel_allowance']),
           days_package: response?.data[0]['days_package'],
 
         })
@@ -356,6 +357,16 @@ function AllRides() {
       setAllPackages(response?.data?.responseData)
     }
   }
+  const handleUpdateFareValue = (travel_allowance, total_price) => {
+    setTravelAllowance(travel_allowance)
+    console.log(travel_allowance, total_price)
+    const currentValues = watch(); // Get current form values
+    reset({
+      ...currentValues, // Spread current values
+      travel_allowance: travel_allowance, // Update the age field, others remain unchanged
+      total_price: total_price
+    });
+  };
   return (
     <>
       <TableContainer component={Paper}>
@@ -665,7 +676,7 @@ function AllRides() {
               <Typography variant="h6" component="div">
                 Create Ride
               </Typography>
-              <IconButton onClick={() => {setOpen(false); reset()}}>
+              <IconButton onClick={() => { reset(); setOpen(false); }}>
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -1066,7 +1077,7 @@ function AllRides() {
                           <Select {...field} className="w-full" label="Packages">
                             {
 
-                              packages?.map((data) => <MenuItem value={data?._id}>
+                              packages?.map((data) => <MenuItem value={data?._id} onClick={() => { handleUpdateFareValue(data?.travel_allowance, data?.total); console.log(data?.total, data?.travel_allowance, "CHeck ALL VAL") }}>
                                 {data?.package_name}
                               </MenuItem>)
                             }
@@ -1122,9 +1133,9 @@ function AllRides() {
                     />
                   )}
                 />
-
+{console.log(Number(watch('total_price')) , traveAllowance , Number(watch('travel_allowance')) , Number((watch('travel_allowance') * watch('increment_percentage') / 100)) ,  Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100)) , "CJJCS")}
                 <TextField
-                  value={Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))}
+                  value={Number(watch('total_price')) - traveAllowance + Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))}
                   label="Total Fare"
                   className="w-full"
                   InputLabelProps={{ shrink: true }}
