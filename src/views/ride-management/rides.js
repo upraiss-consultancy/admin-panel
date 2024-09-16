@@ -1272,8 +1272,6 @@ function AllRides() {
                   </Button>
                 }
               </Box>
-              <button onClick={handleSet}>Click ME</button>
-              {console.log(fare, "FARE Hain??")}
             </Box>
           </Box>
         </Drawer>
