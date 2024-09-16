@@ -73,7 +73,7 @@ function AllRides() {
       decrement_percentage: 0,
       increment_percentage: 0,
       total_price: 0,
-      days_package: 0
+      days_package: 1
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -379,6 +379,7 @@ function AllRides() {
     }
   }
   const handleUpdateFareValue = (total_price) => {
+    console.log(total_price , 'total_price1212' )
     let percentageOf20 = total_price * 0.20;
     let percentageOf82 = percentageOf20 * 0.82;
     setFare(prevState => ({ ...prevState, totalPrice: total_price, driverCharge: total_price * 0.64, travelAllowance: total_price * 0.16, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
