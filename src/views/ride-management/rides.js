@@ -316,7 +316,8 @@ function AllRides() {
   const [search, setSearch] = useState('');
   const wayType = watch('way_type', 'One Way');
   const paymentType = watch('payment_type');
-  const totalDays = watch('days_package')
+  let totalDays = watch('days_package')
+  totalDays = watch('days_package') == 0 ? 1 : watch('days_package')
   const date = new Date();
   const handleRideNumberChange = async (value) => {
     if (value?.length === 10) {
@@ -379,7 +380,7 @@ function AllRides() {
     }
   }
   const handleUpdateFareValue = (total_price) => {
-    console.log(total_price , 'total_price1212' )
+    console.log(total_price, 'total_price1212')
     let percentageOf20 = total_price * 0.20;
     let percentageOf82 = percentageOf20 * 0.82;
     setFare(prevState => ({ ...prevState, totalPrice: total_price, driverCharge: total_price * 0.64, travelAllowance: total_price * 0.16, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
