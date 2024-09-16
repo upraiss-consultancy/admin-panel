@@ -72,7 +72,8 @@ function AllRides() {
       travel_allowance: 0,
       decrement_percentage: 0,
       increment_percentage: 0,
-      total_price: 0
+      total_price: 0,
+      days_package: 0
     },
     resolver: yupResolver(CreateRideSchema)
   });
@@ -105,8 +106,16 @@ function AllRides() {
   const [dropOffCity, setDropOffCity] = useState([]);
   const [isLoading, setISLoading] = useState(false);
   const [remarks, setRemarks] = useState('');
-  const [traveAllowance , setTravelAllowance] = useState(0)
-
+  const [totalBaseValue, setTotalBaseValue] = useState(0);
+  const [disabled, setDisabled] = useState(true)
+  const [fare, setFare] = useState({
+    totalPrice: 0,
+    driverCharge: 0,
+    travelAllowance: 0,
+    platformFee: 0,
+    gst: 0,
+  })
+  console.log(errors, "errors")
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -175,7 +184,7 @@ function AllRides() {
   useEffect(() => {
     fetchRides();
   }, [currentPage, allParams]);
-  const watchAllFields = watch();
+
   // useEffect(() => {
   //   fetchPackage()
   // }, [])
@@ -220,7 +229,11 @@ function AllRides() {
       ...data,
       pickup_date: pickupformattedDate,
       return_date: returnformattedDate,
-      total_price: Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))
+      total_price: fare.totalPrice,
+      travel_allowance: fare.travelAllowance,
+      company_amount: fare.platformFee,
+      driver_amount: fare.driverCharge,
+      gst: fare.gst
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
@@ -279,7 +292,12 @@ function AllRides() {
       alreadypaid_amount: data['alreadypaid_amount'],
       email: data['email'],
       travel_allowance: data['travel_allowance'],
-      days_package: data['days_package']
+      days_package: data['days_package'],
+      total_price: data['total_price'],
+      days_package: data['days_package'],
+      company_amount: Number(data['platformFee']),
+      driver_amount: Number(data['driverCharge']),
+      gst: Number(data['gst'])
     })
     setIsUpdate(true)
     setOpen(true);
@@ -297,7 +315,8 @@ function AllRides() {
 
   const [search, setSearch] = useState('');
   const wayType = watch('way_type', 'One Way');
-  const paymentType = watch('payment_type')
+  const paymentType = watch('payment_type');
+  const totalDays = watch('days_package')
   const date = new Date();
   const handleRideNumberChange = async (value) => {
     if (value?.length === 10) {
@@ -307,7 +326,6 @@ function AllRides() {
         }
       });
       if (response?.data?.length > 0) {
-        console.log(response?.data[0]['way_type'], "WAY TYPE")
         reset({
           // _id: data['_id'],
           booking_type: response?.data[0]['booking_type'],
@@ -334,6 +352,9 @@ function AllRides() {
           email: response?.data[0]['email'],
           travel_allowance: Number(response?.data[0]['travel_allowance']),
           days_package: response?.data[0]['days_package'],
+          company_amount: Number(response?.data[0]['platformFee']),
+          driver_amount: Number(response?.data[0]['driverCharge']),
+          gst: Number(response?.data[0]['gst'])
 
         })
       }
@@ -357,16 +378,52 @@ function AllRides() {
       setAllPackages(response?.data?.responseData)
     }
   }
-  const handleUpdateFareValue = (travel_allowance, total_price) => {
-    setTravelAllowance(travel_allowance)
-    console.log(travel_allowance, total_price)
-    const currentValues = watch(); // Get current form values
+  const handleUpdateFareValue = (total_price) => {
+    let percentageOf20 = total_price * 0.20;
+    let percentageOf82 = percentageOf20 * 0.82;
+    setFare(prevState => ({ ...prevState, totalPrice: total_price, driverCharge: total_price * 0.64, travelAllowance: total_price * 0.16, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
+    const currentValues = watch();
     reset({
-      ...currentValues, // Spread current values
-      travel_allowance: travel_allowance, // Update the age field, others remain unchanged
+      ...currentValues,
       total_price: total_price
     });
   };
+  const handleSet = (e) => {
+    if (totalBaseValue > Number(e.target.value)) {
+      setValue('decrement_percentage', Number(totalBaseValue - e.target.value))
+      setValue('increment_percentage', 0)
+    } else if (totalBaseValue < Number(e.target.value)) {
+      setValue('increment_percentage', Number(e.target.value - totalBaseValue))
+      setValue('decrement_percentage', 0)
+    } else if (totalBaseValue === Number(e.target.value)) {
+      setValue('increment_percentage', 0)
+      setValue('decrement_percentage', 0)
+    }
+    handleUpdateFareValue(e.target.value)
+  }
+
+  const handleDriverChange = (e) => {
+    let value = Number(fare.travelAllowance) + Number(fare.driverCharge);
+    setFare(prevState => ({ ...prevState, driverCharge: e.target.value, travelAllowance: value - Number(e.target.value) }))
+  }
+
+  const handleTravelAllowanceChange = (e) => {
+    let value = Number(fare.travelAllowance) + Number(fare.driverCharge);
+    setFare(prevState => ({ ...prevState, travelAllowance: e.target.value, driverCharge: value - Number(e.target.value) }))
+  }
+
+  const handlePlatFormFeeChange = (e) => {
+    let value = Number(fare.platformFee) + Number(fare.gst);
+    setFare(prevState => ({ ...prevState, platformFee: e.target.value, gst: value - Number(e.target.value) }))
+  }
+
+  const handleGstChange = (e) => {
+    let value = Number(fare.platformFee) + Number(fare.gst);
+    setFare(prevState => ({ ...prevState, gst: e.target.value, platformFee: value - Number(e.target.value) }))
+  }
+
+
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -1077,7 +1134,7 @@ function AllRides() {
                           <Select {...field} className="w-full" label="Packages">
                             {
 
-                              packages?.map((data) => <MenuItem value={data?._id} onClick={() => { handleUpdateFareValue(data?.travel_allowance, data?.total); console.log(data?.total, data?.travel_allowance, "CHeck ALL VAL") }}>
+                              packages?.map((data) => <MenuItem value={data?._id} onClick={() => { handleUpdateFareValue(data?.total * totalDays); setDisabled(false); setTotalBaseValue(data?.total * totalDays); setValue('package_id', data?._id) }}>
                                 {data?.package_name}
                               </MenuItem>)
                             }
@@ -1089,59 +1146,117 @@ function AllRides() {
                 }
               </Stack>
               <Stack direction={"row"} className="!mb-4" gap={2}>
+                <TextField
+                  value={Number(watch('total_price'))}
+                  onChange={e => handleSet(e)}
+                  label="Total Fare"
+                  className="w-full"
+                  InputLabelProps={{ shrink: true }}
+                  disabled={disabled}
+
+                />
+              </Stack>
+              <Stack direction={"row"} className="!mb-4" gap={2}>
                 <Controller
                   control={control}
                   name="travel_allowance"
                   render={({ field }) => (
                     <TextField
-                      {...field}
-                      label="Travel Allowance"
+                      value={fare.driverCharge}
+                      onChange={(e) => handleDriverChange(e)}
+                      label="Driver Charge"
                       className="w-full"
                       error={!!errors.travel_allowance}
                       helperText={errors.travel_allowance?.message}
                       InputLabelProps={{ shrink: true }}
+                      disabled={disabled}
                     />
                   )}
                 />
+
+                <TextField
+                  value={fare.travelAllowance}
+                  onChange={(e) => handleTravelAllowanceChange(e)}
+                  label="Travel Allowance"
+                  className="w-full"
+                  error={!!errors.travel_allowance}
+                  helperText={errors.travel_allowance?.message}
+                  InputLabelProps={{ shrink: true }}
+                  disabled={disabled}
+                />
+
+              </Stack>
+              <Stack direction={"row"} className="!mb-4" gap={2}>
+                {/* <Controller
+                  control={control}
+                  name="travel_allowance"
+                  render={({ field }) => ( */}
+                <TextField
+                  value={fare.platformFee}
+                  onChange={(e) => handlePlatFormFeeChange(e)}
+                  label="Platform Fee"
+                  className="w-full"
+                  error={!!errors.travel_allowance}
+                  helperText={errors.travel_allowance?.message}
+                  InputLabelProps={{ shrink: true }}
+                  disabled={disabled}
+                />
+                {/* )}
+                /> */}
+                {/* <Controller
+                  control={control}
+                  name="travel_allowance"
+                  render={({ field }) => ( */}
+                <TextField
+
+                  label="GST"
+                  value={fare.gst}
+                  onChange={(e) => handleGstChange(e)}
+                  className="w-full"
+                  error={!!errors.travel_allowance}
+                  helperText={errors.travel_allowance?.message}
+                  InputLabelProps={{ shrink: true }}
+                  disabled={disabled}
+                />
+                {/* )}
+                /> */}
+              </Stack>
+              <Stack direction={"row"} className="!mb-4" gap={2}>
                 <Controller
                   control={control}
                   name="increment_percentage"
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Add Surcharge (in %)"
+                      label="Add Surcharge"
+                      InputProps={{
+                        readOnly: true
+                      }}
                       className="w-full"
                       error={!!errors.increment_percentage}
                       helperText={errors.increment_percentage?.message}
                       InputLabelProps={{ shrink: true }}
+                      disabled={disabled}
                     />
                   )}
                 />
-              </Stack>
-              <Stack direction={"row"} className="!mb-4" gap={2}>
                 <Controller
                   control={control}
                   name="decrement_percentage"
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Discount (in %)"
+                      InputProps={{
+                        readOnly: true
+                      }}
+                      label="Discount"
                       className="w-full"
                       error={!!errors.decrement_percentage}
                       helperText={errors.decrement_percentage?.message}
                       InputLabelProps={{ shrink: true }}
+                      disabled={disabled}
                     />
                   )}
-                />
-{console.log(Number(watch('total_price')) , traveAllowance , Number(watch('travel_allowance')) , Number((watch('travel_allowance') * watch('increment_percentage') / 100)) ,  Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100)) , "CJJCS")}
-                <TextField
-                  value={Number(watch('total_price')) - traveAllowance + Number(watch('travel_allowance')) + Number((watch('travel_allowance') * watch('increment_percentage') / 100)) - Number(((watch('travel_allowance') * watch('decrement_percentage')) / 100))}
-                  label="Total Fare"
-                  className="w-full"
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    readOnly: true
-                  }}
                 />
 
               </Stack>
