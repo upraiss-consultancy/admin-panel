@@ -294,6 +294,7 @@ function AllRides() {
       travel_allowance: data['travel_allowance'],
       days_package: data['days_package'],
       total_price: data['total_price'],
+      days_package: data['days_package'],
       company_amount: Number(data['platformFee']),
       driver_amount: Number(data['driverCharge']),
       gst: Number(data['gst'])
