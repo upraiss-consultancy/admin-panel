@@ -62,8 +62,8 @@ export const createRide = async (endpoint, rideData) => {
         return { message: message, bookingId: bookingId };
       }
     }
-  } catch (error) { 
-    
+  } catch (error) {
+
   }
 };
 
@@ -131,7 +131,6 @@ export const interestedDriverList = async (endpoint, params) => {
 export const AssignInterestedDrivers = async (endpoint, data) => {
   try {
     const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
-    console.log(response, "response123")
     if (response) {
       const {
         statusText,
@@ -143,6 +142,23 @@ export const AssignInterestedDrivers = async (endpoint, data) => {
     }
   } catch (error) { }
 };
+
+
+export const UpdateFare = async (endpoint, data) => {
+  try {
+    const response = await api.post(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, data);
+    if (response) {
+      const {
+        statusText,
+        data: { responseData: responseData, responseCode, message },
+      } = response;
+      if (responseCode === 200) {
+        return { responseData: responseData, message: message, responseCode: responseCode };
+      }
+    }
+  } catch (error) { }
+};
+
 
 
 

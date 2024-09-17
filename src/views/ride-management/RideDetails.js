@@ -22,13 +22,14 @@ import { useSearchParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
 import utc from 'dayjs/plugin/utc';
+import PaymentFormDrawer from './updateFare';
 dayjs.extend(utc);
 function RideDetailView() {
     const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE, UNASSIGN_DRIVER } = END_POINTS;
     const [searchParams] = useSearchParams()
     const bookingId = searchParams.get('bookingId');
     const { state } = useLocation();
-    console.log(state, "STATES VALUES")
+    const [open, setOpen] = useState(false);
     const [rideData, setRideData] = useState({
         data: [],
         rideData: []
@@ -78,10 +79,14 @@ function RideDetailView() {
     return (
         <>
             <Box sx={{ marginTop: 2 }}>
-                <Typography variant="h6" gutterBottom >
-                    Ride Details
-
-                </Typography>
+                <Box className="flex justify-between items-center">
+                    <Typography variant="h6" gutterBottom >
+                        Ride Details
+                    </Typography>
+                    <Button onClick={() => setOpen(true)}>
+                        Update Fare
+                    </Button>
+                </Box>
                 <Divider />
                 <Typography variant="body1" gutterBottom className='!mt-4'>
                     <strong>Passeneger Name</strong> {state?.pass_name}
@@ -122,7 +127,7 @@ function RideDetailView() {
                         </>
                     )
                 }
-            
+
                 <Box className=" pb-4">
                     <Typography variant="body1" gutterBottom>
                         <strong>Total Amount:</strong> {state?.fare[0]?.amount}
@@ -238,7 +243,7 @@ function RideDetailView() {
                         </Box>
                     </Stack> */}
             </TableContainer >
-
+            <PaymentFormDrawer open={open} setOpen={setOpen} bookingId={bookingId} />
         </>
     )
 }

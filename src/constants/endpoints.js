@@ -40,6 +40,7 @@ const END_POINTS = {
     TRANSACTION_HISTORY_LIST: "v0/admin/wallet/transaction/fetch_list",
     CLOSE_JOB: "v0/admin/job/closedJobs",
     GET_USER_BY_PHONE: "v0/admin/provide_phone_get_userId",
-    CREATE_PAYMENT_BY_ADMIN: "v0/admin/wallet/create_payment"
+    CREATE_PAYMENT_BY_ADMIN: "v0/admin/wallet/create_payment",
+    UPDATE_FARE: "v0/admin/updateFare"
 }
 export default END_POINTS
