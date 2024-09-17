@@ -72,9 +72,9 @@ function Packages() {
     const bookingType = watch('booking_type');
     const tripType = watch('trip_type');
     let TotalBasic = 0;
-    TotalBasic = Number(watch('driver_charge')) + Number(watch('travel_allowance')) + Number(watch('night_charge')) + Number(watch('extra_charge'));
+    TotalBasic = Number(watch('driver_charge')) + Number(watch('travel_allowance'));
     let TotalAmount = 0;
-    TotalAmount = Number(TotalBasic) + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100) + Number(watch('other_charge'));
+    TotalAmount = Number(TotalBasic) + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
             params: {
