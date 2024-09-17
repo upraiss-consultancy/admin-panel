@@ -381,18 +381,18 @@ function AllRides() {
   }
   const handleUpdateFareValue = (total_price) => {
     console.log(total_price, 'total_price1212')
-    let percentageOf20 = total_price * 0.20;
+    let percentageOf20 = Number(total_price) * 0.20;
     let percentageOf82 = percentageOf20 * 0.82;
-    setFare(prevState => ({ ...prevState, totalPrice: total_price, driverCharge: total_price * 0.64, travelAllowance: total_price * 0.16, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
+    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.64, travelAllowance: Number(total_price) * 0.16, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
     const currentValues = watch();
     reset({
       ...currentValues,
-      total_price: total_price
+      total_price: Number(total_price)
     });
   };
   const handleSet = (e) => {
     if (totalBaseValue > Number(e.target.value)) {
-      setValue('decrement_percentage', Number(totalBaseValue - e.target.value))
+      setValue('decrement_percentage', Number(totalBaseValue - Number(e.target.value)))
       setValue('increment_percentage', 0)
     } else if (totalBaseValue < Number(e.target.value)) {
       setValue('increment_percentage', Number(e.target.value - totalBaseValue))
@@ -406,22 +406,22 @@ function AllRides() {
 
   const handleDriverChange = (e) => {
     let value = Number(fare.travelAllowance) + Number(fare.driverCharge);
-    setFare(prevState => ({ ...prevState, driverCharge: e.target.value, travelAllowance: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, driverCharge: Number(e.target.value), travelAllowance: value - Number(e.target.value) }))
   }
 
   const handleTravelAllowanceChange = (e) => {
     let value = Number(fare.travelAllowance) + Number(fare.driverCharge);
-    setFare(prevState => ({ ...prevState, travelAllowance: e.target.value, driverCharge: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, travelAllowance:  Number(e.target.value), driverCharge: value - Number(e.target.value) }))
   }
 
   const handlePlatFormFeeChange = (e) => {
     let value = Number(fare.platformFee) + Number(fare.gst);
-    setFare(prevState => ({ ...prevState, platformFee: e.target.value, gst: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, platformFee:  Number(e.target.value), gst: value - Number(e.target.value) }))
   }
 
   const handleGstChange = (e) => {
     let value = Number(fare.platformFee) + Number(fare.gst);
-    setFare(prevState => ({ ...prevState, gst: e.target.value, platformFee: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, gst:  Number(e.target.value), platformFee: value - Number(e.target.value) }))
   }
 
 
