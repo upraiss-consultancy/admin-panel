@@ -587,9 +587,10 @@ function AllRides() {
                 value={allParams.booking_type || 'All'}
                 onChange={(e) => setAllParams({ ...allParams, payment_status: e.target.value })}
               >
-                <MenuItem value={'received'}>Received</MenuItem>
-                <MenuItem value={'pending'}>Pending</MenuItem>
-                <MenuItem value={'partiallyReceived'}>Partially Received</MenuItem>
+                <MenuItem value={'Recived'}>Received</MenuItem>
+                {/* <MenuItem value={'pending'}>Pending</MenuItem> */}
+                <MenuItem value={'Partially Paid'}>Partially Received</MenuItem>
+                <MenuItem value={'Not Recived'}>Not Received</MenuItem>
               </Select>
             </FormControl>
           </Grid>
