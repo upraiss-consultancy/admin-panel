@@ -1149,7 +1149,7 @@ function AllRides() {
               </Stack>
               <Stack direction={"row"} className="!mb-4" gap={2}>
                 <TextField
-                  value={Number(watch('total_price')).toFixed(2) || 0}
+                  value={Number(watch('total_price')).toFixed(2)}
                   onChange={e => handleSet(e)}
                   label="Total Fare"
                   className="w-full"
@@ -1164,7 +1164,7 @@ function AllRides() {
                   name="travel_allowance"
                   render={({ field }) => (
                     <TextField
-                      value={fare.driverCharge.toFixed(2) || 0}
+                      value={fare.driverCharge.toFixed(2)}
                       onChange={(e) => handleDriverChange(e)}
                       label="Driver Charge"
                       className="w-full"
@@ -1177,7 +1177,7 @@ function AllRides() {
                 />
 
                 <TextField
-                  value={fare.travelAllowance.toFixed(2) || 0}
+                  value={fare.travelAllowance.toFixed(2)}
                   onChange={(e) => handleTravelAllowanceChange(e)}
                   label="Travel Allowance"
                   className="w-full"
@@ -1194,7 +1194,7 @@ function AllRides() {
                   name="travel_allowance"
                   render={({ field }) => ( */}
                 <TextField
-                  value={fare.platformFee.toFixed(2) || 0}
+                  value={fare.platformFee.toFixed(2)}
                   onChange={(e) => handlePlatFormFeeChange(e)}
                   label="Platform Fee"
                   className="w-full"
@@ -1212,7 +1212,7 @@ function AllRides() {
                 <TextField
 
                   label="GST"
-                  value={fare.gst.toFixed(2) || 0}
+                  value={fare.gst.toFixed(2)}
                   onChange={(e) => handleGstChange(e)}
                   className="w-full"
                   error={!!errors.travel_allowance}
