@@ -1115,11 +1115,12 @@ function AllRides() {
                     </FormControl>
                   )}
                 />
-                {
-                  !selectPackage && <Button onClick={() => { setSelectPackage(true); handlePackage() }} variant="contained" disabled={
+                {/* variant="contained" disabled={
                     (!way_type || !booking_type || !pickup_city || !pickup_state) ?
                       true : false
-                  }>
+                  } */}
+                {
+                  !selectPackage && <Button onClick={() => { setSelectPackage(true); handlePackage() }} >
                     Select Package
                   </Button>
                 }

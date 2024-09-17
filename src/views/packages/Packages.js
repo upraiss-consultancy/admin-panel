@@ -503,7 +503,7 @@ function Packages() {
                         }
 
                         {
-                            tripType !== "Round Trip" && (
+                           ( tripType !== "Round Trip" && bookingType !== "Local") && (
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
