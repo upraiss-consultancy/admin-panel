@@ -98,7 +98,8 @@ function AllRides() {
     startDate: '',
     endDate: "",
     city: "",
-    state: ""
+    state: "",
+    payment_status: ''
   })
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -295,8 +296,8 @@ function AllRides() {
       days_package: data['days_package'],
       total_price: data['total_price'],
       days_package: data['days_package'],
-      company_amount: Number(data['platformFee']),
-      driver_amount: Number(data['driverCharge']),
+      company_amount: Number(data['company_amount']),
+      driver_amount: Number(data['driver_amount']),
       gst: Number(data['gst'])
     })
     setIsUpdate(true)
@@ -351,12 +352,12 @@ function AllRides() {
           payment_type: response?.data[0]['payment_type'],
           alreadypaid_amount: Number(response?.data[0]['alreadypaid_amount']),
           email: response?.data[0]['email'],
-          travel_allowance: Number(response?.data[0]['travel_allowance']),
+          travel_allowance: Number(response?.data[0]?.fare[0]['travel_allowance']),
           days_package: Number(response?.data[0]['days_package']),
-          company_amount: Number(response?.data[0]['platformFee']),
-          driver_amount: Number(response?.data[0]['driverCharge']),
+          company_amount: Number(response?.data[0]['company_amount']),
+          driver_amount: Number(response?.data[0]['driver_amount']),
           gst: Number(response?.data[0]['gst']),
-total_price: Number(response?.data[0]['total_price']),
+          total_price: Number(response?.data[0]['total_price']),
         })
       }
     }
@@ -411,20 +412,21 @@ total_price: Number(response?.data[0]['total_price']),
 
   const handleTravelAllowanceChange = (e) => {
     let value = Number(fare.travelAllowance) + Number(fare.driverCharge);
-    setFare(prevState => ({ ...prevState, travelAllowance:  Number(e.target.value), driverCharge: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value), driverCharge: value - Number(e.target.value) }))
   }
 
   const handlePlatFormFeeChange = (e) => {
     let value = Number(fare.platformFee) + Number(fare.gst);
-    setFare(prevState => ({ ...prevState, platformFee:  Number(e.target.value), gst: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, platformFee: Number(e.target.value), gst: value - Number(e.target.value) }))
+
   }
 
   const handleGstChange = (e) => {
     let value = Number(fare.platformFee) + Number(fare.gst);
-    setFare(prevState => ({ ...prevState, gst:  Number(e.target.value), platformFee: value - Number(e.target.value) }))
+    setFare(prevState => ({ ...prevState, gst: Number(e.target.value), platformFee: value - Number(e.target.value) }))
   }
 
-
+  console.log(watch('travel_allowance', 'driver_charge'), "CHECK TRSVEL ALLOWANCE", getValues())
 
   return (
     <>
@@ -577,7 +579,20 @@ total_price: Number(response?.data[0]['total_price']),
               </Select>
             </FormControl>
           </Grid>
-
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>Paymet Status</InputLabel>
+              <Select
+                label="Booking Type"
+                value={allParams.booking_type || 'All'}
+                onChange={(e) => setAllParams({ ...allParams, payment_status: e.target.value })}
+              >
+                <MenuItem value={'received'}>Received</MenuItem>
+                <MenuItem value={'pending'}>Pending</MenuItem>
+                <MenuItem value={'partiallyReceived'}>Partially Received</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
 
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

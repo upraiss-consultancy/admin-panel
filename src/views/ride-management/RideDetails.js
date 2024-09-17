@@ -122,6 +122,21 @@ function RideDetailView() {
                         </>
                     )
                 }
+            
+                <Box className=" pb-4">
+                    <Typography variant="body1" gutterBottom>
+                        <strong>Total Amount:</strong> {state?.fare[0]?.amount}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        <strong>Received Amount:</strong> {state?.fare[0]?.paidAmount}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        <strong>Pending Amount:</strong>  {state?.fare[0]?.pendingAmount}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        <strong>Payment Status</strong>  {state?.fare[0]?.payment_status}
+                    </Typography>
+                </Box>
             </Box>
             <TableContainer component={Paper}>
                 <Box className="flex my-2 justify-between px-4">
@@ -203,7 +218,7 @@ function RideDetailView() {
                                         console.log(data, data?._id)}
                                     <TableCell className="!text-center">
                                         <Box className="flex">
-                                            {console.log(data?.status , 'STATUSKKK')}
+                                            {console.log(data?.status, 'STATUSKKK')}
                                             {
                                                 data?.status !== "approved" && <Button variant="outlined" onClick={() => handleAssignRide(data?._id)} className=' !mr-2 text-nowrap' disabled={data?.status === "complete"}>Assign Ride</Button>
                                             }
