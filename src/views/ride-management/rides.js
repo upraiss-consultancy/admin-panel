@@ -349,14 +349,14 @@ function AllRides() {
           car_type: response?.data[0]['car_type'],
           pass_whatsapp_no: response?.data[0]['pass_whatsapp_no'],
           payment_type: response?.data[0]['payment_type'],
-          alreadypaid_amount: response?.data[0]['alreadypaid_amount'],
+          alreadypaid_amount: Number(response?.data[0]['alreadypaid_amount']),
           email: response?.data[0]['email'],
           travel_allowance: Number(response?.data[0]['travel_allowance']),
-          days_package: response?.data[0]['days_package'],
+          days_package: Number(response?.data[0]['days_package']),
           company_amount: Number(response?.data[0]['platformFee']),
           driver_amount: Number(response?.data[0]['driverCharge']),
-          gst: Number(response?.data[0]['gst'])
-
+          gst: Number(response?.data[0]['gst']),
+total_price: Number(response?.data[0]['total_price']),
         })
       }
     }
