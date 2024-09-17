@@ -32,6 +32,7 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
         control,
         handleSubmit,
         reset,
+        watch,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(validationSchema),
@@ -92,6 +93,53 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                     )}
                                 />
                             </Grid>
+                            {
+                                watch('payment_status') === "Recived" && (
+                                    <Grid item xs={6}>
+
+                                        <Controller
+                                            name="payment_status"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <TextField
+                                                    {...field}
+                                                    select
+                                                    label="Received From"
+                                                    fullWidth
+                                                    error={!!errors.payment_status}
+                                                    helperText={errors.payment_status?.message}
+                                                >
+                                                    <MenuItem value="Recived">Company</MenuItem>
+                                                    <MenuItem value="Not Recived">Driver</MenuItem>
+                                                </TextField>
+                                            )}
+                                        />
+                                    </Grid>
+                                )}{
+
+                                watch('payment_status') === "Not Recived" && (
+                                    <Grid item xs={6}>
+
+                                        <Controller
+                                            name="payment_status"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <TextField
+                                                    {...field}
+                                                    select
+                                                    label="Received To"
+                                                    fullWidth
+                                                    error={!!errors.payment_status}
+                                                    helperText={errors.payment_status?.message}
+                                                >
+                                                    <MenuItem value="Recived">Company</MenuItem>
+                                                    <MenuItem value="Not Recived">Driver</MenuItem>
+                                                </TextField>
+                                            )}
+                                        />
+                                    </Grid>
+                                )
+                            }
 
                             <Grid item xs={6}>
                                 <Controller
@@ -113,23 +161,9 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={12}>
-                                <Controller
-                                    name="payment_mode_remark"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            label="Payment Mode Remark"
-                                            fullWidth
-                                            error={!!errors.payment_mode_remark}
-                                            helperText={errors.payment_mode_remark?.message}
-                                        />
-                                    )}
-                                />
-                            </Grid>
 
-                            <Grid item xs={12}>
+
+                            {/* <Grid item xs={12}>
                                 <Controller
                                     name="comment"
                                     control={control}
@@ -143,7 +177,7 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                         />
                                     )}
                                 />
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={6}>
                                 <Controller
@@ -195,6 +229,22 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                     )}
                                 />
                             </Grid>
+
+                        </Grid>
+                        <Grid item xs={12} pt={2}>
+                            <Controller
+                                name="payment_mode_remark"
+                                control={control}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Payment Mode Remark"
+                                        fullWidth
+                                        error={!!errors.payment_mode_remark}
+                                        helperText={errors.payment_mode_remark?.message}
+                                    />
+                                )}
+                            />
                         </Grid>
 
                         <Box mt={3}>
