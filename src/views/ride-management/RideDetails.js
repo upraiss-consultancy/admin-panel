@@ -83,7 +83,7 @@ function RideDetailView() {
                     <Typography variant="h6" gutterBottom >
                         Ride Details
                     </Typography>
-                    <Button onClick={() => setOpen(true)}>
+                    <Button onClick={() => setOpen(true)} sx={{ backgroundColor: '#DD781E', height: 40 , color: "#fff"}}>
                         Update Fare
                     </Button>
                 </Box>
@@ -243,7 +243,7 @@ function RideDetailView() {
                         </Box>
                     </Stack> */}
             </TableContainer >
-            <PaymentFormDrawer open={open} setOpen={setOpen} bookingId={bookingId} />
+            <PaymentFormDrawer open={open} setOpen={setOpen} bookingId={bookingId} fareData={state?.fare[0]} />
         </>
     )
 }

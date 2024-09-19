@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     Drawer,
     Button,
@@ -22,18 +22,18 @@ const validationSchema = yup.object().shape({
     payment_mode: yup.string().required("Payment Mode is required"),
     payment_mode_remark: yup.string().nullable(),
     comment: yup.string().nullable(),
-    amount: yup.number().required("Amount is required").min(0, "Must be 0 or more"),
     paidAmount: yup.number().required("Paid Amount is required").min(0, "Must be 0 or more"),
     pendingAmount: yup.number().required("Pending Amount is required").min(0, "Must be 0 or more"),
 });
 
-const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
+const PaymentFormDrawer = ({ open, setOpen, bookingId, fareData }) => {
     const {
         control,
         handleSubmit,
         reset,
         watch,
         formState: { errors },
+        setValue
     } = useForm({
         resolver: yupResolver(validationSchema),
         defaultValues: {
@@ -41,12 +41,15 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
             payment_mode: "",
             payment_mode_remark: null,
             comment: null,
-            amount: 0,
             paidAmount: 0,
             pendingAmount: 0,
         },
     });
-
+    const [disableInput, setDisableInput] = useState({
+        totalAmountInput: false,
+        paidInput: false,
+        pendingAmountInput: false
+    })
     const onSubmit = async (data) => {
         let transformedData = {
             ...data,
@@ -61,7 +64,34 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
             showToast('Something went wrong', 'error');
         }
     };
+    const handleChange = (value) => {
+        switch (value) {
+            case "Recived":
+                setDisableInput(prevState => ({ ...prevState, totalAmountInput: true, paidInput: true, pendingAmountInput: true }));
+                setValue('paidAmount', fareData?.paidAmount?.toFixed(2))
+                setValue('pendingAmount', fareData?.pendingAmount?.toFixed(2))
+                break;
+            case "Not Recived":
+                setDisableInput(prevState => ({ ...prevState, totalAmountInput: true, paidInput: true, pendingAmountInput: true }));
+                setValue('paidAmount', fareData?.paidAmount?.toFixed(2))
+                setValue('pendingAmount', fareData?.pendingAmount?.toFixed(2))
+                break;
+            case "Partially Paid":
+                setDisableInput(prevState => ({ ...prevState, totalAmountInput: true, paidInput: false, pendingAmountInput: true }));
+                setValue('paidAmount', fareData?.paidAmount?.toFixed(2))
+                setValue('pendingAmount', fareData?.pendingAmount?.toFixed(2))
+                break;
+        }
+    }
 
+    const handlePaidAmountChange = (value) => {
+        if (value <= fareData?.amount) {
+            let pendingAmount = fareData?.amount - value;
+            setValue('pendingAmount', pendingAmount);
+        } else {
+            showToast('Please write correct amount', 'error')
+        }
+    }
     return (
         <>
             <Drawer anchor="right" open={open} onClose={() => { reset(); setOpen(false); }}>
@@ -75,9 +105,13 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                 <Controller
                                     name="payment_status"
                                     control={control}
-                                    render={({ field }) => (
+                                    render={({ field: { onChange, value } }) => (
                                         <TextField
-                                            {...field}
+                                            value={value}
+                                            onChange={(e) => {
+                                                onChange(e.target.value);
+                                                handleChange(e.target.value)
+                                            }}
                                             select
                                             label="Payment Status"
                                             fullWidth
@@ -86,60 +120,12 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                         >
                                             <MenuItem value="Recived">Received</MenuItem>
                                             <MenuItem value="Not Recived">Not Received</MenuItem>
-                                            <MenuItem value="Pending">Pending</MenuItem>
-                                            <MenuItem value="Failed">Failed</MenuItem>
                                             <MenuItem value="Partially Paid">Partially Paid</MenuItem>
                                         </TextField>
                                     )}
                                 />
                             </Grid>
-                            {
-                                watch('payment_status') === "Recived" && (
-                                    <Grid item xs={6}>
 
-                                        <Controller
-                                            name="payment_status"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    select
-                                                    label="Received From"
-                                                    fullWidth
-                                                    error={!!errors.payment_status}
-                                                    helperText={errors.payment_status?.message}
-                                                >
-                                                    <MenuItem value="Recived">Company</MenuItem>
-                                                    <MenuItem value="Not Recived">Driver</MenuItem>
-                                                </TextField>
-                                            )}
-                                        />
-                                    </Grid>
-                                )}{
-
-                                watch('payment_status') === "Not Recived" && (
-                                    <Grid item xs={6}>
-
-                                        <Controller
-                                            name="payment_status"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    select
-                                                    label="Received To"
-                                                    fullWidth
-                                                    error={!!errors.payment_status}
-                                                    helperText={errors.payment_status?.message}
-                                                >
-                                                    <MenuItem value="Recived">Company</MenuItem>
-                                                    <MenuItem value="Not Recived">Driver</MenuItem>
-                                                </TextField>
-                                            )}
-                                        />
-                                    </Grid>
-                                )
-                            }
 
                             <Grid item xs={6}>
                                 <Controller
@@ -160,54 +146,39 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                     )}
                                 />
                             </Grid>
-
-
-
-                            {/* <Grid item xs={12}>
-                                <Controller
-                                    name="comment"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            label="Comment"
-                                            fullWidth
-                                            error={!!errors.comment}
-                                            helperText={errors.comment?.message}
-                                        />
-                                    )}
-                                />
-                            </Grid> */}
-
                             <Grid item xs={6}>
-                                <Controller
-                                    name="amount"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            label="Amount"
-                                            type="number"
-                                            fullWidth
-                                            error={!!errors.amount}
-                                            helperText={errors.amount?.message}
-                                        />
-                                    )}
+
+                                <TextField
+                                    value={fareData?.amount?.toFixed(2)}
+                                    label="Amount"
+                                    type="number"
+                                    fullWidth
+                                    error={!!errors.amount}
+                                    helperText={errors.amount?.message}
+                                    disabled={disableInput?.totalAmountInput}
                                 />
+
                             </Grid>
 
                             <Grid item xs={6}>
                                 <Controller
                                     name="paidAmount"
                                     control={control}
-                                    render={({ field }) => (
+                                    render={({ field: { onChange, value } }) => (
                                         <TextField
-                                            {...field}
+                                            value={value}
+                                            onChange={(e) => {
+                                                if (fareData?.amount >= e.target.value) {
+                                                    onChange(e.target.value);
+                                                    handlePaidAmountChange(e.target.value)
+                                                }
+                                            }}
                                             label="Paid Amount"
                                             type="number"
                                             fullWidth
                                             error={!!errors.paidAmount}
                                             helperText={errors.paidAmount?.message}
+                                            disabled={disableInput?.paidInput}
                                         />
                                     )}
                                 />
@@ -225,6 +196,7 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId }) => {
                                             fullWidth
                                             error={!!errors.pendingAmount}
                                             helperText={errors.pendingAmount?.message}
+                                            disabled={disableInput?.pendingAmountInput}
                                         />
                                     )}
                                 />
