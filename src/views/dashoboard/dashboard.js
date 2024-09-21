@@ -1,10 +1,10 @@
-import { Container, Grid, Paper, Typography, Card, CardContent, Stack, Tabs, Tab, Box, Avatar, Divider } from "@mui/material";
-import { useState } from "react";
+import { Container, Grid, Paper, Typography, Card, CardContent, Stack, Tabs, Tab, Box, Avatar, Divider, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Bar } from 'react-chartjs-2';
 import { useSpring, animated } from '@react-spring/web';
 import WorkIcon from '@mui/icons-material/Work';
-
+import { getJob } from "../../api/services/job";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -14,7 +14,14 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-
+import END_POINTS from "../../constants/endpoints";
+import { getDriverList } from "../../api/services/driver";
+import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from 'date-fns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+const { GET_ALL_JOB, ALL_USER_ADMIN } = END_POINTS;
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -117,9 +124,9 @@ const TabPanel = ({ children, value, index, ...other }) => {
 const DriverCard = ({ driver }) => {
     return (
         <Box display="flex" alignItems="center" mb={2}>
-            <Avatar src={driver.image} alt={driver.name} />
+            <Avatar src={driver.profile_img} alt={driver.name} />
             <Box ml={2}>
-                <Typography variant="h6">{driver.name}</Typography>
+                <Typography variant="h6">{driver.full_name}</Typography>
                 <Box display="flex" alignItems="center">
                     <CheckCircleIcon style={{ color: 'green', fontSize: 16 }} />
                     <Typography variant="body2" color="textSecondary" ml={1}>
@@ -133,35 +140,37 @@ const DriverCard = ({ driver }) => {
 };
 
 
-const DriverStatus = () => {
+const DriverStatus = ({ navigate }) => {
     const [tabValue, setTabValue] = useState(0);
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
+    const [drivers, setDrivers] = useState([]);
+    const fetchDrivers = async () => {
+        const responseData = await getDriverList(ALL_USER_ADMIN, {
+            params: {
+                active_status: tabValue == 0 ? 'online' : 'offline'
+            }
 
-    // Example drivers data
-    const drivers = [
-        {
-            image: 'https://via.placeholder.com/150',
-            name: 'John Doe',
-            status: 'Active',
-            details: 'Driver since 2021, 500 rides completed',
-        },
-        {
-            image: 'https://via.placeholder.com/150',
-            name: 'Jane Smith',
-            status: 'Active',
-            details: 'Driver since 2020, 350 rides completed',
-        },
-    ];
+        });
+        if (responseData?.data) {
+            setDrivers(responseData?.data)
+        }
+    };
+    useEffect(() => {
+        fetchDrivers();
+    }, [tabValue])
 
     const tabStyles = (isActive) => ({
-        backgroundColor: isActive ? '#DD781E' : '#e0e0e0', // Active tab: blue, Inactive tab: light grey
+        backgroundColor: isActive ? '#DD781E' : '#e0e0e0',
         color: isActive ? '#fff' : '#000',
         borderRadius: '4px',
         margin: '0 4px',
     });
+    const handleViewDriver = (id) => {
+        navigate(`/profile/${id}`)
+    }
 
     return (
         <Box>
@@ -173,25 +182,18 @@ const DriverStatus = () => {
                 centered
             >
                 <Tab label="Active Driver" style={tabStyles(tabValue === 0)} className=" flex-1" />
-                <Tab label="Blocked Driver" style={tabStyles(tabValue === 1)} className=" flex-1" />
-                <Tab label="Inactive Driver" style={tabStyles(tabValue === 2)} className=" flex-1" />
+                {/* <Tab label="Blocked Driver" style={tabStyles(tabValue === 1)} className=" flex-1" /> */}
+                <Tab label="Inactive Driver" style={tabStyles(tabValue === 1)} className=" flex-1" />
             </Tabs>
 
-            <TabPanel value={tabValue} index={0}>
+            <TabPanel value={tabValue} index={tabValue}>
                 <Grid container spacing={2}>
-                    {drivers.map((driver, index) => (
-                        <Grid item xs={12} md={12} key={index}>
+                    {drivers?.map((driver, index) => (
+                        <Grid item xs={12} md={12} key={index} onClick={() => handleViewDriver(driver?._id)}>
                             <DriverCard driver={driver} />
                         </Grid>
                     ))}
                 </Grid>
-            </TabPanel>
-
-            <TabPanel value={tabValue} index={1}>
-                <Typography variant="h6">Blocked Driver Details Here</Typography>
-            </TabPanel>
-            <TabPanel value={tabValue} index={2}>
-                <Typography variant="h6">Inactive Driver Details Here</Typography>
             </TabPanel>
         </Box>
     );
@@ -237,9 +239,15 @@ const RecentActivityItem = ({ activity }) => {
     );
 };
 
-const RecentJobItem = ({ job }) => {
+const RecentJobItem = ({ job, navigate }) => {
+    function timeAgo(timestamp) {
+        return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+    }
+    const handleNavigate = (id) => {
+        navigate(`/all-candidates/${id}`)
+    }
     return (
-        <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
+        <Paper elevation={2} sx={{ p: 2, mb: 2 }} onClick={() => handleNavigate(job?._id)}>
             <Grid container alignItems="center">
                 <Grid item>
                     <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
@@ -249,10 +257,10 @@ const RecentJobItem = ({ job }) => {
                 <Grid item xs>
                     <Typography variant="h6">{job.title}</Typography>
                     <Typography variant="body2" color="textSecondary">
-                        {job.company} - {job.location}
+                        {'Drive Assist'} - {job.location}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                        {job.date}
+                        {timeAgo(job?.createdAt)}
                     </Typography>
                 </Grid>
             </Grid>
@@ -260,7 +268,14 @@ const RecentJobItem = ({ job }) => {
     );
 };
 
-const RecentJobs = () => {
+const RecentJobs = ({ navigate }) => {
+    const [jobData, setJobData] = useState([]);
+    const fetchJobs = async () => {
+        const response = await getJob(GET_ALL_JOB);
+        if (response) {
+            setJobData(response?.data)
+        }
+    }
     const jobs = [
         {
             title: 'Software Engineer',
@@ -282,14 +297,17 @@ const RecentJobs = () => {
         },
         // Add more jobs as needed
     ];
+    useEffect(() => {
+        fetchJobs()
+    }, [])
 
     return (
         <Box>
             <Typography variant="h5" mb={3}>
                 Recent Jobs
             </Typography>
-            {jobs.map((job, index) => (
-                <RecentJobItem key={index} job={job} />
+            {jobData.map((job, index) => (
+                <RecentJobItem key={index} job={job} navigate={navigate} />
             ))}
         </Box>
     );
@@ -353,12 +371,46 @@ const RecentActivity = () => {
 };
 
 function Dashboard() {
+    const navigate = useNavigate()
     return (
         <>
             <Paper className=" py-5 px-5">
-                <Typography variant="h4" component="h3" className=" !mb-2">
-                    Dashboard
-                </Typography>
+                <Box className=" flex justify-between items-start mb-4">
+
+                    <Typography variant="h4" component="h3" className=" !mb-2">
+                        Dashboard
+                    </Typography>
+                    <Box className="  flex justify-between items-center gap-2">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label="From"
+
+                                // onChange={(value) => setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        sx={{ '& .MuiInputBase-root': { height: 40 } }} // Adjust height
+                                    />
+                                )}
+                            />
+                        </LocalizationProvider>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label="To"
+
+                                // onChange={(value) => setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        sx={{ '& .MuiInputBase-root': { height: 40 } }} // Adjust height
+                                    />
+                                )}
+                            />
+                        </LocalizationProvider>
+                    </Box>
+                </Box>
                 <Grid container spacing={2}>
 
                     <Grid item xs={3}>
@@ -370,13 +422,13 @@ function Dashboard() {
                         </Stack>
                         <Divider />
                         <Box className="mt-5">
-                            <RecentJobs />
+                            <RecentJobs navigate={navigate} />
                         </Box>
 
                     </Grid>
                     <Grid item xs={6}>
                         <Paper className=" p-5">
-                            <DriverStatus />
+                            <DriverStatus navigate={navigate} />
                             <Divider />
                             <Box className=" mt-4">
                                 <FinancialSummary />

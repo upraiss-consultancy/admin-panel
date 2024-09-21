@@ -120,6 +120,7 @@ export default function JobDetailScreen() {
           </Typography>
         </Box>
       </Box>
+      {console.log(jobDetail?.jobhistory , "JOB DETAILS12121")}
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="All" />
         <Tab label="Shortlisted" />
@@ -148,14 +149,12 @@ export default function JobDetailScreen() {
 }
 
 function renderCandidateCards(candidates, searchParams, navigate) {
-
   const onShortlist = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: 'shortlist',
+      type: 'shortlisted',
       remark: "string"
     })
-    console.log(response, "Response")
   }
 
   const onReject = async (id) => {
