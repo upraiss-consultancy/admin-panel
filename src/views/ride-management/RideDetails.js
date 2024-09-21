@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import showToast from '../../utils/toast';
 import utc from 'dayjs/plugin/utc';
 import PaymentFormDrawer from './updateFare';
+import GenerateInvoiceButton from '../../components/invoice/GenerateInvoice';
 dayjs.extend(utc);
 function RideDetailView() {
     const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE, UNASSIGN_DRIVER } = END_POINTS;
@@ -38,6 +39,7 @@ function RideDetailView() {
     const [allParams, setAllParams] = useState({
         search: ''
     })
+    const [invoiceData, setInvoiceData] = useState({})
     const fetchInterestedUserList = async () => {
         const interestedDriverData = await interestedDriverList(`${USER_INTERESTED_BOOKING_LIST}`, {
             params: {
@@ -52,7 +54,6 @@ function RideDetailView() {
     }, [allParams]);
 
     const handleAssignRide = async (id) => {
-        console.log(id, "ID ??")
         const responseCode = await AssignInterestedDrivers(USER_INTERESTED_ASSIGN_RIDE, { bookingId: id });
         if (responseCode) {
             if (responseCode === 200) {
@@ -76,6 +77,45 @@ function RideDetailView() {
             showToast(response?.data?.message, 'error')
         }
     }
+
+    useEffect(() => {
+        if (state?.way_type === "One Way") {
+
+            setInvoiceData({
+                'Passeneger Name': state?.pass_name,
+                'Passeneger Mobile No.': state?.pass_mobile_no,
+                'Car Type:': state?.car_type,
+                'Booking Type': state?.booking_type,
+                'Way Type': state?.way_type,
+                'Pick-Up Address': state?.pickup_address + ", " + state?.pickup_city + ", " + state?.pickup_state + " " + state?.pickup_pin,
+                'Pick-Up Date': dayjs(state?.pickup_date).format('MM-DD-YYYY'),
+                'Pick-Up Time': dayjs(state?.pickup_time).utc().format('HH:mm:ss'),
+                'Return Address': state?.return_address + ", " + state?.return_city + ", " + state?.return_state + " " + state?.return_pin,
+                'Return Date': dayjs(state?.return_date).format('MM-DD-YYYY'),
+                'Return Time': dayjs(state?.return_time).utc().format('HH:mm:ss'),
+                'Total Amount': state?.fare[0]?.amount,
+                'Received Amount': state?.fare[0]?.paidAmount,
+                'Pending Amount': state?.fare[0]?.pendingAmount,
+                'Payment Status': state?.fare[0]?.payment_status
+            })
+        } else {
+            setInvoiceData({
+                'Passeneger Name': state?.pass_name,
+                'Passeneger Mobile No.': state?.pass_mobile_no,
+                'Car Type:': state?.car_type,
+                'Booking Type': state?.booking_type,
+                'Way Type': state?.way_type,
+                'Pick-Up Address': state?.pickup_address + ", " + state?.pickup_city + ", " + state?.pickup_state + " " + state?.pickup_pin,
+                'Pick-Up Date': dayjs(state?.pickup_date).format('MM-DD-YYYY'),
+                'Pick-Up Time': dayjs(state?.pickup_time).utc().format('HH:mm:ss'),
+                'Total Amount': state?.fare[0]?.amount,
+                'Received Amount': state?.fare[0]?.paidAmount,
+                'Pending Amount': state?.fare[0]?.pendingAmount,
+                'Payment Status': state?.fare[0]?.payment_status
+            })
+        }
+
+    }, [state])
     return (
         <>
             <Box sx={{ marginTop: 2 }}>
@@ -83,7 +123,7 @@ function RideDetailView() {
                     <Typography variant="h6" gutterBottom >
                         Ride Details
                     </Typography>
-                    <Button onClick={() => setOpen(true)} sx={{ backgroundColor: '#DD781E', height: 40 , color: "#fff"}}>
+                    <Button onClick={() => setOpen(true)} sx={{ backgroundColor: '#DD781E', height: 40, color: "#fff" }}>
                         Update Fare
                     </Button>
                 </Box>
@@ -140,6 +180,9 @@ function RideDetailView() {
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                         <strong>Payment Status</strong>  {state?.fare[0]?.payment_status}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        <GenerateInvoiceButton rowData={invoiceData} />
                     </Typography>
                 </Box>
             </Box>
