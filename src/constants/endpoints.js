@@ -41,6 +41,8 @@ const END_POINTS = {
     CLOSE_JOB: "v0/admin/job/closedJobs",
     GET_USER_BY_PHONE: "v0/admin/provide_phone_get_userId",
     CREATE_PAYMENT_BY_ADMIN: "v0/admin/wallet/create_payment",
-    UPDATE_FARE: "v0/admin/updateFare"
+    UPDATE_FARE: "v0/admin/updateFare",
+    RIDE_COUNT: 'v0/admin/dashboardRideCount',
+    GET_NOTIFICATION: "v0/admin/get_notification"
 }
 export default END_POINTS
