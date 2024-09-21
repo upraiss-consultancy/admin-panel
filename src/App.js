@@ -7,8 +7,13 @@ import { generateToken , messaging} from './views/notification/index.js';
 import { useEffect } from 'react';
 import { onMessage } from 'firebase/messaging';
 import showToast from './utils/toast.js';
+import { useLoading } from './context/loadingContext.js';
+import Loader from './components/loader/loader.js';
+import { useAxiosInterceptors } from './api/middlewares/protected-interceptor.js';
 function App() {
   const routing = useRoutes(Router);
+  const { loading } = useLoading();
+  useAxiosInterceptors();
   useEffect(() => {
     generateToken()
     onMessage(messaging, (payload) => {
@@ -19,6 +24,7 @@ function App() {
   return (
     <>
       {routing}
+      {loading && <Loader />}
       <ToastContainer />
     </>
   );

@@ -1,26 +1,44 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import CustomApiError from "../../utils/CustomApiError";
+import { useLoading } from "../../context/loadingContext";
 import CONFIG_KEYS from "../../config";
 // import { refreshTokenApi } from "../endpoints/auth/token-refresh";
 const api = axios.create({
   baseURL: CONFIG_KEYS.API_BASE_URL,
 });
+export const useAxiosInterceptors = () => {
+  const { setLoading } = useLoading();
+  api.interceptors.request.use(
+    (config) => {
+      setLoading(true);
+      const tokenString = localStorage.getItem("token");
+      if (tokenString) {
+        config.headers.token = `${tokenString}`;
+      }
+      config.params = {
+        ...config.params,
+      }
+      return config;
+    },
+    (error) => {
+      setLoading(false);
+      return Promise.reject(error);
+    }
+  );
+  api.interceptors.response.use(
+    function (response) {
+      // Hide loader when the response is received
+      setLoading(false);
+      return response;
+    },
+    function (error) {
+      // Hide loader in case of error
+      setLoading(false);
+      return Promise.reject(error);
+    }
+  );
 
-api.interceptors.request.use(
-  (config) => {
-    const tokenString = localStorage.getItem("token");
-    if (tokenString) {
-      config.headers.token = `${tokenString}`;
-    }
-    config.params ={
-      ...config.params,
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+}
 
 // api.interceptors.response.use(
 //   (response) => response,

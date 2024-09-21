@@ -159,6 +159,15 @@ export const UpdateFare = async (endpoint, data) => {
   } catch (error) { }
 };
 
+export const getRidesCount = async (endpoint, params) => {
+  try {
+    const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
+    if (response) {
+      return response;
+    }
+  } catch (error) { }
+};
+
 
 
 

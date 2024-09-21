@@ -21,7 +21,9 @@ import { formatDistanceToNow } from 'date-fns';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-const { GET_ALL_JOB, ALL_USER_ADMIN } = END_POINTS;
+import { getRidesCount } from "../../api/services/ride";
+import { getNotifications } from "../../api/services/notification";
+const { GET_ALL_JOB, ALL_USER_ADMIN , RIDE_COUNT , GET_NOTIFICATION} = END_POINTS;
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -371,6 +373,31 @@ const RecentActivity = () => {
 };
 
 function Dashboard() {
+    const [rideCount , setRideCount]= useState({
+        totalRide: [],
+        pendingRide: [],
+        completeRide: [],
+        cancelRide: []
+    })
+    const fetchRides = async () => {
+        const response = await getRidesCount(RIDE_COUNT);
+        if (response?.data?.responseData) {
+            setRideCount(response?.data?.responseData[0])
+        }
+    }
+
+    const fetchNotifications = async () => {
+        const response = await getNotifications(GET_NOTIFICATION);
+        console.log(response , "RESPONSE78965")
+        if (response?.data?.responseData) {
+            console.log(response?.data?.responseData  , "RIDE DATA")
+            // setRideCount(response?.data?.responseData[0])
+        }
+    }
+    useEffect(() => {
+        fetchRides();
+        fetchNotifications()
+    },[])
     const navigate = useNavigate()
     return (
         <>
@@ -416,9 +443,9 @@ function Dashboard() {
                     <Grid item xs={3}>
 
                         <Stack direction={'column'} gap={5} className=" mb-5">
-                            <RideCard title="Total Rides" count={120} status="total" />
-                            <RideCard title="Complete Rides" count={100} status="complete" />
-                            <RideCard title="Cancel Rides" count={20} status="cancel" />
+                            <RideCard title="Total Rides" count={rideCount?.totalRide[0]?.totalRide} status="total" />
+                            <RideCard title="Complete Rides" count={rideCount?.completeRide[0]?.completeRide || 0} status="complete" />
+                            <RideCard title="Cancel Rides" count={rideCount?.cancelRide[0]?.cancelRide || 0} status="cancel" />
                         </Stack>
                         <Divider />
                         <Box className="mt-5">
