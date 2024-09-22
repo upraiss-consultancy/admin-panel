@@ -227,14 +227,14 @@ const RideCard = ({ title, count, status }) => {
 const RecentActivityItem = ({ activity }) => {
     return (
         <Box display="flex" alignItems="flex-start" mb={3} p={2} borderRadius="8px" border="1px solid #e0e0e0">
-            <Avatar src={activity.driverImage} alt={activity.driverName} />
+            <Avatar src={activity?.user[0]?.driverImage} alt={activity.driverName} />
             <Box ml={2}>
-                <Typography variant="h6">{activity.driverName}</Typography>
+                <Typography variant="h6">{activity?.user[0]?.full_name}</Typography>
                 <Typography variant="body2" color="textSecondary">
                     {activity.date} at {activity.time}
                 </Typography>
                 <Typography variant="body1" mt={1}>
-                    {activity.details}
+                    {activity.message}
                 </Typography>
             </Box>
         </Box>
@@ -315,7 +315,8 @@ const RecentJobs = ({ navigate }) => {
     );
 };
 
-const RecentActivity = () => {
+const RecentActivity = ({notification}) => {
+    console.log(notification , 'notification')
     // Example data for recent activities
     const activities = [
         {
@@ -362,7 +363,7 @@ const RecentActivity = () => {
                 Recent Activity
             </Typography>
             <Grid container direction="column">
-                {activities.map((activity, index) => (
+                {notification?.map((activity, index) => (
                     <Grid item key={index}>
                         <RecentActivityItem activity={activity} />
                     </Grid>
@@ -379,6 +380,7 @@ function Dashboard() {
         completeRide: [],
         cancelRide: []
     })
+    const [notification , setNotification] = useState([])
     const fetchRides = async () => {
         const response = await getRidesCount(RIDE_COUNT);
         if (response?.data?.responseData) {
@@ -389,9 +391,8 @@ function Dashboard() {
     const fetchNotifications = async () => {
         const response = await getNotifications(GET_NOTIFICATION);
         console.log(response , "RESPONSE78965")
-        if (response?.data?.responseData) {
-            console.log(response?.data?.responseData  , "RIDE DATA")
-            // setRideCount(response?.data?.responseData[0])
+        if (response?.data) {
+            setNotification(response?.data)
         }
     }
     useEffect(() => {
@@ -464,7 +465,7 @@ function Dashboard() {
                     </Grid>
                     <Grid item xs={3}>
 
-                        <RecentActivity />
+                        <RecentActivity notification={notification}/>
 
                     </Grid>
                 </Grid>

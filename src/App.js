@@ -25,8 +25,8 @@ function App() {
   }, [])
   return (
     <>
-      {routing}
       {loading && <Loader />}
+      {routing}
       <ToastContainer />
     </>
   );
