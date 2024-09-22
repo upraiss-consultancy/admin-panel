@@ -573,7 +573,7 @@ function AllRides() {
               <InputLabel>Payment Status</InputLabel>
               <Select
                 label="Booking Type"
-                value={allParams.booking_type || 'Recived'}
+                value={allParams.payment_status}
                 onChange={(e) => setAllParams({ ...allParams, payment_status: e.target.value })}
               >
                 <MenuItem value={'Recived'}>Received</MenuItem>
