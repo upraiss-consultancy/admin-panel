@@ -115,10 +115,6 @@ function AllRides() {
     platformFee: 0,
     gst: 0,
   })
-  const [packageState, setPackageStates] = useState({
-    pickUpState: "",
-    dropOffState: ""
-  })
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -137,12 +133,6 @@ function AllRides() {
     }
   };
 
-  // const fetchPackage = async () => {
-  //   const response = await getPackages(GET_ALL_PACKAGES);
-  //   if (response?.data?.responseCode === 200) {
-  //     setAllPackages(response?.data?.responseData)
-  //   }
-  // };
 
   const pickupState = watch('pickup_state');
   const dropOffState = watch('return_state');
@@ -366,9 +356,9 @@ function AllRides() {
       params: {
         trip_type: way_type,
         pickup_city: pickup_city,
-        pickup_state: packageState?.pickUpState,
+        pickup_state: pickup_state,
         dropoff_city: return_city,
-        dropoff_state: packageState.dropOffState,
+        dropoff_state: return_state,
         booking_type: booking_type
       }
     });
@@ -580,14 +570,13 @@ function AllRides() {
           </Grid>
           <Grid item xs={12} sm={4} md={3}>
             <FormControl fullWidth>
-              <InputLabel>Paymet Status</InputLabel>
+              <InputLabel>Payment Status</InputLabel>
               <Select
                 label="Booking Type"
-                value={allParams.booking_type || 'All'}
+                value={allParams.booking_type || 'Recived'}
                 onChange={(e) => setAllParams({ ...allParams, payment_status: e.target.value })}
               >
                 <MenuItem value={'Recived'}>Received</MenuItem>
-                {/* <MenuItem value={'pending'}>Pending</MenuItem> */}
                 <MenuItem value={'Partially Paid'}>Partially Received</MenuItem>
                 <MenuItem value={'Not Recived'}>Not Received</MenuItem>
               </Select>
@@ -946,7 +935,7 @@ function AllRides() {
                       <InputLabel>Pickup State</InputLabel>
                       <Select label="Pick-up State" {...field}>
                         {states.map((state) => (
-                          <MenuItem key={state.isoCode} value={state.isoCode} onClick={() => setPackageStates({ ...packageState, pickUpState: state.name })}>
+                          <MenuItem key={state.isoCode} value={state.isoCode}>
                             {state.name}
                           </MenuItem>
                         ))}
@@ -1058,7 +1047,7 @@ function AllRides() {
                             <InputLabel>Drop-off State</InputLabel>
                             <Select label="Drop-off State" {...field}>
                               {dropOffStates.map((state) => (
-                                <MenuItem key={state.isoCode} value={state.isoCode} onClick={() => setPackageStates({ ...packageState, dropOffState: state.name })}>
+                                <MenuItem key={state.isoCode} value={state.isoCode}>
                                   {state.name}
                                 </MenuItem>
                               ))}
