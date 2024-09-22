@@ -124,6 +124,8 @@ const TabPanel = ({ children, value, index, ...other }) => {
 };
 
 const DriverCard = ({ driver }) => {
+    console
+    .log(driver , 'driver1212')
     return (
         <Box display="flex" alignItems="center" mb={2}>
             <Avatar src={driver.profile_img} alt={driver.name} />
@@ -132,7 +134,7 @@ const DriverCard = ({ driver }) => {
                 <Box display="flex" alignItems="center">
                     <CheckCircleIcon style={{ color: 'green', fontSize: 16 }} />
                     <Typography variant="body2" color="textSecondary" ml={1}>
-                        {driver.status}
+                        {driver.mobile_no}
                     </Typography>
                 </Box>
                 <Typography variant="body2">{driver.details}</Typography>
