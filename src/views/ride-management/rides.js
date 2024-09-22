@@ -59,7 +59,6 @@ function AllRides() {
     formState: { errors },
     setValue,
     getValues,
-    trigger
   } = useForm({
     defaultValues: {
       _id: null,
@@ -116,7 +115,10 @@ function AllRides() {
     platformFee: 0,
     gst: 0,
   })
-  console.log(errors, "errors")
+  const [packageState, setPackageStates] = useState({
+    pickUpState: "",
+    dropOffState: ""
+  })
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -127,7 +129,6 @@ function AllRides() {
         }
       }
     );
-    console.log(data, "data 12121")
     if (data?.data?.length > 0) {
       setAllRides(data?.data);
       setPaginationData(data?.metadata)
@@ -136,15 +137,12 @@ function AllRides() {
     }
   };
 
-  const fetchPackage = async () => {
-    // const { booking_type, trip_type, pickup_city
-    //   , pickup_state, dropoff_city, dropoff_state } = watch();
-    // console.log(booking_type)
-    const response = await getPackages(GET_ALL_PACKAGES);
-    if (response?.data?.responseCode === 200) {
-      setAllPackages(response?.data?.responseData)
-    }
-  };
+  // const fetchPackage = async () => {
+  //   const response = await getPackages(GET_ALL_PACKAGES);
+  //   if (response?.data?.responseCode === 200) {
+  //     setAllPackages(response?.data?.responseData)
+  //   }
+  // };
 
   const pickupState = watch('pickup_state');
   const dropOffState = watch('return_state');
@@ -186,9 +184,7 @@ function AllRides() {
     fetchRides();
   }, [currentPage, allParams]);
 
-  // useEffect(() => {
-  //   fetchPackage()
-  // }, [])
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -363,16 +359,16 @@ function AllRides() {
     }
   };
   const allValue = getValues();
-
+  const pickUpCity = watch('pickup_city')
   const { way_type, booking_type, pickup_city, pickup_state, return_city, return_state } = allValue;
   const handlePackage = async () => {
     const response = await getPackages(GET_ALL_PACKAGES, {
       params: {
         trip_type: way_type,
         pickup_city: pickup_city,
-        pickup_state: pickup_state,
+        pickup_state: packageState?.pickUpState,
         dropoff_city: return_city,
-        dropoff_state: return_state,
+        dropoff_state: packageState.dropOffState,
         booking_type: booking_type
       }
     });
@@ -380,6 +376,7 @@ function AllRides() {
       setAllPackages(response?.data?.responseData)
     }
   }
+
   const handleUpdateFareValue = (total_price) => {
     console.log(total_price, 'total_price1212')
     let percentageOf20 = Number(total_price) * 0.20;
@@ -426,7 +423,9 @@ function AllRides() {
     setFare(prevState => ({ ...prevState, gst: Number(e.target.value), platformFee: value - Number(e.target.value) }))
   }
 
-  console.log(watch('travel_allowance', 'driver_charge'), "CHECK TRSVEL ALLOWANCE", getValues())
+  useEffect(() => {
+    handlePackage()
+  }, [pickupState, dropOffCity, dropOffState, pickUpCity])
 
   return (
     <>
@@ -911,7 +910,7 @@ function AllRides() {
                   name="pickup_date"
                   render={({ field }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date"  {...field} renderInput={(params) => (
+                      <DatePicker label="Pick-up Date" disablePast={true}  {...field} renderInput={(params) => (
                         <TextField
                           {...params}
                           fullWidth
@@ -947,7 +946,7 @@ function AllRides() {
                       <InputLabel>Pickup State</InputLabel>
                       <Select label="Pick-up State" {...field}>
                         {states.map((state) => (
-                          <MenuItem key={state.isoCode} value={state.isoCode}>
+                          <MenuItem key={state.isoCode} value={state.isoCode} onClick={() => setPackageStates({ ...packageState, pickUpState: state.name })}>
                             {state.name}
                           </MenuItem>
                         ))}
@@ -1015,13 +1014,17 @@ function AllRides() {
                             <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
                               <TextField
                                 {...field}
-                                label="Pick-up city"
                                 className="w-full"
                                 error={!!errors.return_date}
                                 helperText={errors.return_date?.message}
                                 InputLabelProps={{ shrink: true }}
+
                               />
-                            )} />
+                            )} shouldDisableDate={(date) => {
+                              const pickupDate = watch('pickup_date');
+                              return pickupDate && date.isBefore(pickupDate, 'day');
+                            }}
+                              disablePast={true} />
                           </LocalizationProvider>
                         )}
                       />
@@ -1055,7 +1058,7 @@ function AllRides() {
                             <InputLabel>Drop-off State</InputLabel>
                             <Select label="Drop-off State" {...field}>
                               {dropOffStates.map((state) => (
-                                <MenuItem key={state.isoCode} value={state.isoCode}>
+                                <MenuItem key={state.isoCode} value={state.isoCode} onClick={() => setPackageStates({ ...packageState, dropOffState: state.name })}>
                                   {state.name}
                                 </MenuItem>
                               ))}
