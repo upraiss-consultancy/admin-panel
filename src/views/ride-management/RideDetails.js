@@ -170,13 +170,13 @@ function RideDetailView() {
 
                 <Box className=" pb-4">
                     <Typography variant="body1" gutterBottom>
-                        <strong>Total Amount:</strong> {state?.fare[0]?.amount}
+                        <strong>Total Amount:</strong> {state?.fare[0]?.amount?.toFixed(2)}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        <strong>Received Amount:</strong> {state?.fare[0]?.paidAmount}
+                        <strong>Received Amount:</strong> {state?.fare[0]?.paidAmount?.toFixed(2)}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        <strong>Pending Amount:</strong>  {state?.fare[0]?.pendingAmount}
+                        <strong>Pending Amount:</strong>  {state?.fare[0]?.pendingAmount?.toFixed(2)}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                         <strong>Payment Status</strong>  {state?.fare[0]?.payment_status}
