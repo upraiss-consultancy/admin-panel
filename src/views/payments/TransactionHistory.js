@@ -26,8 +26,6 @@ const columns = [
 
 const TransactionHistoryList = () => {
     const [data, setData] = useState([]);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [search, setSearch] = useState('')
     const [params, setAllParams] = useState({
         search: "",
@@ -60,7 +58,7 @@ const TransactionHistoryList = () => {
 
     useEffect(() => {
         fetchTransactionHistory()
-    }, [])
+    }, [params])
 
     return (
         <Paper style={{ padding: 16 }}>
