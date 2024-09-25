@@ -43,6 +43,7 @@ const END_POINTS = {
     CREATE_PAYMENT_BY_ADMIN: "v0/admin/wallet/create_payment",
     UPDATE_FARE: "v0/admin/updateFare",
     RIDE_COUNT: 'v0/admin/dashboardRideCount',
-    GET_NOTIFICATION: "v0/admin/get_notification"
+    GET_NOTIFICATION: "v0/admin/get_notification",
+    GET_HOURS: 'v0/admin/package/get_hours'
 }
 export default END_POINTS

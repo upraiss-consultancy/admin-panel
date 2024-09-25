@@ -77,10 +77,11 @@ function RideDetailView() {
             showToast(response?.data?.message, 'error')
         }
     }
-
+console
+.log(state , 'state123123')
     useEffect(() => {
-        if (state?.way_type === "One Way") {
 
+        if (state?.way_type === "One Way") {
             setInvoiceData({
                 'Passeneger Name': state?.pass_name,
                 'Passeneger Mobile No.': state?.pass_mobile_no,
@@ -182,7 +183,7 @@ function RideDetailView() {
                         <strong>Payment Status</strong>  {state?.fare[0]?.payment_status}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        <GenerateInvoiceButton rowData={invoiceData} />
+                        <GenerateInvoiceButton rowData={state} />
                     </Typography>
                 </Box>
             </Box>
