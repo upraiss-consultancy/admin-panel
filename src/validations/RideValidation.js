@@ -22,17 +22,14 @@ export const CreateRideSchema = Yup.object().shape({
         then: () => Yup.string().required('Return date is required'),
     }),
     pickup_address: Yup.string().required('Pick-up address is required'),
-    pickup_state: Yup.string().required('Pick-up state is required'),
+    pickup_state: Yup.string(),
     pickup_city: Yup.string().required('Pick-up city is required'),
     pickup_pin: Yup.string().required('Pick-up pin is required'),
     return_address: Yup.string().when('way_type', {
         is: 'One Way',
         then: () => Yup.string().required('Return address is required')
     }),
-    return_state: Yup.string().when('way_type', {
-        is: 'One Way',
-        then: () => Yup.string().required('Return state is required')
-    }),
+    return_state: Yup.string(),
     return_city: Yup.string().when('way_type', {
         is: 'One Way',
         then: () =>
@@ -50,6 +47,11 @@ export const CreateRideSchema = Yup.object().shape({
     decrement_percentage: Yup.number(),
     increment_percentage: Yup.number(),
     days_package: Yup.number(),
-    total_price: Yup.number()
+    total_price: Yup.number(),
+    hours_package: Yup.number().when('booking_type', {
+        is: 'Local',
+        then: () =>
+            Yup.number().required('Hours package is required'),
+    })
 })
 

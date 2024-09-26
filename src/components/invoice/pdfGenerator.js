@@ -2,35 +2,6 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Box, Grid, Typography } from '@mui/material';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
-const pdfStyles = StyleSheet.create({
-  page: {
-    padding: 20,
-    fontSize: 10,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  table: {
-    display: 'table',
-    width: 'auto',
-    marginBottom: 20,
-  },
-  tableRow: {
-    flexDirection: 'row',
-  },
-  tableCell: {
-    padding: 5,
-    borderBottom: '1pt solid black',
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  footer: {
-    marginTop: 30,
-    textAlign: 'right',
-  },
-});
 export const generatePDF = (data, ref) => {
   const input = ref.current; // Get the DOM element for the invoice
   html2canvas(input, { scale: 1 })
@@ -51,6 +22,8 @@ export const generatePDF = (data, ref) => {
 const Invoice = React.forwardRef(({ data }, ref) => {
   return (
     <>
+      {console
+        .log(data, "PDF DATA")}
       {/* <div
       ref={ref}
       style={{
@@ -74,79 +47,162 @@ const Invoice = React.forwardRef(({ data }, ref) => {
         </tbody>
       </table>
     </div> */}
-      <Document>
-        <Page size="A4" style={pdfStyles.page}>
-          {/* Header Section */}
-          <View style={pdfStyles.header}>
-            <Text style={pdfStyles.bold}>DRIVEASSIST TECHNOLOGIES INDIA PRIVATE LIMITED</Text>
-            <Text>Address Line 1, City, Postal Code</Text>
-            <Text>GSTIN: 07AAxxxxEXXXZZ</Text>
-          </View>
+      <Grid container justifyContent="center" maxWidth={'842px'}>
+        <Grid item xs={12}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Tax Invoice
+          </Typography>
+        </Grid>
 
-          {/* Bill To Section */}
-          <View>
-            <Text style={pdfStyles.bold}>Bill To:</Text>
-            <Text>BGGS SOLUTIONS PRIVATE LIMITED</Text>
-            <Text>Address Line 1, City, Postal Code</Text>
-            <Text>GSTIN: 07AAxxxxEXXXZZ</Text>
-          </View>
+        <Grid item xs={12} ref={ref}>
+          {/* Invoice Design */}
+          <Box border={1} p={2} mb={2} style={{ backgroundColor: '#fff' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography variant="h6">
+                  DRIVEASSIST TECHNOLOGIES INDIA PRIVATE LIMITED
+                </Typography>
+                <Typography variant="body2">
+                  4436/1, NA, Gurugram, Haryana - 122003 | GSTIN: 07AAICXXXXXX1Z
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2" fontWeight="bold">
+                  Bill To:
+                </Typography>
+                <Typography variant="body2">BGGS SOLUTIONS PRIVATE LIMITED</Typography>
+                <Typography variant="body2">
+                  South West Delhi, Delhi - 110075
+                </Typography>
+                <Typography variant="body2">GSTIN: 07AAACXXXXXX1ZD</Typography>
+              </Grid>
+              <Grid item xs={6} textAlign="right">
+                <Typography variant="body2">Invoice No: INV305</Typography>
+                <Typography variant="body2">Date: 23-09-2024</Typography>
+              </Grid>
 
-          {/* Invoice Information */}
-          <View>
-            <Text>Invoice No: INV305</Text>
-            <Text>Date: 23-09-2024</Text>
-            <Text>Due Date: 23-09-2024</Text>
-          </View>
+              {/* Table Header */}
+              <Grid item xs={12}>
+                <Box borderTop={1} borderBottom={1} p={1}>
+                  <Grid container>
+                    <Grid item xs={1}>
+                      <Typography variant="body2" fontWeight="bold">
+                        S.No
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Item Description
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2" fontWeight="bold">
+                        HSN
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Qty
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Rate
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Amount
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
 
-          {/* Table */}
-          <View style={pdfStyles.table}>
-            {/* Table Header */}
-            <View style={pdfStyles.tableRow}>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>S.No</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>Item Description</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>HSN</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>Qty</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>Rate</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>Taxable Value</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>GST</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.bold]}>Amount</Text>
-            </View>
+              {/* Table Rows */}
+              <Grid item xs={12}>
+                <Box borderBottom={1} p={1}>
+                  <Grid container>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">1</Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2">Driver Charges</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">998515</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">1</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ 1,400.00</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ 1,470.00</Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
 
-            {/* Table Rows */}
-            <View style={pdfStyles.tableRow}>
-              <Text style={pdfStyles.tableCell}>1</Text>
-              <Text style={pdfStyles.tableCell}>Driver Charges</Text>
-              <Text style={pdfStyles.tableCell}>998515</Text>
-              <Text style={pdfStyles.tableCell}>1</Text>
-              <Text style={pdfStyles.tableCell}>1,400</Text>
-              <Text style={pdfStyles.tableCell}>1,400.00</Text>
-              <Text style={pdfStyles.tableCell}>70</Text>
-              <Text style={pdfStyles.tableCell}>1,470.00</Text>
-            </View>
-            <View style={pdfStyles.tableRow}>
-              <Text style={pdfStyles.tableCell}>2</Text>
-              <Text style={pdfStyles.tableCell}>Driver Night Charges</Text>
-              <Text style={pdfStyles.tableCell}>996423</Text>
-              <Text style={pdfStyles.tableCell}>1</Text>
-              <Text style={pdfStyles.tableCell}>200</Text>
-              <Text style={pdfStyles.tableCell}>200.00</Text>
-              <Text style={pdfStyles.tableCell}>10</Text>
-              <Text style={pdfStyles.tableCell}>210.00</Text>
-            </View>
-          </View>
+              <Grid item xs={12}>
+                <Box borderBottom={1} p={1}>
+                  <Grid container>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">2</Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2">Driver Night Charges</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">996423</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">1</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ 200.00</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ 210.00</Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
 
-          {/* Payment and Total Section */}
-          <View>
-            <Text>Total Amount: ₹1,680.00</Text>
-            <Text>Amount in Words: One Thousand Six Hundred and Eighty Only</Text>
-          </View>
+              {/* Total Amount */}
+              <Grid item xs={6} textAlign="left">
+                <Typography variant="h6" fontWeight="bold">
+                  Payment Details
+                </Typography>
+                <Typography variant="body2">Bank: HDFC Bank</Typography>
+                <Typography variant="body2">A/C Holder Name: DRIVEASSIST TECHNOLOGIES INDIA
+                  PRIVATE LIMITED</Typography>
+                <Typography variant="body2">Account No: 50200072734454</Typography>
+                <Typography variant="body2">
+                  IFSC Code: HDFC0000622
+                </Typography>
+              </Grid>
+              <Grid item xs={6} textAlign="right">
+                <Typography variant="body2">Sub Total: ₹1,600.00</Typography>
+                <Typography variant="body2">GST: ₹80.00</Typography>
+                <Typography variant="h6" fontWeight="bold">
+                  Total Amount: ₹1,680.00
+                </Typography>
+                <Typography variant="body2">
+                  Amount in Words: One Thousand Six Hundred and Eighty Rupees Only
+                </Typography>
+              </Grid>
 
-          {/* Footer */}
-          <View style={pdfStyles.footer}>
-            <Text>Authorized Signatory</Text>
-          </View>
-        </Page>
-      </Document>
+              {/* Footer */}
+              <Grid item xs={12} textAlign="right" mt={2}>
+                <Typography variant="body2">Authorized Signatory</Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Grid>
+      </Grid>
+
     </>
   );
 });
