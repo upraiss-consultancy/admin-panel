@@ -168,6 +168,16 @@ export const getRidesCount = async (endpoint, params) => {
   } catch (error) { }
 };
 
+export const getHours = async (endpoint) => {
+  try {
+    const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`);
+    if (response) {
+      return response;
+    }
+  } catch (error) { }
+};
+
+
 
 
 

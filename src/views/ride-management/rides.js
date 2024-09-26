@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getAllRides, deleteRide, cancelRide, createRide } from "../../api/services/ride";
+import { getAllRides, deleteRide, cancelRide, createRide, getHours } from "../../api/services/ride";
 import END_POINTS from "../../constants/endpoints";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import {
@@ -25,7 +25,8 @@ import {
   FormControl,
   InputLabel,
   Avatar,
-  Grid
+  Grid,
+  FormHelperText
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -72,14 +73,15 @@ function AllRides() {
       decrement_percentage: 0,
       increment_percentage: 0,
       total_price: 0,
-      days_package: 1
+      days_package: 1,
+      hours_package: 0
     },
     resolver: yupResolver(CreateRideSchema)
   });
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING, GET_ALL_PACKAGES } =
+  const { BOOKING_LIST, ADMIN_DELETE_BOOKING, ADMIN_CANCEL_BOOKING, CREATE_BOOKING, GET_ALL_PACKAGES, GET_HOURS } =
     END_POINTS;
   const [bookingID, setBookingID] = useState('');
   const [isUpdate, setIsUpdate] = useState(false);
@@ -115,6 +117,7 @@ function AllRides() {
     platformFee: 0,
     gst: 0,
   })
+  const [hours, setHours] = useState([])
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -133,6 +136,13 @@ function AllRides() {
     }
   };
 
+  const fetchHours = async () => {
+    const data = await getHours(GET_HOURS);
+    if (data?.data?.responseData) {
+      setHours(data?.data?.responseData)
+    }
+  };
+
 
   const pickupState = watch('pickup_state');
   const dropOffState = watch('return_state');
@@ -141,6 +151,7 @@ function AllRides() {
     const stateData = State.getStatesOfCountry('IN');
     setDropOffStates(stateData)
     setStates(stateData);
+    fetchHours()
   }, []);
 
   useEffect(() => {
@@ -350,7 +361,9 @@ function AllRides() {
   };
   const allValue = getValues();
   const pickUpCity = watch('pickup_city')
-  const { way_type, booking_type, pickup_city, pickup_state, return_city, return_state } = allValue;
+  const car_type = watch('car_type')
+  const return_city = watch('return_city')
+  const { way_type, booking_type, pickup_city, pickup_state, return_state, hours_package } = allValue;
   const handlePackage = async () => {
     const response = await getPackages(GET_ALL_PACKAGES, {
       params: {
@@ -359,19 +372,19 @@ function AllRides() {
         pickup_state: pickup_state,
         dropoff_city: return_city,
         dropoff_state: return_state,
-        booking_type: booking_type
+        booking_type: booking_type,
+        car_type: car_type
       }
     });
+    console.log(response, 'response1212')
     if (response?.data?.responseCode === 200) {
       setAllPackages(response?.data?.responseData)
     }
   }
-
   const handleUpdateFareValue = (total_price) => {
-    console.log(total_price, 'total_price1212')
-    let percentageOf20 = Number(total_price) * 0.20;
+    let percentageOf20 = Number(total_price) * 0.80 * 0.20;
     let percentageOf82 = percentageOf20 * 0.82;
-    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.64, travelAllowance: Number(total_price) * 0.16, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
+    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.64, travelAllowance: Number(total_price) * 0.2, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
     const currentValues = watch();
     reset({
       ...currentValues,
@@ -415,7 +428,7 @@ function AllRides() {
 
   useEffect(() => {
     handlePackage()
-  }, [pickupState, dropOffCity, dropOffState, pickUpCity])
+  }, [pickupState, return_city, dropOffState, pickUpCity, hours_package, car_type])
 
   return (
     <>
@@ -842,6 +855,27 @@ function AllRides() {
                 />
               </Stack>
               {
+                watch('booking_type') === "Local" && <Stack direction={"row"} gap={2} className="!mb-4">
+                  <Controller
+                    control={control}
+                    name="hours_package"
+                    render={({ field }) => (
+                      <FormControl fullWidth>
+                        <InputLabel>Hour Package</InputLabel>
+                        <Select label="Hour Package" {...field}>
+                          {
+                            hours?.map((data) => <MenuItem value={data}>
+                              {data} Hour
+                            </MenuItem>)
+                          }
+                        </Select>
+                        {console.log(errors, "Errors 1212")}
+                      </FormControl>
+                    )}
+                  />
+                </Stack>
+              }
+              {
                 watch('booking_type') === "Outstation" &&
                 <Stack direction={"row"} gap={2} className="!mb-4">
                   <Controller
@@ -926,40 +960,60 @@ function AllRides() {
                 />
               </Stack>
               <Stack direction={"row"} gap={2} className="!mb-4">
+                {
+                  booking_type !== 'Local' && (
+                    <Controller
+                      control={control}
+                      name="pickup_state"
+                      render={({ field }) => (
+                        <FormControl fullWidth>
+                          <InputLabel>Pickup State</InputLabel>
+                          <Select label="Pick-up State" {...field} defaultValue="">
+                            {states.map((state) => (
+                              <MenuItem key={state.isoCode} value={state.isoCode}>
+                                {state.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    />
+                  )
+                }
 
-                <Controller
-                  control={control}
-                  name="pickup_state"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Pickup State</InputLabel>
-                      <Select label="Pick-up State" {...field}>
-                        {states.map((state) => (
-                          <MenuItem key={state.isoCode} value={state.isoCode}>
-                            {state.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="pickup_city"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Pick-up City</InputLabel>
-                      <Select label="Pick-up City" {...field}>
-                        {cities.map((city) => (
-                          <MenuItem key={city.name} value={city.name}>
-                            {city.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-
+                {
+                  watch('booking_type') === 'Local' ? <Controller
+                    control={control}
+                    name="pickup_city"
+                    render={({ field }) => (
+                      <FormControl fullWidth>
+                        <InputLabel>Pick-up City</InputLabel>
+                        <Select label="Pick-up City" {...field} defaultValue="">
+                          <MenuItem value={'Delhi'}>Delhi</MenuItem>
+                          <MenuItem value={'Noida'}>Noida</MenuItem>
+                          <MenuItem value={'Gurgaon'}>Gurgaon</MenuItem>
+                          <MenuItem value={'Ghaziabad'}>Ghaziabad</MenuItem>
+                          <MenuItem value={'Faridabad'}>Faridabad</MenuItem>
+                        </Select>
+                      </FormControl>
+                    )}
+                  /> : <Controller
+                    control={control}
+                    name="pickup_city"
+                    render={({ field }) => (
+                      <FormControl fullWidth>
+                        <InputLabel>Pick-up City</InputLabel>
+                        <Select label="Pick-up City" {...field}>
+                          {cities.map((city) => (
+                            <MenuItem key={city.name} value={city.name}>
+                              {city.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  />
+                }
               </Stack>
               <Stack direction={"row"} gap={2} className="!mb-4">
                 <Controller
@@ -994,6 +1048,7 @@ function AllRides() {
               {
                 wayType === "One Way" && (
                   <>
+
                     <Stack direction={"row"} gap={2} className="!mb-4">
                       <Controller
                         control={control}
@@ -1039,39 +1094,64 @@ function AllRides() {
                       />
                     </Stack>
                     <Stack direction={"row"} gap={2} className="!mb-4">
-                      <Controller
-                        control={control}
-                        name="return_state"
-                        render={({ field }) => (
-                          <FormControl fullWidth>
-                            <InputLabel>Drop-off State</InputLabel>
-                            <Select label="Drop-off State" {...field}>
-                              {dropOffStates.map((state) => (
-                                <MenuItem key={state.isoCode} value={state.isoCode}>
-                                  {state.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      />
 
-                      <Controller
-                        control={control}
-                        name="return_city"
-                        render={({ field }) => (
-                          <FormControl fullWidth>
-                            <InputLabel>Drop-off City</InputLabel>
-                            <Select label="Drop-off City" {...field}>
-                              {dropOffCity.map((city) => (
-                                <MenuItem key={city.name} value={city.name}>
-                                  {city.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      />
+                      {
+                        watch('booking_type') === 'Local' ? <Controller
+                          control={control}
+                          name="return_city"
+                          render={({ field }) => (
+                            <FormControl fullWidth>
+                              <InputLabel>Drop-Off City</InputLabel>
+                              <Select label="Drop-Off City" {...field} defaultValue="">
+                                <MenuItem value={'Delhi'}>Delhi</MenuItem>
+                                <MenuItem value={'Noida'}>Noida</MenuItem>
+                                <MenuItem value={'Gurgaon'}>Gurgaon</MenuItem>
+                                <MenuItem value={'Ghaziabad'}>Ghaziabad</MenuItem>
+                                <MenuItem value={'Faridabad'}>Faridabad</MenuItem>
+                              </Select>
+                            </FormControl>
+                          )}
+                        /> :
+                          (
+                            <>
+                              <Controller
+                                control={control}
+                                name="return_state"
+                                render={({ field }) => (
+                                  <FormControl fullWidth>
+                                    <InputLabel>Drop-off State</InputLabel>
+                                    <Select label="Drop-off State" {...field}>
+                                      {dropOffStates.map((state) => (
+                                        <MenuItem key={state.isoCode} value={state.isoCode}>
+                                          {state.name}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </FormControl>
+                                )}
+                              />
+
+                              <Controller
+                                control={control}
+                                name="return_city"
+                                render={({ field }) => (
+                                  <FormControl fullWidth>
+                                    <InputLabel>Drop-off City</InputLabel>
+                                    <Select label="Drop-off City" {...field}>
+                                      {dropOffCity.map((city) => (
+                                        <MenuItem key={city.name} value={city.name}>
+                                          {city.name}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </FormControl>
+                                )}
+                              />
+
+                            </>
+                          )
+                      }
+
                     </Stack>
                     <Stack direction={"row"} gap={2} className="!mb-4">
                       <Controller
@@ -1146,7 +1226,7 @@ function AllRides() {
                             {
 
                               packages?.map((data) => <MenuItem value={data?._id} onClick={() => { handleUpdateFareValue(data?.total * totalDays); setDisabled(false); setTotalBaseValue(data?.total * totalDays); setValue('package_id', data?._id) }}>
-                                {data?.package_name}
+                                Package
                               </MenuItem>)
                             }
                           </Select>
