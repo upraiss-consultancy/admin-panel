@@ -365,17 +365,17 @@ function AllRides() {
   const return_city = watch('return_city')
   const { way_type, booking_type, pickup_city, pickup_state, return_state, hours_package } = allValue;
   const handlePackage = async () => {
-    const response = await getPackages(GET_ALL_PACKAGES, {
-      params: {
-        trip_type: way_type,
-        pickup_city: pickup_city,
-        pickup_state: pickup_state,
-        dropoff_city: return_city,
-        dropoff_state: return_state,
-        booking_type: booking_type,
-        car_type: car_type
-      }
+    const queryParams = new URLSearchParams({
+      trip_type: way_type,
+      pickup_city: pickup_city,
+      pickup_state: pickup_state,
+      dropoff_city: return_city,
+      dropoff_state: return_state,
+      booking_type: booking_type,
+      car_type: car_type
     });
+    
+    const response = await getPackages(`${GET_ALL_PACKAGES}?${queryParams.toString()}`);
     console.log(response, 'response1212')
     if (response?.data?.responseCode === 200) {
       setAllPackages(response?.data?.responseData)
