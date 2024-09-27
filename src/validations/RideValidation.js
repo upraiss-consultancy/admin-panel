@@ -48,8 +48,8 @@ export const CreateRideSchema = Yup.object().shape({
     increment_percentage: Yup.number(),
     days_package: Yup.number(),
     total_price: Yup.number(),
-    hours_package: Yup.number().when('booking_type', {
-        is: 'Local',
+    hours_package: Yup.number().when(['booking_type' , 'way_type'], {
+        is: (booking_type, way_type) => booking_type === 'Local' && way_type === 'Round Trip',
         then: () =>
             Yup.number().required('Hours package is required'),
     })
