@@ -517,31 +517,26 @@ function AllRides() {
   }
 
   const handleTravelAllowanceChange = (e) => {
-    if(Number(e.target.value) === Number(allowancrPrice)) {
-   setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value)}))
-          const currentValues = watch();
-    reset({
-      ...currentValues,
-      total_price:  Number(e.target.value)
-    });
-    } else if(Number(e.target.value)  < Number(allowancrPrice)){
-    let value =Number(allowancrPrice) - Number(e.target.value);
-          const currentValues = watch();
-    reset({
-      ...currentValues,
-      total_price:  fare?.totalPrice +  Number(value)
-    });
-    setFare(prevState => ({ ...prevState,travelAllowance: Number(e.target.value), totalPrice:prevState?.totalPrice +  Number(value)}))
+    if (Number(e.target.value) === Number(allowancrPrice)) {
+      setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value) }))
+    } else if (Number(e.target.value) < Number(allowancrPrice)) {
+      let value = Number(allowancrPrice) - Number(e.target.value);
+      const currentValues = watch();
+      reset({
+        ...currentValues,
+        total_price: fare?.totalPrice + Number(value)
+      });
+      setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value) }))
 
-} else if(Number(e.target.value)  > Number(allowancrPrice)) {
-   let value = Number(e.target.value) - Number(allowancrPrice) ;
-          const currentValues = watch();
-    reset({
-      ...currentValues,
-      total_price:  fare?.totalPrice -  Number(value)
-    });
-   setFare(prevState => ({ ...prevState,travelAllowance: Number(e.target.value), totalPrice:prevState?.totalPrice -  Number(value)}))
-}
+    } else if (Number(e.target.value) > Number(allowancrPrice)) {
+      let value = Number(e.target.value) - Number(allowancrPrice);
+      const currentValues = watch();
+      reset({
+        ...currentValues,
+        total_price: fare?.totalPrice - Number(value)
+      });
+      setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value) }))
+    }
   }
 
   const handlePlatFormFeeChange = (e) => {
@@ -555,7 +550,13 @@ function AllRides() {
     setFare(prevState => ({ ...prevState, gst: Number(e.target.value), platformFee: value - Number(e.target.value) }))
   }
 
-
+  const handleBack = () => {
+    const currentValues = watch();
+    reset({
+      ...currentValues,
+    });
+    setStep(0)
+  }
 
 
 
@@ -1034,9 +1035,11 @@ function AllRides() {
                       <Controller
                         control={control}
                         name="pickup_date"
-                        render={({ field }) => (
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker label="Pick-up Date" disablePast={true}  {...field} renderInput={(params) => (
+                            <DatePicker label="Pick-up Date" disablePast={true} onChange={(newValue) => {
+                              setValue('pickup_date', newValue, { shouldValidate: true });
+                            }} value={value ? dayjs(value) : null} renderInput={(params) => (
                               <TextField
                                 {...params}
                                 fullWidth
@@ -1053,10 +1056,12 @@ function AllRides() {
                       <Controller
                         control={control}
                         name="pickup_time"
-                        render={({ field }) => (
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['TimePicker']}>
-                              <TimePicker label="Pick-up Time" {...field} className=" !mb-2" />
+                            <DemoContainer components={['TimePicker']} >
+                              <TimePicker label="Pick-up Time" className=" !mb-2" onChange={(newValue) => {
+                                setValue('pickup_time', newValue, { shouldValidate: true });
+                              }} value={value ? dayjs(value) : null} />
                             </DemoContainer>
                           </LocalizationProvider>
                         )}
@@ -1172,21 +1177,26 @@ function AllRides() {
                             <Controller
                               control={control}
                               name="return_date"
-                              render={({ field }) => (
+                              render={({ field: { onChange, value }, fieldState: { error } }) => (
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                  <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
-                                    <TextField
-                                      {...field}
-                                      className="w-full"
-                                      error={!!errors.return_date}
-                                      helperText={errors.return_date?.message}
-                                      InputLabelProps={{ shrink: true }}
+                                  <DatePicker label="Drop-off Date" value={value ? dayjs(value) : null}
+                                    onChange={(newValue) => {
+                                      setValue('return_date', newValue, { shouldValidate: true });
+                                    }}
 
-                                    />
-                                  )} shouldDisableDate={(date) => {
-                                    const pickupDate = watch('pickup_date');
-                                    return pickupDate && date.isBefore(pickupDate, 'day');
-                                  }}
+                                    render={({ params }) => (
+                                      <TextField
+                                        {...params}
+                                        className="w-full"
+                                        error={!!errors.return_date}
+                                        helperText={errors.return_date?.message}
+                                        InputLabelProps={{ shrink: true }}
+
+                                      />
+                                    )} shouldDisableDate={(date) => {
+                                      const pickupDate = watch('pickup_date');
+                                      return pickupDate && date.isBefore(pickupDate, 'day');
+                                    }}
                                     disablePast={true} />
                                 </LocalizationProvider>
                               )}
@@ -1523,11 +1533,8 @@ function AllRides() {
                     Next
                   </Button>
                 </Box> : <Box className="flex" gap={2}>
-                  <Button onClick={() => setStep(0)}>
+                  <Button onClick={handleBack} className="!w-full">
                     Back
-                  </Button>
-                  <Button variant="outlined" className="!w-full" type="reset">
-                    Reset
                   </Button>
                   {
                     isUpdate ? <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
