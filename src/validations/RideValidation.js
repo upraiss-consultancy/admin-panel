@@ -43,7 +43,9 @@ export const CreateRideSchema = Yup.object().shape({
     package_id: Yup.string().required('Please select package'),
     pass_whatsapp_no: Yup.string().required('Passenger whatsapp number  is required'),
     email: Yup.string(),
-    travel_allowance: Yup.number().required('Travel allowance is required.'),
+    travel_allowance: Yup.number().transform((value, originalValue) => {
+      return Number(originalValue)
+    }).required('Travel allowance is required.'),
     decrement_percentage: Yup.number(),
     increment_percentage: Yup.number(),
     days_package: Yup.number(),
