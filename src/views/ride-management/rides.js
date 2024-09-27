@@ -520,7 +520,7 @@ function AllRides() {
     if(Number(e.target.value) === allowancrPrice) {
       return;
     } else if(Number(e.target.value)  < allowancrPrice){
- 
+    let value =Number(allowancrPrice) - Number(e.target.value);
     setFare(prevState => ({ ...prevState, totalPrice:prevState?.totalPrice +  Number(value)}))
 } else if(Number(e.target.value)  > allowancrPrice) {
    let value = Number(e.target.value) - Number(allowancrPrice) ;
