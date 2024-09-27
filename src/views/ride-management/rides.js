@@ -518,13 +518,13 @@ function AllRides() {
 
   const handleTravelAllowanceChange = (e) => {
     if(Number(e.target.value) === allowancrPrice) {
-      return;
+   setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value)}))
     } else if(Number(e.target.value)  < allowancrPrice){
     let value =Number(allowancrPrice) - Number(e.target.value);
-    setFare(prevState => ({ ...prevState, totalPrice:prevState?.totalPrice +  Number(value)}))
+    setFare(prevState => ({ ...prevState,travelAllowance: Number(e.target.value), totalPrice:prevState?.totalPrice +  Number(value)}))
 } else if(Number(e.target.value)  > allowancrPrice) {
    let value = Number(e.target.value) - Number(allowancrPrice) ;
-   setFare(prevState => ({ ...prevState, totalPrice:prevState?.totalPrice -  Number(value)}))
+   setFare(prevState => ({ ...prevState,travelAllowance: Number(e.target.value), totalPrice:prevState?.totalPrice -  Number(value)}))
 }
   }
 
