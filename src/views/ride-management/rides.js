@@ -392,7 +392,7 @@ function AllRides() {
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
           setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge)
+            responseData[0]?.travelling_charge || 0)
         }
         const currentValues = watch();
         reset({
@@ -417,7 +417,7 @@ function AllRides() {
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
           setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge)
+            responseData[0]?.travelling_charge || 0)
         }
         const currentValues = watch();
         reset({
@@ -430,7 +430,6 @@ function AllRides() {
     } else if ((watch('way_type') === 'One Way') && (watch('booking_type') === "Outstation")) {
       const resultValue = await trigger(step === 0 && ['pass_name', 'pickup_city', 'pass_mobile_no', 'pass_whatsapp_no', 'email', 'return_city', 'booking_type', 'way_type', 'return_address', 'return_pin', 'return_date', 'return_time', 'car_type'])
       queryParams.delete('hours_package', watch('hours_package'));
-      queryParams.append('days_package', watch('days_package'));
       queryParams.append('return_state', watch('return_state'));
       queryParams.append('return_city', watch('return_city'));
       if (resultValue) {
@@ -447,7 +446,7 @@ function AllRides() {
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
           setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge)
+            responseData[0]?.travelling_charge || 0)
         }
         const currentValues = watch();
         reset({
@@ -459,7 +458,6 @@ function AllRides() {
       }
     } else if ((watch('way_type') === 'Round Trip') && (watch('booking_type') === "Outstation")) {
       const resultValue = await trigger(step === 0 && ['pass_name', 'pickup_city', 'pass_mobile_no', 'pass_whatsapp_no', 'email', 'booking_type', 'way_type', 'car_type']);
-      queryParams.append('days_package', watch('days_package'));
       queryParams.delete('hours_package', watch('hours_package'));
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
@@ -473,7 +471,7 @@ function AllRides() {
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
           setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge)
+            responseData[0]?.travelling_charge || 0)
         }
         const currentValues = watch();
         reset({
