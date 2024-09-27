@@ -385,14 +385,17 @@ function AllRides() {
         if (response?.data?.responseCode === 200) {
           setDisabled(false)
           const TotalPriceOfPackage = response?.data?.
-            responseData[0]?.total - response?.data?.
+            responseData[0]?.total
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
+          setFare(prevState => ({
+            ...prevState, travelAllowance: response?.data?.
               responseData[0]?.travelling_charge
-
+          }))
           handleUpdateFareValue(TotalPriceOfPackage
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
-          setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge || 0)
+
         }
         const currentValues = watch();
         reset({
@@ -410,14 +413,13 @@ function AllRides() {
         if (response?.data?.responseCode === 200) {
           setDisabled(false)
           const TotalPriceOfPackage = response?.data?.
-            responseData[0]?.total - response?.data?.
-              responseData[0]?.travelling_charge
-
+            responseData[0]?.total
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
           handleUpdateFareValue(TotalPriceOfPackage
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
-          setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge || 0)
+
         }
         const currentValues = watch();
         reset({
@@ -439,14 +441,13 @@ function AllRides() {
         if (response?.data?.responseCode === 200) {
           setDisabled(false)
           const TotalPriceOfPackage = response?.data?.
-            responseData[0]?.total - response?.data?.
-              responseData[0]?.travelling_charge
-
+            responseData[0]?.total
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
           handleUpdateFareValue(TotalPriceOfPackage
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
-          setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge || 0)
+
         }
         const currentValues = watch();
         reset({
@@ -464,14 +465,13 @@ function AllRides() {
         if (response?.data?.responseCode === 200) {
           setDisabled(false)
           const TotalPriceOfPackage = response?.data?.
-            responseData[0]?.total - response?.data?.
-              responseData[0]?.travelling_charge
-
+            responseData[0]?.total
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
           handleUpdateFareValue(TotalPriceOfPackage
             * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
               responseData[0]?._id)
-          setAllowancePrice(response?.data?.
-            responseData[0]?.travelling_charge || 0)
+
         }
         const currentValues = watch();
         reset({
@@ -489,9 +489,8 @@ function AllRides() {
   const handleUpdateFareValue = (total_price) => {
     let percentageOf20 = Number(total_price) * 0.20;
     let percentageOf82 = percentageOf20 * 0.82;
-    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.8, travelAllowance: allowancrPrice, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
+    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.8,  platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
     const currentValues = watch();
-    console.log(currentValues, 'currentValues')
     reset({
       ...currentValues,
       total_price: Number(total_price)
@@ -519,12 +518,11 @@ function AllRides() {
   const handleTravelAllowanceChange = (e) => {
     if (Number(e.target.value) === Number(allowancrPrice)) {
       setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value) }))
-    } else if (Number(e.target.value) < Number(allowancrPrice)) {
-      let value = Number(allowancrPrice) - Number(e.target.value);
+    } else if (Number(e.target.value) <= Number(allowancrPrice)) {
       const currentValues = watch();
       reset({
         ...currentValues,
-        total_price: fare?.totalPrice + Number(value)
+        total_price: totalBaseValue - (allowancrPrice - Number(e.target.value)),
       });
       setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value) }))
 
@@ -533,7 +531,7 @@ function AllRides() {
       const currentValues = watch();
       reset({
         ...currentValues,
-        total_price: fare?.totalPrice - Number(value)
+        total_price: totalBaseValue + value
       });
       setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value) }))
     }
@@ -557,9 +555,14 @@ function AllRides() {
     });
     setStep(0)
   }
-
-
-
+  console.log(fare , "FARE")
+  useEffect(() => {
+    const currentValues = watch();
+    reset({
+      ...currentValues,
+    });
+  }, [step , fare])
+console.log(errors , "ERRORs")
   return (
     <>
       <TableContainer component={Paper}>
