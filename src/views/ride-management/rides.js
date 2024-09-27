@@ -65,10 +65,10 @@ function AllRides() {
     defaultValues: {
       _id: null,
       way_type: 'One Way',
-      pickup_date:null,
-      pickup_time:null,
-      return_date:null,
-      return_city:null,
+      pickup_date: null,
+      pickup_time: null,
+      return_date: null,
+      return_city: null,
       booking_type: 'Local',
       return_state: '',
       return_city: '',
@@ -1098,6 +1098,22 @@ function AllRides() {
                       }
                     </Stack>
                     <Stack direction={"row"} gap={2} className="!mb-4">
+                      {/* <Controller
+                          control={control}
+                          name=""
+                          render={({ field }) => ( */}
+                      <TextField
+                        // {...field}
+                        label="Pick-Up Area"
+                        className="w-full"
+                        // error={!!errors.days_package}
+                        // helperText={errors.days_package?.message}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                      {/* )}
+                        /> */}
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
                       <Controller
                         control={control}
                         name="pickup_address"
@@ -1263,6 +1279,22 @@ function AllRides() {
                                 />
                               )}
                             />
+                          </Stack>
+                          <Stack direction={"row"} gap={2} className="!mb-4">
+                            {/* <Controller
+                          control={control}
+                          name=""
+                          render={({ field }) => ( */}
+                            <TextField
+                              // {...field}
+                              label="Drop-Off Area"
+                              className="w-full"
+                              // error={!!errors.days_package}
+                              // helperText={errors.days_package?.message}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                            {/* )}
+                        /> */}
                           </Stack>
                         </>
                       )
@@ -1442,8 +1474,8 @@ function AllRides() {
                           onChange
                         } }) => (
                           <TextField
-                          onChange={(e) => onChange(e.target.value)}
-                          value={watch('decrement_percentage')}
+                            onChange={(e) => onChange(e.target.value)}
+                            value={watch('decrement_percentage')}
                             InputProps={{
                               readOnly: true
                             }}
