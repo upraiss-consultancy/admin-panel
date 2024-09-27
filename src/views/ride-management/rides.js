@@ -517,8 +517,15 @@ function AllRides() {
   }
 
   const handleTravelAllowanceChange = (e) => {
-    let value = Number(fare.travelAllowance) + Number(fare.driverCharge);
-    setFare(prevState => ({ ...prevState, travelAllowance: Number(e.target.value), driverCharge: value - Number(e.target.value) }))
+    if(Number(e.target.value) === allowancrPrice) {
+      return;
+    } else if(Number(e.target.value)  < allowancrPrice){
+ 
+    setFare(prevState => ({ ...prevState, totalPrice:prevState?.totalPrice +  Number(value)}))
+} else if(Number(e.target.value)  > allowancrPrice) {
+   let value = Number(e.target.value) - Number(allowancrPrice) ;
+   setFare(prevState => ({ ...prevState, totalPrice:prevState?.totalPrice -  Number(value)}))
+}
   }
 
   const handlePlatFormFeeChange = (e) => {
