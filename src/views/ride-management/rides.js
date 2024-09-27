@@ -60,10 +60,15 @@ function AllRides() {
     formState: { errors },
     setValue,
     getValues,
+    trigger
   } = useForm({
     defaultValues: {
       _id: null,
       way_type: 'One Way',
+      pickup_date: null,
+      pickup_time: null,
+      return_date: null,
+      return_city: null,
       booking_type: 'Local',
       return_state: '',
       return_city: '',
@@ -89,8 +94,6 @@ function AllRides() {
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate();
   const [paginationData, setPaginationData] = useState([]);
-  const [packages, setAllPackages] = useState([]);
-  const [selectPackage, setSelectPackage] = useState(false)
   const [allParams, setAllParams] = useState({
     booking_type: '',
     way_type: '',
@@ -109,6 +112,7 @@ function AllRides() {
   const [isLoading, setISLoading] = useState(false);
   const [remarks, setRemarks] = useState('');
   const [totalBaseValue, setTotalBaseValue] = useState(0);
+  const [allowancrPrice, setAllowancePrice] = useState(0);
   const [disabled, setDisabled] = useState(true)
   const [fare, setFare] = useState({
     totalPrice: 0,
@@ -118,6 +122,7 @@ function AllRides() {
     gst: 0,
   })
   const [hours, setHours] = useState([])
+  const [step, setStep] = useState(0)
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST,
       {
@@ -360,10 +365,9 @@ function AllRides() {
     }
   };
   const allValue = getValues();
-  const pickUpCity = watch('pickup_city')
   const car_type = watch('car_type')
   const return_city = watch('return_city')
-  const { way_type, booking_type, pickup_city, pickup_state, return_state, hours_package } = allValue;
+  const { way_type, booking_type, pickup_city, pickup_state, return_state } = allValue;
   const handlePackage = async () => {
     const queryParams = new URLSearchParams({
       trip_type: way_type,
@@ -372,20 +376,124 @@ function AllRides() {
       dropoff_city: return_city,
       dropoff_state: return_state,
       booking_type: booking_type,
-      car_type: car_type
+      car_type: car_type,
     });
-    
-    const response = await getPackages(`${GET_ALL_PACKAGES}?${queryParams.toString()}`);
-    console.log(response, 'response1212')
-    if (response?.data?.responseCode === 200) {
-      setAllPackages(response?.data?.responseData)
+    if ((watch('way_type') === 'One Way') && (watch('booking_type') === "Local")) {
+      const resultValue = await trigger(step === 0 && ['pass_name', 'pickup_city', 'pass_mobile_no', 'pass_whatsapp_no', 'email', 'return_city', 'booking_type', 'way_type', 'return_address', 'return_pin', 'return_date', 'return_time', 'car_type'])
+      if (resultValue) {
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        if (response?.data?.responseCode === 200) {
+          setDisabled(false)
+          const TotalPriceOfPackage = response?.data?.
+            responseData[0]?.total - response?.data?.
+              responseData[0]?.travelling_charge
+
+          handleUpdateFareValue(TotalPriceOfPackage
+            * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
+              responseData[0]?._id)
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
+        }
+        const currentValues = watch();
+        reset({
+          ...currentValues,
+          increment_percentage: 0,
+          decrement_percentage: 0
+        });
+        setStep(1)
+      }
+    } else if ((watch('way_type') === 'Round Trip') && (watch('booking_type') === "Local")) {
+      const resultValue = await trigger(step === 0 && ['pass_name', 'pickup_city', 'pass_mobile_no', 'pass_whatsapp_no', 'email', 'booking_type', 'way_type', 'car_type', 'hours_package'])
+      if (resultValue) {
+        queryParams.append('hours_package', watch('hours_package'));
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        if (response?.data?.responseCode === 200) {
+          setDisabled(false)
+          const TotalPriceOfPackage = response?.data?.
+            responseData[0]?.total - response?.data?.
+              responseData[0]?.travelling_charge
+
+          handleUpdateFareValue(TotalPriceOfPackage
+            * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
+              responseData[0]?._id)
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
+        }
+        const currentValues = watch();
+        reset({
+          ...currentValues,
+          increment_percentage: 0,
+          decrement_percentage: 0
+        });
+        setStep(1)
+      }
+    } else if ((watch('way_type') === 'One Way') && (watch('booking_type') === "Outstation")) {
+      const resultValue = await trigger(step === 0 && ['pass_name', 'pickup_city', 'pass_mobile_no', 'pass_whatsapp_no', 'email', 'return_city', 'booking_type', 'way_type', 'return_address', 'return_pin', 'return_date', 'return_time', 'car_type'])
+      queryParams.delete('hours_package', watch('hours_package'));
+      queryParams.append('days_package', watch('days_package'));
+      queryParams.append('return_state', watch('return_state'));
+      queryParams.append('return_city', watch('return_city'));
+      if (resultValue) {
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        console.log(errors, 'EROROR')
+        console.log(response, 'response')
+        if (response?.data?.responseCode === 200) {
+          setDisabled(false)
+          const TotalPriceOfPackage = response?.data?.
+            responseData[0]?.total - response?.data?.
+              responseData[0]?.travelling_charge
+
+          handleUpdateFareValue(TotalPriceOfPackage
+            * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
+              responseData[0]?._id)
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
+        }
+        const currentValues = watch();
+        reset({
+          ...currentValues,
+          increment_percentage: 0,
+          decrement_percentage: 0
+        });
+        setStep(1)
+      }
+    } else if ((watch('way_type') === 'Round Trip') && (watch('booking_type') === "Outstation")) {
+      const resultValue = await trigger(step === 0 && ['pass_name', 'pickup_city', 'pass_mobile_no', 'pass_whatsapp_no', 'email', 'booking_type', 'way_type', 'car_type']);
+      queryParams.append('days_package', watch('days_package'));
+      queryParams.delete('hours_package', watch('hours_package'));
+      if (resultValue) {
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        if (response?.data?.responseCode === 200) {
+          setDisabled(false)
+          const TotalPriceOfPackage = response?.data?.
+            responseData[0]?.total - response?.data?.
+              responseData[0]?.travelling_charge
+
+          handleUpdateFareValue(TotalPriceOfPackage
+            * totalDays); setTotalBaseValue(TotalPriceOfPackage * totalDays); setValue('package_id', response?.data?.
+              responseData[0]?._id)
+          setAllowancePrice(response?.data?.
+            responseData[0]?.travelling_charge)
+        }
+        const currentValues = watch();
+        reset({
+          ...currentValues,
+          increment_percentage: 0,
+          decrement_percentage: 0
+        });
+        setStep(1)
+      }
     }
   }
+
+
+
   const handleUpdateFareValue = (total_price) => {
-    let percentageOf20 = Number(total_price) * 0.80 * 0.20;
+    let percentageOf20 = Number(total_price) * 0.20;
     let percentageOf82 = percentageOf20 * 0.82;
-    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.64, travelAllowance: Number(total_price) * 0.2, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
+    setFare(prevState => ({ ...prevState, totalPrice: Number(total_price), driverCharge: Number(total_price) * 0.8, travelAllowance: allowancrPrice, platformFee: percentageOf82, gst: percentageOf20 * 0.18 }))
     const currentValues = watch();
+    console.log(currentValues, 'currentValues')
     reset({
       ...currentValues,
       total_price: Number(total_price)
@@ -426,9 +534,9 @@ function AllRides() {
     setFare(prevState => ({ ...prevState, gst: Number(e.target.value), platformFee: value - Number(e.target.value) }))
   }
 
-  useEffect(() => {
-    handlePackage()
-  }, [pickupState, return_city, dropOffState, pickUpCity, hours_package, car_type])
+
+
+
 
   return (
     <>
@@ -750,9 +858,12 @@ function AllRides() {
           <Box className="!pt-20 !pb-4 px-5">
             <Box className="flex justify-between items-center mb-4">
               <Typography variant="h6" component="div">
-                Create Ride
+                {
+                  step === 0 ? 'Select Package' : "Create Ride"
+                }
+
               </Typography>
-              <IconButton onClick={() => { reset(); setOpen(false); }}>
+              <IconButton onClick={() => { reset(); setOpen(false); setStep(0) }}>
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -762,347 +873,204 @@ function AllRides() {
               onReset={() => reset()}
               className=" flex flex-col gap-4"
             >
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="pass_name"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Passenger Name"
-                      className="w-full"
-                      error={!!errors.pass_name}
-                      helperText={errors.pass_name?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="pass_mobile_no"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        handleRideNumberChange(e.target.value);
-                      }}
-                      label="Mobile No."
-                      className="w-full"
-                      error={!!errors.pass_mobile_no}
-                      helperText={errors.pass_mobile_no?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="pass_whatsapp_no"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Whatsapp Number"
-                      className="w-full"
-                      error={!!errors.pass_whatsapp_no}
-                      helperText={errors.pass_whatsapp_no?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Email"
-                      className="w-full"
-                      error={!!errors.email}
-                      helperText={errors.email?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="booking_type"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Booking Type</InputLabel>
-                      <Select {...field} className="w-full" defaultValue="Local" label="Booking Type">
-                        <MenuItem value={'Local'}>Local</MenuItem>
-                        <MenuItem value={'Outstation'}>Out Station</MenuItem>
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="way_type"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Way Type</InputLabel>
-                      <Select {...field} className="w-full" defaultValue="One Way" label="Packages">
-                        <MenuItem value={'One Way'}>One Way</MenuItem>
-                        <MenuItem value={'Round Trip'}>Round Trip</MenuItem>
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-              </Stack>
               {
-                watch('booking_type') === "Local" && <Stack direction={"row"} gap={2} className="!mb-4">
-                  <Controller
-                    control={control}
-                    name="hours_package"
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel>Hour Package</InputLabel>
-                        <Select label="Hour Package" {...field}>
-                          {
-                            hours?.map((data) => <MenuItem value={data}>
-                              {data} Hour
-                            </MenuItem>)
-                          }
-                        </Select>
-                        {console.log(errors, "Errors 1212")}
-                      </FormControl>
-                    )}
-                  />
-                </Stack>
-              }
-              {
-                watch('booking_type') === "Outstation" &&
-                <Stack direction={"row"} gap={2} className="!mb-4">
-                  <Controller
-                    control={control}
-                    name="days_package"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Number of Days"
-                        className="w-full"
-                        error={!!errors.days_package}
-                        helperText={errors.days_package?.message}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    )}
-                  />
-                </Stack>
-              }
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="payment_type"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Payment Type</InputLabel>
-                      <Select {...field} className="w-full" defaultValue="Local" label="Booking Type">
-                        <MenuItem value={'Prepaid'}>Prepaid</MenuItem>
-                        <MenuItem value={'Postpaid'}>Postpaid</MenuItem>
-                        <MenuItem value={'Partially Paid'}>Partially Paid</MenuItem>
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-                {
-                  (paymentType === "Prepaid" || paymentType === "Partially Paid") &&
-                  <Controller
-                    control={control}
-                    name="alreadypaid_amount"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Payment Amount"
-                        className="w-full"
-                        error={!!errors.alreadypaid_amount}
-                        helperText={errors.alreadypaid_amount?.message}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    )}
-                  />
-                }
-              </Stack>
-              <Stack direction={"row"} gap={2} alignItems={'center'}>
-                <Controller
-                  control={control}
-                  name="pickup_date"
-                  render={({ field }) => (
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker label="Pick-up Date" disablePast={true}  {...field} renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          variant="outlined"
-                          error={!!errors.pickup_date}
-                          helperText={errors.pickup_date?.message}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      )}
-                      />
-                    </LocalizationProvider>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="pickup_time"
-                  render={({ field }) => (
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={['TimePicker']}>
-                        <TimePicker label="Pick-up Time" {...field} className=" !mb-2" />
-                      </DemoContainer>
-                    </LocalizationProvider>
-                  )}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                {
-                  booking_type !== 'Local' && (
-                    <Controller
-                      control={control}
-                      name="pickup_state"
-                      render={({ field }) => (
-                        <FormControl fullWidth>
-                          <InputLabel>Pickup State</InputLabel>
-                          <Select label="Pick-up State" {...field} defaultValue="">
-                            {states.map((state) => (
-                              <MenuItem key={state.isoCode} value={state.isoCode}>
-                                {state.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
-                    />
-                  )
-                }
-
-                {
-                  watch('booking_type') === 'Local' ? <Controller
-                    control={control}
-                    name="pickup_city"
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel>Pick-up City</InputLabel>
-                        <Select label="Pick-up City" {...field} defaultValue="">
-                          <MenuItem value={'Delhi'}>Delhi</MenuItem>
-                          <MenuItem value={'Noida'}>Noida</MenuItem>
-                          <MenuItem value={'Gurgaon'}>Gurgaon</MenuItem>
-                          <MenuItem value={'Ghaziabad'}>Ghaziabad</MenuItem>
-                          <MenuItem value={'Faridabad'}>Faridabad</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  /> : <Controller
-                    control={control}
-                    name="pickup_city"
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel>Pick-up City</InputLabel>
-                        <Select label="Pick-up City" {...field}>
-                          {cities.map((city) => (
-                            <MenuItem key={city.name} value={city.name}>
-                              {city.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                }
-              </Stack>
-              <Stack direction={"row"} gap={2} className="!mb-4">
-                <Controller
-                  control={control}
-                  name="pickup_address"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Pick-up address"
-                      className="w-full"
-                      error={!!errors.pickup_address}
-                      helperText={errors.pickup_address?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="pickup_pin"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Pick-up Pincode"
-                      className="w-full"
-                      error={!!errors.pickup_pin}
-                      helperText={errors.pickup_pin?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-              </Stack>
-              {
-                wayType === "One Way" && (
+                step === 0 ? (
                   <>
-
                     <Stack direction={"row"} gap={2} className="!mb-4">
                       <Controller
                         control={control}
-                        name="return_date"
+                        name="pass_name"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Passenger Name"
+                            className="w-full"
+                            error={!!errors.pass_name}
+                            helperText={errors.pass_name?.message}
+                            InputLabelProps={{ shrink: true }}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="pass_mobile_no"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleRideNumberChange(e.target.value);
+                            }}
+                            label="Mobile No."
+                            className="w-full"
+                            error={!!errors.pass_mobile_no}
+                            helperText={errors.pass_mobile_no?.message}
+                            InputLabelProps={{ shrink: true }}
+                          />
+                        )}
+                      />
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="pass_whatsapp_no"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Whatsapp Number"
+                            className="w-full"
+                            error={!!errors.pass_whatsapp_no}
+                            helperText={errors.pass_whatsapp_no?.message}
+                            InputLabelProps={{ shrink: true }}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="email"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Email"
+                            className="w-full"
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                            InputLabelProps={{ shrink: true }}
+                          />
+                        )}
+                      />
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="booking_type"
+                        render={({ field }) => (
+                          <FormControl fullWidth>
+                            <InputLabel>Booking Type</InputLabel>
+                            <Select {...field} className="w-full" defaultValue="Local" label="Booking Type">
+                              <MenuItem value={'Local'}>Local</MenuItem>
+                              <MenuItem value={'Outstation'}>Out Station</MenuItem>
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="way_type"
+                        render={({ field }) => (
+                          <FormControl fullWidth>
+                            <InputLabel>Way Type</InputLabel>
+                            <Select {...field} className="w-full" defaultValue="One Way" label="Packages">
+                              <MenuItem value={'One Way'}>One Way</MenuItem>
+                              <MenuItem value={'Round Trip'}>Round Trip</MenuItem>
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                    </Stack>
+                    {
+                      (watch('booking_type') === "Local" && watch('way_type') === "Round Trip") && <Stack direction={"row"} gap={2} className="!mb-4">
+                        <Controller
+                          control={control}
+                          name="hours_package"
+                          render={({ field }) => (
+                            <FormControl fullWidth>
+                              <InputLabel>Hour Package</InputLabel>
+                              <Select label="Hour Package" {...field}>
+                                {
+                                  hours?.map((data) => <MenuItem value={data}>
+                                    {data} Hour
+                                  </MenuItem>)
+                                }
+                              </Select>
+                              {console.log(errors, "Errors 1212")}
+                            </FormControl>
+                          )}
+                        />
+                      </Stack>
+                    }
+                    {
+                      watch('booking_type') === "Outstation" &&
+                      <Stack direction={"row"} gap={2} className="!mb-4">
+                        <Controller
+                          control={control}
+                          name="days_package"
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Number of Days"
+                              className="w-full"
+                              error={!!errors.days_package}
+                              helperText={errors.days_package?.message}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                          )}
+                        />
+                      </Stack>
+                    }
+
+                    <Stack direction={"row"} gap={2} alignItems={'center'}>
+                      <Controller
+                        control={control}
+                        name="pickup_date"
                         render={({ field }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
+                            <DatePicker label="Pick-up Date" disablePast={true}  {...field} renderInput={(params) => (
                               <TextField
-                                {...field}
-                                className="w-full"
-                                error={!!errors.return_date}
-                                helperText={errors.return_date?.message}
+                                {...params}
+                                fullWidth
+                                variant="outlined"
+                                error={!!errors.pickup_date}
+                                helperText={errors.pickup_date?.message}
                                 InputLabelProps={{ shrink: true }}
-
                               />
-                            )} shouldDisableDate={(date) => {
-                              const pickupDate = watch('pickup_date');
-                              return pickupDate && date.isBefore(pickupDate, 'day');
-                            }}
-                              disablePast={true} />
+                            )}
+                            />
                           </LocalizationProvider>
                         )}
                       />
                       <Controller
                         control={control}
-                        name="return_time"
+                        name="pickup_time"
                         render={({ field }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['TimePicker']}>
-                              <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
-                                <TextField
-                                  {...field}
-                                  label="Drop-off Time"
-                                  className="w-full"
-                                  error={!!errors.return_time}
-                                  helperText={errors.return_time?.message}
-                                  InputLabelProps={{ shrink: true }}
-                                />
-                              )} />
+                              <TimePicker label="Pick-up Time" {...field} className=" !mb-2" />
                             </DemoContainer>
                           </LocalizationProvider>
                         )}
                       />
                     </Stack>
                     <Stack direction={"row"} gap={2} className="!mb-4">
+                      {
+                        booking_type !== 'Local' && (
+                          <Controller
+                            control={control}
+                            name="pickup_state"
+                            render={({ field }) => (
+                              <FormControl fullWidth>
+                                <InputLabel>Pickup State</InputLabel>
+                                <Select label="Pick-up State" {...field} defaultValue="">
+                                  {states.map((state) => (
+                                    <MenuItem key={state.isoCode} value={state.isoCode}>
+                                      {state.name}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        )
+                      }
 
                       {
                         watch('booking_type') === 'Local' ? <Controller
                           control={control}
-                          name="return_city"
+                          name="pickup_city"
                           render={({ field }) => (
                             <FormControl fullWidth>
-                              <InputLabel>Drop-Off City</InputLabel>
-                              <Select label="Drop-Off City" {...field} defaultValue="">
+                              <InputLabel>Pick-up City</InputLabel>
+                              <Select label="Pick-up City" {...field} defaultValue="">
                                 <MenuItem value={'Delhi'}>Delhi</MenuItem>
                                 <MenuItem value={'Noida'}>Noida</MenuItem>
                                 <MenuItem value={'Gurgaon'}>Gurgaon</MenuItem>
@@ -1111,263 +1079,451 @@ function AllRides() {
                               </Select>
                             </FormControl>
                           )}
-                        /> :
-                          (
-                            <>
-                              <Controller
-                                control={control}
-                                name="return_state"
-                                render={({ field }) => (
-                                  <FormControl fullWidth>
-                                    <InputLabel>Drop-off State</InputLabel>
-                                    <Select label="Drop-off State" {...field}>
-                                      {dropOffStates.map((state) => (
-                                        <MenuItem key={state.isoCode} value={state.isoCode}>
-                                          {state.name}
-                                        </MenuItem>
-                                      ))}
-                                    </Select>
-                                  </FormControl>
-                                )}
-                              />
-
-                              <Controller
-                                control={control}
-                                name="return_city"
-                                render={({ field }) => (
-                                  <FormControl fullWidth>
-                                    <InputLabel>Drop-off City</InputLabel>
-                                    <Select label="Drop-off City" {...field}>
-                                      {dropOffCity.map((city) => (
-                                        <MenuItem key={city.name} value={city.name}>
-                                          {city.name}
-                                        </MenuItem>
-                                      ))}
-                                    </Select>
-                                  </FormControl>
-                                )}
-                              />
-
-                            </>
-                          )
+                        /> : <Controller
+                          control={control}
+                          name="pickup_city"
+                          render={({ field }) => (
+                            <FormControl fullWidth>
+                              <InputLabel>Pick-up City</InputLabel>
+                              <Select label="Pick-up City" {...field}>
+                                {cities.map((city) => (
+                                  <MenuItem key={city.name} value={city.name}>
+                                    {city.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+                        />
                       }
-
+                    </Stack>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      {/* <Controller
+                          control={control}
+                          name=""
+                          render={({ field }) => ( */}
+                      <TextField
+                        // {...field}
+                        label="Pick-Up Area"
+                        className="w-full"
+                        // error={!!errors.days_package}
+                        // helperText={errors.days_package?.message}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                      {/* )}
+                        /> */}
                     </Stack>
                     <Stack direction={"row"} gap={2} className="!mb-4">
                       <Controller
                         control={control}
-                        name="return_address"
+                        name="pickup_address"
                         render={({ field }) => (
                           <TextField
                             {...field}
-                            label="Drop-off address"
+                            label="Pick-up address"
                             className="w-full"
-                            error={!!errors.return_address}
-                            helperText={errors.return_address?.message}
+                            error={!!errors.pickup_address}
+                            helperText={errors.pickup_address?.message}
                             InputLabelProps={{ shrink: true }}
                           />
                         )}
                       />
                       <Controller
                         control={control}
-                        name="return_pin"
+                        name="pickup_pin"
                         render={({ field }) => (
                           <TextField
                             {...field}
-                            label="Drop-off Pincode"
+                            label="Pick-up Pincode"
                             className="w-full"
-                            error={!!errors.return_pin}
-                            helperText={errors.return_pin?.message}
+                            error={!!errors.pickup_pin}
+                            helperText={errors.pickup_pin?.message}
+                            InputLabelProps={{ shrink: true }}
                           />
                         )}
                       />
+                    </Stack>
+                    {
+                      wayType === "One Way" && (
+                        <>
+
+                          <Stack direction={"row"} gap={2} className="!mb-4">
+                            <Controller
+                              control={control}
+                              name="return_date"
+                              render={({ field }) => (
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                  <DatePicker label="Drop-off Date" {...field} render={({ field }) => (
+                                    <TextField
+                                      {...field}
+                                      className="w-full"
+                                      error={!!errors.return_date}
+                                      helperText={errors.return_date?.message}
+                                      InputLabelProps={{ shrink: true }}
+
+                                    />
+                                  )} shouldDisableDate={(date) => {
+                                    const pickupDate = watch('pickup_date');
+                                    return pickupDate && date.isBefore(pickupDate, 'day');
+                                  }}
+                                    disablePast={true} />
+                                </LocalizationProvider>
+                              )}
+                            />
+                            <Controller
+                              control={control}
+                              name="return_time"
+                              render={({ field }) => (
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                  <DemoContainer components={['TimePicker']}>
+                                    <TimePicker label="Drop-off Time" {...field} render={({ field }) => (
+                                      <TextField
+                                        {...field}
+                                        label="Drop-off Time"
+                                        className="w-full"
+                                        error={!!errors.return_time}
+                                        helperText={errors.return_time?.message}
+                                        InputLabelProps={{ shrink: true }}
+                                      />
+                                    )} />
+                                  </DemoContainer>
+                                </LocalizationProvider>
+                              )}
+                            />
+                          </Stack>
+                          <Stack direction={"row"} gap={2} className="!mb-4">
+
+                            {
+                              watch('booking_type') === 'Local' ? <Controller
+                                control={control}
+                                name="return_city"
+                                render={({ field }) => (
+                                  <FormControl fullWidth>
+                                    <InputLabel>Drop-Off City</InputLabel>
+                                    <Select label="Drop-Off City" {...field} defaultValue="">
+                                      <MenuItem value={'Delhi'}>Delhi</MenuItem>
+                                      <MenuItem value={'Noida'}>Noida</MenuItem>
+                                      <MenuItem value={'Gurgaon'}>Gurgaon</MenuItem>
+                                      <MenuItem value={'Ghaziabad'}>Ghaziabad</MenuItem>
+                                      <MenuItem value={'Faridabad'}>Faridabad</MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                )}
+                              /> :
+                                (
+                                  <>
+                                    <Controller
+                                      control={control}
+                                      name="return_state"
+                                      render={({ field }) => (
+                                        <FormControl fullWidth>
+                                          <InputLabel>Drop-off State</InputLabel>
+                                          <Select label="Drop-off State" {...field}>
+                                            {dropOffStates.map((state) => (
+                                              <MenuItem key={state.isoCode} value={state.isoCode}>
+                                                {state.name}
+                                              </MenuItem>
+                                            ))}
+                                          </Select>
+                                        </FormControl>
+                                      )}
+                                    />
+
+                                    <Controller
+                                      control={control}
+                                      name="return_city"
+                                      render={({ field }) => (
+                                        <FormControl fullWidth>
+                                          <InputLabel>Drop-off City</InputLabel>
+                                          <Select label="Drop-off City" {...field}>
+                                            {dropOffCity.map((city) => (
+                                              <MenuItem key={city.name} value={city.name}>
+                                                {city.name}
+                                              </MenuItem>
+                                            ))}
+                                          </Select>
+                                        </FormControl>
+                                      )}
+                                    />
+
+                                  </>
+                                )
+                            }
+
+                          </Stack>
+                          <Stack direction={"row"} gap={2} className="!mb-4">
+                            <Controller
+                              control={control}
+                              name="return_address"
+                              render={({ field }) => (
+                                <TextField
+                                  {...field}
+                                  label="Drop-off address"
+                                  className="w-full"
+                                  error={!!errors.return_address}
+                                  helperText={errors.return_address?.message}
+                                  InputLabelProps={{ shrink: true }}
+                                />
+                              )}
+                            />
+                            <Controller
+                              control={control}
+                              name="return_pin"
+                              render={({ field }) => (
+                                <TextField
+                                  {...field}
+                                  label="Drop-off Pincode"
+                                  className="w-full"
+                                  error={!!errors.return_pin}
+                                  helperText={errors.return_pin?.message}
+                                />
+                              )}
+                            />
+                          </Stack>
+                          <Stack direction={"row"} gap={2} className="!mb-4">
+                            {/* <Controller
+                          control={control}
+                          name=""
+                          render={({ field }) => ( */}
+                            <TextField
+                              // {...field}
+                              label="Drop-Off Area"
+                              className="w-full"
+                              // error={!!errors.days_package}
+                              // helperText={errors.days_package?.message}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                            {/* )}
+                        /> */}
+                          </Stack>
+                        </>
+                      )
+                    }
+                    <Stack>
+                      <Controller
+                        control={control}
+                        name="car_type"
+                        render={({ field }) => (
+                          <FormControl fullWidth>
+                            <InputLabel>Car Type</InputLabel>
+                            <Select {...field} className="w-full" label="Car Type">
+                              {
+                                CarType?.map((carType) => <MenuItem value={carType}>
+                                  {carType}
+                                </MenuItem>)
+                              }
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                    </Stack>
+                  </>
+                ) : (
+                  <>
+                    <Stack direction={"row"} gap={2} className="!mb-4">
+                      <Controller
+                        control={control}
+                        name="payment_type"
+                        render={({ field }) => (
+                          <FormControl fullWidth>
+                            <InputLabel>Payment Type</InputLabel>
+                            <Select {...field} className="w-full" defaultValue="Local" label="Booking Type">
+                              <MenuItem value={'Prepaid'}>Prepaid</MenuItem>
+                              <MenuItem value={'Postpaid'}>Postpaid</MenuItem>
+                              <MenuItem value={'Partially Paid'}>Partially Paid</MenuItem>
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                      {
+                        (paymentType === "Prepaid" || paymentType === "Partially Paid") &&
+                        <Controller
+                          control={control}
+                          name="alreadypaid_amount"
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Payment Amount"
+                              className="w-full"
+                              error={!!errors.alreadypaid_amount}
+                              helperText={errors.alreadypaid_amount?.message}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                          )}
+                        />
+                      }
+                    </Stack>
+                    <Stack direction={"row"} className="!mb-4" gap={2}>
+
+                      {/* {
+                        !selectPackage && <Button onClick={() => { setSelectPackage(true); handlePackage() }} >
+                          Select Package
+                        </Button>
+                      }
+
+                      {
+                        selectPackage && (
+
+                          <Controller
+                            control={control}
+                            name="package_id"
+                            render={({ field }) => (
+                              <FormControl fullWidth>
+                                <InputLabel>Packages</InputLabel>
+                                <Select {...field} className="w-full" label="Packages">
+                                  {
+
+                                    packages?.map((data) => <MenuItem value={data?._id} onClick={() => { handleUpdateFareValue(data?.total * totalDays); setDisabled(false); setTotalBaseValue(data?.total * totalDays); setValue('package_id', data?._id) }}>
+                                      Package
+                                    </MenuItem>)
+                                  }
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        )
+                      } */}
+                    </Stack>
+                    <Stack direction={"row"} className="!mb-4" gap={2}>
+                      <TextField
+                        value={Number(watch('total_price'))}
+                        onChange={e => handleSet(e)}
+                        label="Total Fare"
+                        className="w-full"
+                        InputLabelProps={{ shrink: true }}
+                        disabled={disabled}
+
+                      />
+                    </Stack>
+                    <Stack direction={"row"} className="!mb-4" gap={2}>
+
+                      <TextField
+                        value={fare.driverCharge}
+                        onChange={(e) => handleDriverChange(e)}
+                        label="Driver Charge"
+                        className="w-full"
+                        error={!!errors.travel_allowance}
+                        helperText={errors.travel_allowance?.message}
+                        InputLabelProps={{ shrink: true }}
+                        disabled={disabled}
+                      />
+
+                      <TextField
+                        value={fare.travelAllowance}
+                        onChange={(e) => handleTravelAllowanceChange(e)}
+                        label="Travel Allowance"
+                        className="w-full"
+                        error={!!errors.travel_allowance}
+                        helperText={errors.travel_allowance?.message}
+                        InputLabelProps={{ shrink: true }}
+                        disabled={disabled}
+                      />
+
+                    </Stack>
+                    <Stack direction={"row"} className="!mb-4" gap={2}>
+
+                      <TextField
+                        value={fare.platformFee}
+                        onChange={(e) => handlePlatFormFeeChange(e)}
+                        label="Platform Fee"
+                        className="w-full"
+                        error={!!errors.travel_allowance}
+                        helperText={errors.travel_allowance?.message}
+                        InputLabelProps={{ shrink: true }}
+                        disabled={disabled}
+                      />
+                      <TextField
+
+                        label="GST"
+                        value={fare.gst}
+                        onChange={(e) => handleGstChange(e)}
+                        className="w-full"
+                        error={!!errors.travel_allowance}
+                        helperText={errors.travel_allowance?.message}
+                        InputLabelProps={{ shrink: true }}
+                        disabled={disabled}
+                      />
+
+                    </Stack>
+                    <Stack direction={"row"} className="!mb-4" gap={2}>
+                      <Controller
+                        control={control}
+                        name="increment_percentage"
+                        render={({ field: {
+                          onChange
+                        } }) => (
+                          <TextField
+                            onChange={(e) => onChange(e.target.value)}
+                            value={watch('increment_percentage')}
+                            label="Add Surcharge"
+                            InputProps={{
+                              readOnly: true
+                            }}
+                            className="w-full"
+                            error={!!errors.increment_percentage}
+                            helperText={errors.increment_percentage?.message}
+                            InputLabelProps={{ shrink: true }}
+                            disabled={disabled}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="decrement_percentage"
+                        render={({ field: {
+                          onChange
+                        } }) => (
+                          <TextField
+                            onChange={(e) => onChange(e.target.value)}
+                            value={watch('decrement_percentage')}
+                            InputProps={{
+                              readOnly: true
+                            }}
+                            label="Discount"
+                            className="w-full"
+                            error={!!errors.decrement_percentage}
+                            helperText={errors.decrement_percentage?.message}
+                            InputLabelProps={{ shrink: true }}
+                            disabled={disabled}
+                          />
+                        )}
+                      />
+
                     </Stack>
                   </>
                 )
               }
 
-              <Stack direction={"row"} className="!mb-4" gap={2}>
-                <Controller
-                  control={control}
-                  name="car_type"
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Car Type</InputLabel>
-                      <Select {...field} className="w-full" label="Car Type">
-                        {
-                          CarType?.map((carType) => <MenuItem value={carType}>
-                            {carType}
-                          </MenuItem>)
-                        }
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-                {/* variant="contained" disabled={
-                    (!way_type || !booking_type || !pickup_city || !pickup_state) ?
-                      true : false
-                  } */}
-                {
-                  !selectPackage && <Button onClick={() => { setSelectPackage(true); handlePackage() }} >
-                    Select Package
+
+
+              {
+                step === 0 ? <Box className="flex justify-end">
+                  <Button variant="contained" className="!w-full !bg-[#DD781E]" onClick={handlePackage}>
+                    Next
                   </Button>
-                }
-
-                {
-                  selectPackage && (
-
-                    <Controller
-                      control={control}
-                      name="package_id"
-                      render={({ field }) => (
-                        <FormControl fullWidth>
-                          <InputLabel>Packages</InputLabel>
-                          <Select {...field} className="w-full" label="Packages">
-                            {
-
-                              packages?.map((data) => <MenuItem value={data?._id} onClick={() => { handleUpdateFareValue(data?.total * totalDays); setDisabled(false); setTotalBaseValue(data?.total * totalDays); setValue('package_id', data?._id) }}>
-                                Package
-                              </MenuItem>)
-                            }
-                          </Select>
-                        </FormControl>
-                      )}
-                    />
-                  )
-                }
-              </Stack>
-              <Stack direction={"row"} className="!mb-4" gap={2}>
-                <TextField
-                  value={Number(watch('total_price'))}
-                  onChange={e => handleSet(e)}
-                  label="Total Fare"
-                  className="w-full"
-                  InputLabelProps={{ shrink: true }}
-                  disabled={disabled}
-
-                />
-              </Stack>
-              <Stack direction={"row"} className="!mb-4" gap={2}>
-                <Controller
-                  control={control}
-                  name="travel_allowance"
-                  render={({ field }) => (
-                    <TextField
-                      value={fare.driverCharge}
-                      onChange={(e) => handleDriverChange(e)}
-                      label="Driver Charge"
-                      className="w-full"
-                      error={!!errors.travel_allowance}
-                      helperText={errors.travel_allowance?.message}
-                      InputLabelProps={{ shrink: true }}
-                      disabled={disabled}
-                    />
-                  )}
-                />
-
-                <TextField
-                  value={fare.travelAllowance}
-                  onChange={(e) => handleTravelAllowanceChange(e)}
-                  label="Travel Allowance"
-                  className="w-full"
-                  error={!!errors.travel_allowance}
-                  helperText={errors.travel_allowance?.message}
-                  InputLabelProps={{ shrink: true }}
-                  disabled={disabled}
-                />
-
-              </Stack>
-              <Stack direction={"row"} className="!mb-4" gap={2}>
-                {/* <Controller
-                  control={control}
-                  name="travel_allowance"
-                  render={({ field }) => ( */}
-                <TextField
-                  value={fare.platformFee}
-                  onChange={(e) => handlePlatFormFeeChange(e)}
-                  label="Platform Fee"
-                  className="w-full"
-                  error={!!errors.travel_allowance}
-                  helperText={errors.travel_allowance?.message}
-                  InputLabelProps={{ shrink: true }}
-                  disabled={disabled}
-                />
-                {/* )}
-                /> */}
-                {/* <Controller
-                  control={control}
-                  name="travel_allowance"
-                  render={({ field }) => ( */}
-                <TextField
-
-                  label="GST"
-                  value={fare.gst}
-                  onChange={(e) => handleGstChange(e)}
-                  className="w-full"
-                  error={!!errors.travel_allowance}
-                  helperText={errors.travel_allowance?.message}
-                  InputLabelProps={{ shrink: true }}
-                  disabled={disabled}
-                />
-                {/* )}
-                /> */}
-              </Stack>
-              <Stack direction={"row"} className="!mb-4" gap={2}>
-                <Controller
-                  control={control}
-                  name="increment_percentage"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Add Surcharge"
-                      InputProps={{
-                        readOnly: true
-                      }}
-                      className="w-full"
-                      error={!!errors.increment_percentage}
-                      helperText={errors.increment_percentage?.message}
-                      InputLabelProps={{ shrink: true }}
-                      disabled={disabled}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="decrement_percentage"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      InputProps={{
-                        readOnly: true
-                      }}
-                      label="Discount"
-                      className="w-full"
-                      error={!!errors.decrement_percentage}
-                      helperText={errors.decrement_percentage?.message}
-                      InputLabelProps={{ shrink: true }}
-                      disabled={disabled}
-                    />
-                  )}
-                />
-
-              </Stack>
-              <Box className="flex" gap={2}>
-                <Button variant="outlined" className="!w-full" type="reset">
-                  Reset
-                </Button>
-                {
-                  isUpdate ? <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
-                    Update
-                  </Button> : <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]" disabled={isLoading}>
-                    Submit
+                </Box> : <Box className="flex" gap={2}>
+                  <Button onClick={() => setStep(0)}>
+                    Back
                   </Button>
-                }
-              </Box>
+                  <Button variant="outlined" className="!w-full" type="reset">
+                    Reset
+                  </Button>
+                  {
+                    isUpdate ? <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]">
+                      Update
+                    </Button> : <Button variant="contained" type="submit" className="!w-full !bg-[#DD781E]" disabled={isLoading}>
+                      Submit
+                    </Button>
+                  }
+                </Box>
+              }
+
+
             </Box>
           </Box>
-        </Drawer>
+        </Drawer >
 
-      </Box>
+      </Box >
       <AssignRideDialog dialogOpen={dialogOpen} handleNavigate={handleRedirect} />
       <CancelRideDialog open={isCancel} remarksChange={(value) => setRemarks(value)} handleClose={() => setIsCancel(false)} handleConfirm={handleCancelRide} />
     </>

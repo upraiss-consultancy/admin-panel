@@ -17,7 +17,7 @@ export const getPackages = async (
     params
 ) => {
     const response = await api.get(
-        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}?${params.toString()}`,
         params
     );
     return response;
