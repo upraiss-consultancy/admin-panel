@@ -446,7 +446,7 @@ function Dashboard() {
                     <Grid item xs={3}>
 
                         <Stack direction={'column'} gap={5} className=" mb-5">
-                            <RideCard title="Total Rides" count={rideCount?.totalRide[0]?.totalRide} status="total" />
+                            <RideCard title="Total Rides" count={rideCount?.totalRide[0]?.totalRide || 0} status="total" />
                             <RideCard title="Complete Rides" count={rideCount?.completeRide[0]?.completeRide || 0} status="complete" />
                             <RideCard title="Cancel Rides" count={rideCount?.cancelRide[0]?.cancelRide || 0} status="cancel" />
                         </Stack>
