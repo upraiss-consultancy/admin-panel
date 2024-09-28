@@ -14,11 +14,11 @@ export const createPackage = async (
 
 export const getPackages = async (
     endpoint,
-    params
+    body
 ) => {
-    const response = await api.get(
-        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}?${params.toString()}`,
-        params
+    const response = await api.post(
+        `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
+        body
     );
     return response;
 };
