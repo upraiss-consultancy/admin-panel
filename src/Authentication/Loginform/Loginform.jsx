@@ -26,7 +26,7 @@ function Loginform() {
     if (response) {
       console.log(response , "Check Login Responsse")
       const { statusText, data: { responseData: { adminUserId, token } } } = response;
-      if (response?.status === 200) {
+      if (response?.data?.responseCode === 200) {
         const expiry = new Date();
         expiry.setDate(expiry.getDate() + 1); // Set expiry date to one day from now
         localStorage.setItem('token', token);
@@ -35,8 +35,14 @@ function Loginform() {
         // const userDetails = { ...response?.data?.responseData, expiry: expiry };
         // const encryptedUserDetails = encryptData(userDetails);
         // localStorage.setItem('userDetails', JSON.stringify(encryptedUserDetails))
+      } 
+      else {
+        showToast(response?.data?.message, 'error');
       }
       navigate('/')
+    } else {
+
+    
     }
   }
   useEffect(() => {

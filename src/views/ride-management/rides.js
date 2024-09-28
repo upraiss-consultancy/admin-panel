@@ -86,7 +86,9 @@ function AllRides() {
       total_price: 0,
       days_package: 1,
       hours_package: 0,
-      tranmission: ""
+      tranmission: "",
+      pickup_area: "",
+      drop_area: ""
     },
     resolver: yupResolver(CreateRideSchema),
   });
@@ -311,6 +313,8 @@ function AllRides() {
       payment_type: data["payment_type"],
       alreadypaid_amount: data["alreadypaid_amount"],
       email: data["email"],
+      pickup_area: data["pickup_area"],
+      drop_area: data["drop_area"],
       travel_allowance: data["travel_allowance"],
       days_package: data["days_package"],
       total_price: data["total_price"],
@@ -367,6 +371,8 @@ function AllRides() {
           package_id: response?.data[0]["package_id"],
           return_pin: response?.data[0]["return_pin"],
           car_type: response?.data[0]["car_type"],
+          pickup_area: response?.data[0]["pickup_area"],
+          drop_area: response?.data[0]["drop_area"],
           pass_whatsapp_no: response?.data[0]["pass_whatsapp_no"],
           payment_type: response?.data[0]["payment_type"],
           alreadypaid_amount: Number(response?.data[0]["alreadypaid_amount"]),
@@ -379,6 +385,7 @@ function AllRides() {
           driver_amount: Number(response?.data[0]["driver_amount"]),
           gst: Number(response?.data[0]["gst"]),
           total_price: Number(response?.data[0]["total_price"]),
+          
         });
       }
     }
@@ -409,15 +416,15 @@ function AllRides() {
       );
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
-      
-            trip_type: way_type,
-            pickup_city: pickup_city,
-            pickup_state: pickup_state,
-            dropoff_city: return_city,
-            dropoff_state: return_state,
-            booking_type: booking_type,
-            car_type: car_type,
-          
+
+          trip_type: way_type,
+          pickup_city: pickup_city,
+          pickup_state: pickup_state,
+          dropoff_city: return_city,
+          dropoff_state: return_state,
+          booking_type: booking_type,
+          car_type: car_type,
+
         });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
@@ -461,14 +468,14 @@ function AllRides() {
       );
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
-      
-            trip_type: way_type,
-            pickup_city: pickup_city,
-            pickup_state: pickup_state,
-            booking_type: booking_type,
-            car_type: car_type,
-            hours_package: watch("hours_package")
-          
+
+          trip_type: way_type,
+          pickup_city: pickup_city,
+          pickup_state: pickup_state,
+          booking_type: booking_type,
+          car_type: car_type,
+          hours_package: watch("hours_package")
+
         });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
@@ -514,16 +521,16 @@ function AllRides() {
       );
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
-  
-            trip_type: way_type,
-            pickup_city: pickup_city,
-            pickup_state: pickup_state,
-            booking_type: booking_type,
-            car_type: car_type,
-            dropoff_city: return_city,
-            dropoff_state: return_state,
-            km: distance
-          
+
+          trip_type: way_type,
+          pickup_city: pickup_city,
+          pickup_state: pickup_state,
+          booking_type: booking_type,
+          car_type: car_type,
+          dropoff_city: return_city,
+          dropoff_state: return_state,
+          km: distance
+
         });
         console.log(errors, "EROROR");
         console.log(response, "response");
@@ -566,16 +573,16 @@ function AllRides() {
       );
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
-       
-            trip_type: way_type,
-            pickup_city: pickup_city,
-            pickup_state: pickup_state,
-            booking_type: booking_type,
-            car_type: car_type,
-            dropoff_city: return_city,
-            dropoff_state: return_state,
-            km: distance
-        
+
+          trip_type: way_type,
+          pickup_city: pickup_city,
+          pickup_state: pickup_state,
+          booking_type: booking_type,
+          car_type: car_type,
+          dropoff_city: return_city,
+          dropoff_state: return_state,
+          km: distance
+
         });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
@@ -1459,20 +1466,20 @@ function AllRides() {
                     )}
                   </Stack>
                   <Stack direction={"row"} gap={2} className="!mb-4">
-                    {/* <Controller
-                          control={control}
-                          name=""
-                          render={({ field }) => ( */}
-                    <TextField
-                      // {...field}
-                      label="Pick-Up Area"
-                      className="w-full"
-                      // error={!!errors.days_package}
-                      // helperText={errors.days_package?.message}
-                      InputLabelProps={{ shrink: true }}
+                    <Controller
+                      control={control}
+                      name="pickup_area"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Pick-Up Area"
+                          className="w-full"
+                          error={!!errors.pickup_area}
+                          helperText={errors.pickup_area?.message}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      )}
                     />
-                    {/* )}
-                        /> */}
                   </Stack>
                   <Stack direction={"row"} gap={2} className="!mb-4">
                     <Controller
@@ -1673,20 +1680,20 @@ function AllRides() {
                         />
                       </Stack>
                       <Stack direction={"row"} gap={2} className="!mb-4">
-                        {/* <Controller
+                        <Controller
                           control={control}
-                          name=""
-                          render={({ field }) => ( */}
+                          name="drop_area"
+                          render={({ field }) => (
                         <TextField
-                          // {...field}
+                          {...field}
                           label="Drop-Off Area"
                           className="w-full"
-                          // error={!!errors.days_package}
-                          // helperText={errors.days_package?.message}
+                          error={!!errors.drop_area}
+                          helperText={errors.drop_area?.message}
                           InputLabelProps={{ shrink: true }}
                         />
-                        {/* )}
-                        /> */}
+                      )}
+                        /> 
                       </Stack>
                     </>
                   )}
