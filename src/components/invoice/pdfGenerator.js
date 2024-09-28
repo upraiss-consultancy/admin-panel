@@ -136,7 +136,7 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                       <Typography variant="body2">1</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Typography variant="body2">₹ 1,400.00</Typography>
+                      <Typography variant="body2">₹ {data?.fare[0]?.driver_amount}</Typography>
                     </Grid>
                     <Grid item xs={2}>
                       <Typography variant="body2">₹ 1,470.00</Typography>
@@ -184,8 +184,10 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                 </Typography>
               </Grid>
               <Grid item xs={6} textAlign="right">
-                <Typography variant="body2">Sub Total: ₹1,600.00</Typography>
-                <Typography variant="body2">GST: ₹80.00</Typography>
+                <Typography variant="body2">Sub Total: ₹{data?.fare[0]?.company_amount + 
+data?.fare[0]?.driver_amount
+}</Typography>
+                <Typography variant="body2">GST: ₹{data?.fare[0]?.gst}</Typography>
                 <Typography variant="h6" fontWeight="bold">
                   Total Amount: ₹1,680.00
                 </Typography>
