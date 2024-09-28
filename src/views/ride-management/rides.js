@@ -612,15 +612,26 @@ function AllRides() {
 
   const handleTravelAllowanceChange = (e) => {
     if (Number(e.target.value) === Number(allowancrPrice)) {
+
       setFare((prevState) => ({
         ...prevState,
         travelAllowance: Number(e.target.value),
       }));
-           const currentValues = watch();
-      reset({
-        ...currentValues,
-        total_price: totalBaseValue,
-      });
+      const currentValues = watch();
+
+      if (watch('total_price') === totalBaseValue) {
+
+        reset({
+          ...currentValues,
+          total_price: totalBaseValue,
+        });
+      } else {
+        let value = e.target.value
+        reset({
+          ...currentValues,
+          total_price: watch('total_price') + Number(value),
+        });
+      }
     } else if (Number(e.target.value) < Number(allowancrPrice)) {
       const currentValues = watch();
       reset({
@@ -939,10 +950,10 @@ function AllRides() {
                     <TableCell>
                       {data?.return_address !== undefined
                         ? data?.return_address +
-                          " " +
-                          data?.return_city +
-                          ", " +
-                          data?.return_pin
+                        " " +
+                        data?.return_city +
+                        ", " +
+                        data?.return_pin
                         : "N.A."}
                     </TableCell>
                     <TableCell>
@@ -987,10 +998,10 @@ function AllRides() {
                         data?.booking_status === "pending"
                           ? " !text-orange-400 capitalize"
                           : data?.booking_status === "approved"
-                          ? "!text-green-500 "
-                          : data?.booking_status === "cancel"
-                          ? "!text-red-600 capitalize"
-                          : ""
+                            ? "!text-green-500 "
+                            : data?.booking_status === "cancel"
+                              ? "!text-red-600 capitalize"
+                              : ""
                       }
                     >
                       {data?.booking_status === "approved"
@@ -1652,21 +1663,21 @@ function AllRides() {
                     />
                     {(paymentType === "Prepaid" ||
                       paymentType === "Partially Paid") && (
-                      <Controller
-                        control={control}
-                        name="alreadypaid_amount"
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Payment Amount"
-                            className="w-full"
-                            error={!!errors.alreadypaid_amount}
-                            helperText={errors.alreadypaid_amount?.message}
-                            InputLabelProps={{ shrink: true }}
-                          />
-                        )}
-                      />
-                    )}
+                        <Controller
+                          control={control}
+                          name="alreadypaid_amount"
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Payment Amount"
+                              className="w-full"
+                              error={!!errors.alreadypaid_amount}
+                              helperText={errors.alreadypaid_amount?.message}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                          )}
+                        />
+                      )}
                   </Stack>
                   <Stack direction={"row"} className="!mb-4" gap={2}>
                     {/* {
