@@ -86,6 +86,7 @@ function AllRides() {
       total_price: 0,
       days_package: 1,
       hours_package: 0,
+      tranmission: ""
     },
     resolver: yupResolver(CreateRideSchema),
   });
@@ -121,7 +122,6 @@ function AllRides() {
   const [cities, setCities] = useState([]);
   const [dropOffStates, setDropOffStates] = useState([]);
   const [dropOffCity, setDropOffCity] = useState([]);
-  const [isLoading, setISLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
   const [totalBaseValue, setTotalBaseValue] = useState(0);
   const [allowancrPrice, setAllowancePrice] = useState(0);
@@ -135,6 +135,13 @@ function AllRides() {
   });
   const [hours, setHours] = useState([]);
   const [step, setStep] = useState(0);
+  const [latLonPoints, setLatLonPoints] = useState({
+    pickup_lat: '',
+    pickup_lon: '',
+    dropOff_lat: '',
+    dropOff_lon: ''
+  })
+  const [distance, setDistance] = useState(null);
   const fetchRides = async () => {
     const data = await getAllRides(BOOKING_LIST, {
       params: {
@@ -235,23 +242,23 @@ function AllRides() {
     setIsCancel(false);
   };
   const onSubmit = async (data) => {
-    setISLoading(true);
+    // setISLoading(true);
     const pickupformattedDate = dayjs(data.pickup_date);
     const returnformattedDate = dayjs(data.return_date);
     const transformedData = {
       ...data,
       pickup_date: pickupformattedDate,
       return_date: returnformattedDate,
-      total_price: fare.totalPrice,
-      travel_allowance: fare.travelAllowance,
-      company_amount: fare.platformFee,
-      driver_amount: fare.driverCharge,
-      gst: fare.gst,
+      total_price: fare.totalPrice.toFixed(2),
+      travel_allowance: fare.travelAllowance.toFixed(2),
+      company_amount: fare.platformFee.toFixed(2),
+      driver_amount: fare.driverCharge.toFixed(2),
+      gst: fare.gst.toFixed(2),
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
       if (data?._id === null) {
-        setISLoading(false);
+        // setISLoading(false);
         setBookingID(response?.bookingId);
         setDialogOpen(true);
       } else {
@@ -382,15 +389,6 @@ function AllRides() {
   const { way_type, booking_type, pickup_city, pickup_state, return_state } =
     allValue;
   const handlePackage = async () => {
-    const queryParams = new URLSearchParams({
-      trip_type: way_type,
-      pickup_city: pickup_city,
-      pickup_state: pickup_state,
-      dropoff_city: return_city,
-      dropoff_state: return_state,
-      booking_type: booking_type,
-      car_type: car_type,
-    });
     if (watch("way_type") === "One Way" && watch("booking_type") === "Local") {
       const resultValue = await trigger(
         step === 0 && [
@@ -410,7 +408,17 @@ function AllRides() {
         ]
       );
       if (resultValue) {
-        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, {
+      
+            trip_type: way_type,
+            pickup_city: pickup_city,
+            pickup_state: pickup_state,
+            dropoff_city: return_city,
+            dropoff_state: return_state,
+            booking_type: booking_type,
+            car_type: car_type,
+          
+        });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
@@ -452,8 +460,16 @@ function AllRides() {
         ]
       );
       if (resultValue) {
-        queryParams.append("hours_package", watch("hours_package"));
-        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, {
+      
+            trip_type: way_type,
+            pickup_city: pickup_city,
+            pickup_state: pickup_state,
+            booking_type: booking_type,
+            car_type: car_type,
+            hours_package: watch("hours_package")
+          
+        });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
@@ -496,11 +512,19 @@ function AllRides() {
           "car_type",
         ]
       );
-      queryParams.delete("hours_package", watch("hours_package"));
-      queryParams.append("return_state", watch("return_state"));
-      queryParams.append("return_city", watch("return_city"));
       if (resultValue) {
-        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, {
+  
+            trip_type: way_type,
+            pickup_city: pickup_city,
+            pickup_state: pickup_state,
+            booking_type: booking_type,
+            car_type: car_type,
+            dropoff_city: return_city,
+            dropoff_state: return_state,
+            km: distance
+          
+        });
         console.log(errors, "EROROR");
         console.log(response, "response");
         if (response?.data?.responseCode === 200) {
@@ -540,9 +564,19 @@ function AllRides() {
           "car_type",
         ]
       );
-      queryParams.delete("hours_package", watch("hours_package"));
       if (resultValue) {
-        const response = await getPackages(`${GET_ALL_PACKAGES}`, queryParams);
+        const response = await getPackages(`${GET_ALL_PACKAGES}`, {
+       
+            trip_type: way_type,
+            pickup_city: pickup_city,
+            pickup_state: pickup_state,
+            booking_type: booking_type,
+            car_type: car_type,
+            dropoff_city: return_city,
+            dropoff_state: return_state,
+            km: distance
+        
+        });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
@@ -613,25 +647,26 @@ function AllRides() {
   const handleTravelAllowanceChange = (e) => {
     if (Number(e.target.value) === Number(allowancrPrice)) {
 
+
+      const currentValues = watch();
+
+      if (Number(watch('total_price')) === Number(totalBaseValue)) {
+        reset({
+          ...currentValues,
+          total_price: totalBaseValue - Number(allowancrPrice),
+        });
+      } else {
+        let value = e.target.value
+        console.log(value, "HEY VALUE")
+        reset({
+          ...currentValues,
+          total_price: Number(watch('total_price')) + Number(value) - (allowancrPrice / 10),
+        });
+      }
       setFare((prevState) => ({
         ...prevState,
         travelAllowance: Number(e.target.value),
       }));
-      const currentValues = watch();
-
-      if (watch('total_price') === totalBaseValue) {
-
-        reset({
-          ...currentValues,
-          total_price: totalBaseValue,
-        });
-      } else {
-        let value = e.target.value
-        reset({
-          ...currentValues,
-          total_price: watch('total_price') + Number(value),
-        });
-      }
     } else if (Number(e.target.value) < Number(allowancrPrice)) {
       const currentValues = watch();
       reset({
@@ -681,14 +716,46 @@ function AllRides() {
     });
     setStep(0);
   };
-  console.log(fare, "FARE");
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = degreesToRadians(lat2 - lat1);
+    const dLon = degreesToRadians(lon2 - lon1);
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // Distance in kilometers
+    setDistance(distance)
+  }
+
+  function degreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+  }
+
   useEffect(() => {
     const currentValues = watch();
     reset({
       ...currentValues,
     });
   }, [step, fare]);
-  console.log(errors, "ERRORs");
+
+  useEffect(() => {
+    const allSelected = latLonPoints.pickup_lat && latLonPoints.pickup_lon && latLonPoints.dropOff_lat && latLonPoints.dropOff_lon;
+
+    if (allSelected) {
+      const timeout = setTimeout(() => {
+        calculateDistance(latLonPoints.pickup_lat, latLonPoints.pickup_lon, latLonPoints.dropOff_lat, latLonPoints.dropOff_lon);
+      }, 500); // Delay to wait for the final input
+
+      return () => clearTimeout(timeout); // Cleanup to avoid multiple calls
+    }
+  }, [latLonPoints.pickup_lat, latLonPoints.pickup_lon, latLonPoints.dropOff_lat, latLonPoints.dropOff_lon]);
+
+  console.log(distance, "DISTAnce")
   return (
     <>
       <TableContainer component={Paper}>
@@ -1378,7 +1445,10 @@ function AllRides() {
                             <InputLabel>Pick-up City</InputLabel>
                             <Select label="Pick-up City" {...field}>
                               {cities.map((city) => (
-                                <MenuItem key={city.name} value={city.name}>
+                                <MenuItem key={city.name} value={city.name} onClick={() => setLatLonPoints(prevState => ({
+                                  ...prevState, pickup_lat: city.
+                                    latitude, pickup_lon: city.longitude
+                                }))}>
                                   {city.name}
                                 </MenuItem>
                               ))}
@@ -1558,6 +1628,10 @@ function AllRides() {
                                       <MenuItem
                                         key={city.name}
                                         value={city.name}
+                                        onClick={() => setLatLonPoints(prevState => ({
+                                          ...prevState, dropOff_lat: city.
+                                            latitude, dropOff_lon: city.longitude
+                                        }))}
                                       >
                                         {city.name}
                                       </MenuItem>
@@ -1616,7 +1690,7 @@ function AllRides() {
                       </Stack>
                     </>
                   )}
-                  <Stack>
+                  <Stack direction={"row"} gap={2} className="!mb-4">
                     <Controller
                       control={control}
                       name="car_type"
@@ -1631,6 +1705,23 @@ function AllRides() {
                             {CarType?.map((carType) => (
                               <MenuItem value={carType}>{carType}</MenuItem>
                             ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="tranmission"
+                      render={({ field }) => (
+                        <FormControl fullWidth>
+                          <InputLabel>Transmission</InputLabel>
+                          <Select
+                            {...field}
+                            className="w-full"
+                            label="Transmission"
+                          >
+                            <MenuItem value={"Automatic"}>Automatic</MenuItem>
+                            <MenuItem value={"Manual"}>Manual</MenuItem>
                           </Select>
                         </FormControl>
                       )}
@@ -1721,7 +1812,7 @@ function AllRides() {
                   </Stack>
                   <Stack direction={"row"} className="!mb-4" gap={2}>
                     <TextField
-                      value={fare.driverCharge}
+                      value={fare.driverCharge.toFixed(2)}
                       onChange={(e) => handleDriverChange(e)}
                       label="Driver Charge"
                       className="w-full"
@@ -1732,7 +1823,7 @@ function AllRides() {
                     />
 
                     <TextField
-                      value={fare.travelAllowance}
+                      value={fare.travelAllowance.toFixed(2)}
                       onChange={(e) => handleTravelAllowanceChange(e)}
                       label="Travel Allowance"
                       className="w-full"
@@ -1744,7 +1835,7 @@ function AllRides() {
                   </Stack>
                   <Stack direction={"row"} className="!mb-4" gap={2}>
                     <TextField
-                      value={fare.platformFee}
+                      value={fare.platformFee.toFixed(2)}
                       onChange={(e) => handlePlatFormFeeChange(e)}
                       label="Platform Fee"
                       className="w-full"
@@ -1755,7 +1846,7 @@ function AllRides() {
                     />
                     <TextField
                       label="GST"
-                      value={fare.gst}
+                      value={fare.gst.toFixed(2)}
                       onChange={(e) => handleGstChange(e)}
                       className="w-full"
                       error={!!errors.travel_allowance}
@@ -1835,7 +1926,7 @@ function AllRides() {
                       variant="contained"
                       type="submit"
                       className="!w-full !bg-[#DD781E]"
-                      disabled={isLoading}
+
                     >
                       Submit
                     </Button>
