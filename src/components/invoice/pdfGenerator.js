@@ -2,7 +2,7 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Box, Grid, Typography } from '@mui/material';
-export const generatePDF = (data, ref) => {
+export const generatePDF = (ref) => {
   const input = ref.current; // Get the DOM element for the invoice
   html2canvas(input, { scale: 1 })
     .then((canvas) => {
@@ -17,36 +17,54 @@ export const generatePDF = (data, ref) => {
     .catch((err) => console.error('Error generating PDF: ', err));
 };
 
+const numberToWords = (num) => {
+  const ones = [
+    '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+    'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+  ];
+  const tens = [
+    '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'
+  ];
 
+  if (num === 0) return 'zero';
 
-const Invoice = React.forwardRef(({ data }, ref) => {
+  let word = '';
+
+  if (Math.floor(num / 1000) > 0) {
+    word += ones[Math.floor(num / 1000)] + ' thousand ';
+    num %= 1000;
+  }
+
+  if (Math.floor(num / 100) > 0) {
+    word += ones[Math.floor(num / 100)] + ' hundred ';
+    num %= 100;
+  }
+
+  if (num > 0) {
+    if (num < 20) {
+      word += ones[num];
+    } else {
+      word += tens[Math.floor(num / 10)];
+      if (num % 10 > 0) {
+        word += ' ' + ones[num % 10];
+      }
+    }
+  }
+
+  return word.trim();
+};
+const today = new Date();
+const day = today.getDate();
+
+// Get the current month (Months are zero-based, so we add 1)
+const month = today.getMonth() + 1; 
+
+// Get the current year
+const year = today.getFullYear();
+const Invoice = React.forwardRef(({ data, billToData }, ref) => {
+  
   return (
     <>
-      {console
-        .log(data, "PDF DATA")}
-      {/* <div
-      ref={ref}
-      style={{
-        width: '210mm', // A4 width
-        minHeight: '297mm', // A4 height
-        backgroundColor: '#f5f5f5',
-        padding: '20px',
-        // display: "none"
-      }}
-      
-    >
-      <h1>Invoice</h1>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-        <tbody>
-          {Object.entries(data).map(([key, value]) => (
-            <tr key={key} style={{ borderBottom: '1px solid #ccc' }}>
-              <td style={{ padding: '10px', fontWeight: 'bold' }}>{key}</td>
-              <td style={{ padding: '10px', textAlign: 'right' }}>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div> */}
       <Grid container justifyContent="center" maxWidth={'842px'}>
         <Grid item xs={12}>
           <Typography variant="h4" align="center" gutterBottom>
@@ -66,19 +84,28 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                   4436/1, NA, Gurugram, Haryana - 122003 | GSTIN: 07AAICXXXXXX1Z
                 </Typography>
               </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" fontWeight="bold">
-                  Bill To:
-                </Typography>
-                <Typography variant="body2">BGGS SOLUTIONS PRIVATE LIMITED</Typography>
-                <Typography variant="body2">
-                  South West Delhi, Delhi - 110075
-                </Typography>
-                <Typography variant="body2">GSTIN: 07AAACXXXXXX1ZD</Typography>
-              </Grid>
+              {
+                Object.keys(billToData ? billToData : {})?.length > 0 && (
+                  <>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Bill To:
+                      </Typography>
+                      <Typography variant="body2">{billToData?.
+                        name}</Typography>
+                      <Typography variant="body2">
+                        {billToData?.address}
+                      </Typography>
+                      <Typography variant="body2">GSTIN: {billToData?.gstNo
+                      }</Typography>
+                    </Grid>
+                  </>
+                )
+              }
+
               <Grid item xs={6} textAlign="right">
                 <Typography variant="body2">Invoice No: INV305</Typography>
-                <Typography variant="body2">Date: 23-09-2024</Typography>
+                <Typography variant="body2">Date: {day}-{month}-{year}</Typography>
               </Grid>
 
               {/* Table Header */}
@@ -105,9 +132,14 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                         Qty
                       </Typography>
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={1}>
                       <Typography variant="body2" fontWeight="bold">
                         Rate
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2" fontWeight="bold">
+                        GST
                       </Typography>
                     </Grid>
                     <Grid item xs={2}>
@@ -118,7 +150,7 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                   </Grid>
                 </Box>
               </Grid>
-
+              {/* company_amount */}
               {/* Table Rows */}
               <Grid item xs={12}>
                 <Box borderBottom={1} p={1}>
@@ -135,11 +167,14 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                     <Grid item xs={1}>
                       <Typography variant="body2">1</Typography>
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={1}>
                       <Typography variant="body2">₹ {data?.fare[0]?.driver_amount}</Typography>
                     </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">₹ 0</Typography>
+                    </Grid>
                     <Grid item xs={2}>
-                      <Typography variant="body2">₹ 1,470.00</Typography>
+                      <Typography variant="body2">₹ {data?.fare[0]?.driver_amount}</Typography>
                     </Grid>
                   </Grid>
                 </Box>
@@ -152,7 +187,7 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                       <Typography variant="body2">2</Typography>
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography variant="body2">Driver Night Charges</Typography>
+                      <Typography variant="body2">Driver Travel Allowance</Typography>
                     </Grid>
                     <Grid item xs={1}>
                       <Typography variant="body2">996423</Typography>
@@ -160,11 +195,52 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                     <Grid item xs={1}>
                       <Typography variant="body2">1</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                      <Typography variant="body2">₹ 200.00</Typography>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.travel_allowance
+                      }</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">₹ 0</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Typography variant="body2">₹ 210.00</Typography>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.travel_allowance
+                      }</Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Box borderBottom={1} p={1}>
+                  <Grid container>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">2</Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2">Platform Fee</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">996423</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">1</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.company_amount
+                      }</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.gst
+                      }</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.company_amount + data?.fare[0]?.gst
+                      }</Typography>
                     </Grid>
                   </Grid>
                 </Box>
@@ -184,15 +260,14 @@ const Invoice = React.forwardRef(({ data }, ref) => {
                 </Typography>
               </Grid>
               <Grid item xs={6} textAlign="right">
-                <Typography variant="body2">Sub Total: ₹{data?.fare[0]?.company_amount + 
-data?.fare[0]?.driver_amount
-}</Typography>
-                <Typography variant="body2">GST: ₹{data?.fare[0]?.gst}</Typography>
+                <Typography variant="body2">Total Amount: ₹{data?.fare[0]?.amount
+                }</Typography>
+                {/* <Typography variant="body2">GST: ₹{data?.fare[0]?.gst}</Typography>
                 <Typography variant="h6" fontWeight="bold">
                   Total Amount: ₹1,680.00
-                </Typography>
+                </Typography> */}
                 <Typography variant="body2">
-                  Amount in Words: One Thousand Six Hundred and Eighty Rupees Only
+                  Amount in Words: {numberToWords(data?.fare[0]?.amount)}
                 </Typography>
               </Grid>
 

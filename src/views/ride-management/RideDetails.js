@@ -24,6 +24,7 @@ import showToast from '../../utils/toast';
 import utc from 'dayjs/plugin/utc';
 import PaymentFormDrawer from './updateFare';
 import GenerateInvoiceButton from '../../components/invoice/GenerateInvoice';
+import BillToPopup from './BillTo';
 dayjs.extend(utc);
 function RideDetailView() {
     const { USER_INTERESTED_BOOKING_LIST, USER_INTERESTED_ASSIGN_RIDE, UNASSIGN_DRIVER } = END_POINTS;
@@ -77,8 +78,7 @@ function RideDetailView() {
             showToast(response?.data?.message, 'error')
         }
     }
-console
-.log(state , 'state123123')
+
     useEffect(() => {
 
         if (state?.way_type === "One Way") {
@@ -183,7 +183,8 @@ console
                         <strong>Payment Status</strong>  {state?.fare[0]?.payment_status}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        <GenerateInvoiceButton rowData={state} />
+                        <BillToPopup rowData={state}/>
+                        {/* <GenerateInvoiceButton rowData={state} /> */}
                     </Typography>
                 </Box>
             </Box>
