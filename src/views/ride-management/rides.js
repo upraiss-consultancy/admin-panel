@@ -479,6 +479,7 @@ function AllRides() {
         });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
+          console.log(response?.data?.responseData[0]?.travelling_charge , 'BBBB')
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
           const TravelAllowance =
             response?.data?.responseData[0]?.travelling_charge;
@@ -502,6 +503,7 @@ function AllRides() {
       watch("way_type") === "One Way" &&
       watch("booking_type") === "Outstation"
     ) {
+  
       const resultValue = await trigger(
         step === 0 && [
           "pass_name",
@@ -519,6 +521,7 @@ function AllRides() {
           "car_type",
         ]
       );
+   
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
 
@@ -530,20 +533,21 @@ function AllRides() {
           dropoff_city: return_city,
           dropoff_state: return_state,
           km: distance
-
         });
-        console.log(errors, "EROROR");
-        console.log(response, "response");
+        console.log(response , ' KANHAIAya' , response?.data?.responseData[0]?.travelling_charge)
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
-          const TravelAllowance =
-            response?.data?.responseData[0]?.travelling_charge;
+          const TravelAllowance = response?.data?.responseData[0]?.travelling_charge;
           setAllowancePrice(response?.data?.responseData[0]?.travelling_charge);
           handleUpdateFareValue(
             TotalPriceOfPackage * totalDays,
-            TravelAllowance
+            response?.data?.responseData[0]?.travelling_charge
           );
+          setFare((prevState) => ({
+            ...prevState,
+            travelAllowance: response?.data?.responseData[0]?.travelling_charge,
+          }));
           setTotalBaseValue(TotalPriceOfPackage * totalDays);
           setValue("package_id", response?.data?.responseData[0]?._id);
         }
@@ -573,16 +577,12 @@ function AllRides() {
       );
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
-
           trip_type: way_type,
           pickup_city: pickup_city,
           pickup_state: pickup_state,
           booking_type: booking_type,
           car_type: car_type,
-          dropoff_city: return_city,
-          dropoff_state: return_state,
-          km: distance
-
+          km: 0
         });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
@@ -762,7 +762,7 @@ function AllRides() {
     }
   }, [latLonPoints.pickup_lat, latLonPoints.pickup_lon, latLonPoints.dropOff_lat, latLonPoints.dropOff_lon]);
 
-  console.log(distance, "DISTAnce")
+
   return (
     <>
       <TableContainer component={Paper}>

@@ -318,46 +318,6 @@ const RecentJobs = ({ navigate }) => {
 };
 
 const RecentActivity = ({notification}) => {
-    console.log(notification , 'notification')
-    // Example data for recent activities
-    const activities = [
-        {
-            driverImage: 'https://via.placeholder.com/150',
-            driverName: 'Kanhaiya Singh',
-            date: 'Aug 10, 2024',
-            time: '10:30 AM',
-            details: 'Completed a ride from A to B. Passenger rated 5 stars.',
-        },
-        {
-            driverImage: 'https://via.placeholder.com/150',
-            driverName: 'Dhyana Dave',
-            date: 'Aug 10, 2024',
-            time: '9:45 AM',
-            details: 'Reported an issue with the vehicle during a ride.',
-        },
-        {
-            driverImage: 'https://via.placeholder.com/150',
-            driverName: 'Kanhaiya Singh',
-            date: 'Aug 10, 2024',
-            time: '10:30 AM',
-            details: 'Completed a ride from A to B. Passenger rated 5 stars.',
-        },
-        {
-            driverImage: 'https://via.placeholder.com/150',
-            driverName: 'Dhyana Dave',
-            date: 'Aug 10, 2024',
-            time: '9:45 AM',
-            details: 'Reported an issue with the vehicle during a ride.',
-        },
-        {
-            driverImage: 'https://via.placeholder.com/150',
-            driverName: 'Kanhaiya Singh',
-            date: 'Aug 10, 2024',
-            time: '9:45 AM',
-            details: 'Reported an issue with the vehicle during a ride.',
-        },
-        // Add more activities as needed
-    ];
 
     return (
         <Box>
