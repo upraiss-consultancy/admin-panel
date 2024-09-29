@@ -243,13 +243,13 @@ function Packages() {
                             (e) => setAllParams(prevState => ({ ...prevState, search: e.target.value }))
                         }
                     />
-                    <Button
+                    {/* <Button
                         variant="contained"
                         className="!bg-[#DD781E]"
                         onClick={() => setOpen(true)}
                     >
                         Create Package
-                    </Button>
+                    </Button> */}
                 </Box>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
