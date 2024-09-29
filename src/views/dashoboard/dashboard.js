@@ -234,9 +234,9 @@ const RecentActivityItem = ({ activity }) => {
             <Avatar src={activity?.user[0]?.driverImage} alt={activity.driverName} />
             <Box ml={2}>
                 <Typography variant="h6">{activity?.user[0]?.full_name}</Typography>
-                <Typography variant="body2" color="textSecondary">
+                {/* <Typography variant="body2" color="textSecondary">
                     {activity.date} at {activity.time}
-                </Typography>
+                </Typography> */}
                 <Typography variant="body1" mt={1}>
                     {activity.message}
                 </Typography>
