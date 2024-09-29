@@ -259,6 +259,7 @@ function AllRides() {
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
+      
       if (data?._id === null) {
         // setISLoading(false);
         setBookingID(response?.bookingId);
@@ -270,7 +271,9 @@ function AllRides() {
       fetchRides();
       setOpen(false);
       reset();
+      setStep(1)
     }
+    reset();
   };
   const handleNavigate = () => {
     const queryParams = new URLSearchParams({ bookingId: bookingID });
@@ -448,7 +451,12 @@ function AllRides() {
           decrement_percentage: 0,
         });
         console.log(response?.data?.responseData , 'responseData')
-        setStep(1);
+        if(response?.data?.responseData?.length > 0) {
+
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     } else if (
       watch("way_type") === "Round Trip" &&
@@ -499,7 +507,11 @@ function AllRides() {
           decrement_percentage: 0,
         });
         console.log(response?.data?.responseData , 'responseData')
-        setStep(1);
+        if(response?.data?.responseData?.length > 0) {
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     } else if (
       watch("way_type") === "One Way" &&
@@ -559,8 +571,12 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        console.log(response?.data?.responseData , 'responseData')
-        setStep(1);
+        if(response?.data?.responseData?.length > 0) {
+
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     } else if (
       watch("way_type") === "Round Trip" &&
@@ -608,8 +624,11 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        console.log(response?.data?.responseData , 'responseData')
-        setStep(1);
+        if(response?.data?.responseData?.length > 0) {
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     }
   };
