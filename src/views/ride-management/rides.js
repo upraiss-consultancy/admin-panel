@@ -259,6 +259,7 @@ function AllRides() {
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
+      
       if (data?._id === null) {
         // setISLoading(false);
         setBookingID(response?.bookingId);
@@ -270,7 +271,9 @@ function AllRides() {
       fetchRides();
       setOpen(false);
       reset();
+      setStep(1)
     }
+    reset();
   };
   const handleNavigate = () => {
     const queryParams = new URLSearchParams({ bookingId: bookingID });
@@ -447,7 +450,13 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        setStep(1);
+        console.log(response?.data?.responseData , 'responseData')
+        if(response?.data?.responseData?.length > 0) {
+
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     } else if (
       watch("way_type") === "Round Trip" &&
@@ -497,7 +506,12 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        setStep(1);
+        console.log(response?.data?.responseData , 'responseData')
+        if(response?.data?.responseData?.length > 0) {
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     } else if (
       watch("way_type") === "One Way" &&
@@ -557,7 +571,12 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        setStep(1);
+        if(response?.data?.responseData?.length > 0) {
+
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     } else if (
       watch("way_type") === "Round Trip" &&
@@ -578,8 +597,6 @@ function AllRides() {
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
           trip_type: way_type,
-          pickup_city: pickup_city,
-          pickup_state: pickup_state,
           booking_type: booking_type,
           car_type: car_type,
           km: 0
@@ -594,6 +611,10 @@ function AllRides() {
             TotalPriceOfPackage * totalDays,
             TravelAllowance
           );
+          setFare((prevState) => ({
+            ...prevState,
+            travelAllowance: response?.data?.responseData[0]?.travelling_charge,
+          }));
           setTotalBaseValue(TotalPriceOfPackage * totalDays);
           setValue("package_id", response?.data?.responseData[0]?._id);
         }
@@ -603,7 +624,11 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        setStep(1);
+        if(response?.data?.responseData?.length > 0) {
+          setStep(1);
+        } else {
+          showToast('No Package Found' , 'error')
+        }
       }
     }
   };
