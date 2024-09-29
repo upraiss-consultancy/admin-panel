@@ -447,6 +447,7 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
+        console.log(response?.data?.responseData , 'responseData')
         setStep(1);
       }
     } else if (
@@ -497,6 +498,7 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
+        console.log(response?.data?.responseData , 'responseData')
         setStep(1);
       }
     } else if (
@@ -557,6 +559,7 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
+        console.log(response?.data?.responseData , 'responseData')
         setStep(1);
       }
     } else if (
@@ -578,8 +581,6 @@ function AllRides() {
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
           trip_type: way_type,
-          pickup_city: pickup_city,
-          pickup_state: pickup_state,
           booking_type: booking_type,
           car_type: car_type,
           km: 0
@@ -594,6 +595,10 @@ function AllRides() {
             TotalPriceOfPackage * totalDays,
             TravelAllowance
           );
+          setFare((prevState) => ({
+            ...prevState,
+            travelAllowance: response?.data?.responseData[0]?.travelling_charge,
+          }));
           setTotalBaseValue(TotalPriceOfPackage * totalDays);
           setValue("package_id", response?.data?.responseData[0]?._id);
         }
@@ -603,6 +608,7 @@ function AllRides() {
           increment_percentage: 0,
           decrement_percentage: 0,
         });
+        console.log(response?.data?.responseData , 'responseData')
         setStep(1);
       }
     }
