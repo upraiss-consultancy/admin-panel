@@ -251,7 +251,7 @@ console.log(watch('total_price') , 'Amrat Garg')
       ...data,
       pickup_date: pickupformattedDate,
       return_date: returnformattedDate,
-      total_price: fare.totalPrice.toFixed(2),
+      total_price: watch('total_price'),
       travel_allowance: fare.travelAllowance.toFixed(2),
       company_amount: fare.platformFee.toFixed(2),
       driver_amount: fare.driverCharge.toFixed(2),
