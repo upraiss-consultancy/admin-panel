@@ -492,7 +492,7 @@ function AllRides() {
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
           const TravelAllowance =
             response?.data?.responseData[0]?.travelling_charge;
-          setAllowancePrice(response?.data?.responseData[0]?.travelling_charge);
+          setAllowancePrice(response?.data?.responseData[0]?.travelling_charge ? response?.data?.responseData[0]?.travelling_charge : 0);
           handleUpdateFareValue(
             TotalPriceOfPackage * totalDays,
             TravelAllowance
@@ -613,7 +613,7 @@ function AllRides() {
           );
           setFare((prevState) => ({
             ...prevState,
-            travelAllowance: response?.data?.responseData[0]?.travelling_charge,
+            travelAllowance: response?.data?.responseData[0]?.travelling_charge ? response?.data?.responseData[0]?.travelling_charge : 0,
           }));
           setTotalBaseValue(TotalPriceOfPackage * totalDays);
           setValue("package_id", response?.data?.responseData[0]?._id);
@@ -1844,7 +1844,7 @@ function AllRides() {
                   </Stack>
                   <Stack direction={"row"} className="!mb-4" gap={2}>
                     <TextField
-                      value={fare.driverCharge.toFixed(2)}
+                      value={fare?.driverCharge?.toFixed(2)}
                       onChange={(e) => handleDriverChange(e)}
                       label="Driver Charge"
                       className="w-full"
@@ -1855,7 +1855,7 @@ function AllRides() {
                     />
 
                     <TextField
-                      value={fare.travelAllowance.toFixed(2)}
+                      value={fare?.travelAllowance?.toFixed(2)}
                       onChange={(e) => handleTravelAllowanceChange(e)}
                       label="Travel Allowance"
                       className="w-full"
@@ -1878,7 +1878,7 @@ function AllRides() {
                     />
                     <TextField
                       label="GST"
-                      value={fare.gst.toFixed(2)}
+                      value={fare?.gst?.toFixed(2)}
                       onChange={(e) => handleGstChange(e)}
                       className="w-full"
                       error={!!errors.travel_allowance}
