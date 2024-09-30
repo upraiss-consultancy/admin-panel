@@ -25,7 +25,7 @@ import { getRidesCount } from "../../api/services/ride";
 import { getNotifications } from "../../api/services/notification";
 import { getDrivers } from "../../api/services/dashboard";
 import dayjs from 'dayjs';
-const { GET_ALL_JOB, ALL_USER_ADMIN , RIDE_COUNT , GET_NOTIFICATION , GET_DRIVERS} = END_POINTS;
+const { GET_ALL_JOB, ALL_USER_ADMIN, RIDE_COUNT, GET_NOTIFICATION, GET_DRIVERS } = END_POINTS;
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -126,47 +126,40 @@ const TabPanel = ({ children, value, index, ...other }) => {
 };
 
 const DriverCard = ({ driver }) => {
-    console
-    .log(driver , 'driver1212')
     return (
         <Box display="flex" alignItems="center" mb={2}>
-            <Avatar src={driver.profile_img} alt={driver.name} />
-            <Box ml={2}>
-                <Typography variant="h6">{driver.full_name}</Typography>
-                <Box display="flex" alignItems="center">
-                    <CheckCircleIcon style={{ color: 'green', fontSize: 16 }} />
-                    <Typography variant="body2" color="textSecondary" ml={1}>
-                        {driver.mobile_no}
-                    </Typography>
-                </Box>
-                <Typography variant="body2">{driver.details}</Typography>
-            </Box>
+            {
+                driver?._id !== '' && (
+                    <>
+
+                        <Box ml={2}>
+
+                            <Typography variant="h6">{driver?.
+                                _id
+                            }</Typography>
+                            <Box display="flex" alignItems="center">
+                                <CheckCircleIcon style={{ color: 'green', fontSize: 16 }} />
+                                <Typography variant="body2" color="textSecondary" ml={1}>
+                                    <stoong>Count:</stoong>{driver.count
+                                    }
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </>
+                )
+            }
         </Box>
     );
 };
 
 
-const DriverStatus = ({ navigate }) => {
+const DriverStatus = ({ driverData }) => {
     const [tabValue, setTabValue] = useState(0);
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
-    const [drivers, setDrivers] = useState([]);
-    const fetchDrivers = async () => {
-        const responseData = await getDriverList(ALL_USER_ADMIN, {
-            params: {
-                active_status: tabValue == 0 ? 'online' : 'offline'
-            }
 
-        });
-        if (responseData?.data) {
-            setDrivers(responseData?.data)
-        }
-    };
-    useEffect(() => {
-        fetchDrivers();
-    }, [tabValue])
 
     const tabStyles = (isActive) => ({
         backgroundColor: isActive ? '#DD781E' : '#e0e0e0',
@@ -174,9 +167,6 @@ const DriverStatus = ({ navigate }) => {
         borderRadius: '4px',
         margin: '0 4px',
     });
-    const handleViewDriver = (id) => {
-        navigate(`/profile/${id}`)
-    }
 
     return (
         <Box>
@@ -185,17 +175,16 @@ const DriverStatus = ({ navigate }) => {
                 onChange={handleTabChange}
                 indicatorColor="primary"
                 textColor="primary"
-                centered
+                fullWidth
             >
-                <Tab label="Active Driver" style={tabStyles(tabValue === 0)} className=" flex-1" />
-                {/* <Tab label="Blocked Driver" style={tabStyles(tabValue === 1)} className=" flex-1" /> */}
-                <Tab label="Inactive Driver" style={tabStyles(tabValue === 1)} className=" flex-1" />
+                <Tab label="Active Driver" style={tabStyles(tabValue === 0)} className=" flex-1 w-full" fullWidth/>
+
             </Tabs>
 
             <TabPanel value={tabValue} index={tabValue}>
                 <Grid container spacing={2}>
-                    {drivers?.map((driver, index) => (
-                        <Grid item xs={12} md={12} key={index} onClick={() => handleViewDriver(driver?._id)}>
+                    {driverData?.map((driver, index) => (
+                        <Grid item xs={12} md={12} key={index}>
                             <DriverCard driver={driver} />
                         </Grid>
                     ))}
@@ -229,16 +218,14 @@ const RideCard = ({ title, count, status }) => {
 
 
 const RecentActivityItem = ({ activity }) => {
+    console.log(activity?.user, "activity?.user1212")
     return (
         <Box display="flex" alignItems="flex-start" mb={3} p={2} borderRadius="8px" border="1px solid #e0e0e0">
-            <Avatar src={activity?.user[0]?.driverImage} alt={activity.driverName} />
+            <Avatar src={activity?.user[0]?.driverImage || ''} alt={activity?.driverName} />
             <Box ml={2}>
                 <Typography variant="h6">{activity?.user[0]?.full_name}</Typography>
-                {/* <Typography variant="body2" color="textSecondary">
-                    {activity.date} at {activity.time}
-                </Typography> */}
                 <Typography variant="body1" mt={1}>
-                    {activity.message}
+                    {activity?.message}
                 </Typography>
             </Box>
         </Box>
@@ -319,7 +306,7 @@ const RecentJobs = ({ navigate }) => {
     );
 };
 
-const RecentActivity = ({notification}) => {
+const RecentActivity = ({ notification }) => {
 
     return (
         <Box>
@@ -338,21 +325,21 @@ const RecentActivity = ({notification}) => {
 };
 
 function Dashboard() {
-    const [rideCount , setRideCount]= useState({
+    const [rideCount, setRideCount] = useState({
         totalRide: [],
         pendingRide: [],
         completeRide: [],
         cancelRide: []
     })
-    const [notification , setNotification] = useState([])
-    const [selectedDate, setSelectedDate] = useState(dayjs())
+    const [notification, setNotification] = useState([])
+    const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY/MM/DD'));
+    const [drivers, setDrivers] = useState([])
     const fetchRides = async () => {
         const response = await getRidesCount(RIDE_COUNT);
         if (response?.data?.responseData) {
             setRideCount(response?.data?.responseData[0])
         }
     }
-
     const fetchNotifications = async () => {
         const response = await getNotifications(GET_NOTIFICATION);
         if (response?.data) {
@@ -360,23 +347,25 @@ function Dashboard() {
         }
     }
     const fetchDrivers = async () => {
-        const response = await getDrivers(GET_DRIVERS , {
+        const response = await getDrivers(GET_DRIVERS, {
             params: {
                 date: selectedDate
             }
         });
         if (response?.data) {
-            setNotification(response?.data)
+            setDrivers(response?.data)
         }
     }
     useEffect(() => {
+        fetchDrivers()
+    }, [selectedDate])
+    useEffect(() => {
         fetchRides();
         fetchNotifications()
-        fetchDrivers()
-        console.log(selectedDate , 'selectedDate')
-    },[])
+        console.log(selectedDate, 'selectedDate')
+    }, [])
     const navigate = useNavigate()
-    
+
     return (
         <>
             <Paper className=" py-5 px-5">
@@ -390,7 +379,7 @@ function Dashboard() {
                             <DatePicker
                                 label="From"
 
-                                // onChange={(value) => setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })}
+                                onChange={(value) => setSelectedDate(dayjs(value).format('YYYY/MM/DD'))}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -431,7 +420,7 @@ function Dashboard() {
                     </Grid>
                     <Grid item xs={6}>
                         <Paper className=" p-5">
-                            <DriverStatus navigate={navigate} />
+                            <DriverStatus driverData={drivers} />
                             <Divider />
                             <Box className=" mt-4">
                                 <FinancialSummary />
@@ -440,7 +429,7 @@ function Dashboard() {
                     </Grid>
                     <Grid item xs={3}>
 
-                        <RecentActivity notification={notification}/>
+                        <RecentActivity notification={notification} />
 
                     </Grid>
                 </Grid>
