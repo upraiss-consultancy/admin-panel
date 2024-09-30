@@ -23,7 +23,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { getRidesCount } from "../../api/services/ride";
 import { getNotifications } from "../../api/services/notification";
-const { GET_ALL_JOB, ALL_USER_ADMIN , RIDE_COUNT , GET_NOTIFICATION} = END_POINTS;
+import { getDrivers } from "../../api/services/dashboard";
+import dayjs from 'dayjs';
+const { GET_ALL_JOB, ALL_USER_ADMIN , RIDE_COUNT , GET_NOTIFICATION , GET_DRIVERS} = END_POINTS;
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -232,9 +234,9 @@ const RecentActivityItem = ({ activity }) => {
             <Avatar src={activity?.user[0]?.driverImage} alt={activity.driverName} />
             <Box ml={2}>
                 <Typography variant="h6">{activity?.user[0]?.full_name}</Typography>
-                <Typography variant="body2" color="textSecondary">
+                {/* <Typography variant="body2" color="textSecondary">
                     {activity.date} at {activity.time}
-                </Typography>
+                </Typography> */}
                 <Typography variant="body1" mt={1}>
                     {activity.message}
                 </Typography>
@@ -343,6 +345,7 @@ function Dashboard() {
         cancelRide: []
     })
     const [notification , setNotification] = useState([])
+    const [selectedDate, setSelectedDate] = useState(dayjs())
     const fetchRides = async () => {
         const response = await getRidesCount(RIDE_COUNT);
         if (response?.data?.responseData) {
@@ -352,7 +355,16 @@ function Dashboard() {
 
     const fetchNotifications = async () => {
         const response = await getNotifications(GET_NOTIFICATION);
-        console.log(response , "RESPONSE78965")
+        if (response?.data) {
+            setNotification(response?.data)
+        }
+    }
+    const fetchDrivers = async () => {
+        const response = await getDrivers(GET_DRIVERS , {
+            params: {
+                date: selectedDate
+            }
+        });
         if (response?.data) {
             setNotification(response?.data)
         }
@@ -360,8 +372,11 @@ function Dashboard() {
     useEffect(() => {
         fetchRides();
         fetchNotifications()
+        fetchDrivers()
+        console.log(selectedDate , 'selectedDate')
     },[])
     const navigate = useNavigate()
+    
     return (
         <>
             <Paper className=" py-5 px-5">
@@ -385,11 +400,9 @@ function Dashboard() {
                                 )}
                             />
                         </LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 label="To"
-
-                                // onChange={(value) => setAllParams({ ...allParams, startDate: dayjs(value).format('YYYY-MM-DD') })}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -398,7 +411,7 @@ function Dashboard() {
                                     />
                                 )}
                             />
-                        </LocalizationProvider>
+                        </LocalizationProvider> */}
                     </Box>
                 </Box>
                 <Grid container spacing={2}>

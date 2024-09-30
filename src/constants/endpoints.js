@@ -44,6 +44,7 @@ const END_POINTS = {
     UPDATE_FARE: "v0/admin/updateFare",
     RIDE_COUNT: 'v0/admin/dashboardRideCount',
     GET_NOTIFICATION: "v0/admin/get_notification",
-    GET_HOURS: 'v0/admin/package/get_hours'
+    GET_HOURS: 'v0/admin/package/get_hours',
+    GET_DRIVERS: 'v0/admin/dashboard-user-count'
 }
 export default END_POINTS
