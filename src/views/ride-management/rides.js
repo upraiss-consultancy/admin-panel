@@ -169,7 +169,7 @@ function AllRides() {
 
   const pickupState = watch("pickup_state");
   const dropOffState = watch("return_state");
-
+console.log(watch('total_price') , 'Amrat Garg')
   useEffect(() => {
     const stateData = State.getStatesOfCountry("IN");
     setDropOffStates(stateData);
