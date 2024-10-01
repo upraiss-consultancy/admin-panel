@@ -34,7 +34,7 @@ const ApplicantDetailView = () => {
   const onReject = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: 'unselected',
+      type: 'not shortlisted',
       remark: "string"
     });
     console.log(response , "response")
