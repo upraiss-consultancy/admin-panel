@@ -137,6 +137,7 @@ const TransactionHistoryList = () => {
                         {data?.map((row, index) => (
 
                             <TableRow key={index}>
+                                {console.log(row?.user?.mobile_no, row,'NUMBER Hain ??')}
                                 <TableCell>
                                     <Avatar src={row?.user?.profile_img} />
                                 </TableCell>
@@ -144,7 +145,7 @@ const TransactionHistoryList = () => {
                                     {row?.user?.full_name}
                                 </TableCell>
                                 <TableCell>
-                                    {row?.user?.mobile_number || 'N/A'}
+                                    {row?.user?.mobile_no || 'N/A'}
                                 </TableCell>
                                 <TableCell>
                                     {row?.type || 'N/A'}

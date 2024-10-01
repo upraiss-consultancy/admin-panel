@@ -19,7 +19,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { createDriver } from "../../api/services/driver";
 import { FaEllipsisVertical } from "react-icons/fa6";
 import DeleteDriver from "./DriverDeleteDialogue";
-import { State, City } from 'country-state-city';
+import { State, City, Country } from 'country-state-city';
+import CountryCodes from '../../CountryCodes.json';
 function Drivers() {
     const [driverListResponse, setDriverListResponse] = useState({
         data: [],
@@ -181,7 +182,6 @@ function Drivers() {
     const handleViewDriver = (id) => {
         navigate(`/profile/${id}`)
     }
-
     return (
         <>
 
@@ -592,7 +592,7 @@ function Drivers() {
                         <Typography variant="h6" component="div">
                             {isUpdate ? 'Update Driver' : 'Create Driver'}
                         </Typography>
-                        <IconButton onClick={() => {setOpen(false); reset()}}>
+                        <IconButton onClick={() => { setOpen(false); reset() }}>
                             <CloseIcon />
                         </IconButton>
                     </Box>
@@ -620,13 +620,34 @@ function Drivers() {
                                 control={control}
                                 name="mobile_no"
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Mobile No."
-                                        className="w-full"
-                                        error={!!errors.mobile_no}
-                                        helperText={errors.mobile_no?.message}
-                                    />
+                                    <div className="w-full flex">
+                                        {/* <Controller
+                                            name="country_code"
+                                            control={control}
+                                            render={({ field: countryField }) => (
+                                                <TextField
+                                                    {...countryField}
+                                                    select
+                                                    label="Code"
+                                                    variant="outlined"
+                                                    style={{ width: '100px' }}
+                                                    error={!!errors.country_code}
+                                                    helperText={errors.country_code?.message}
+                                                >
+                                                    {
+                                                        CountryCodes?.map((data) =>   <MenuItem value="+1">{data?.dial_code} {`(${data?.code})`}</MenuItem>)   
+                                                    }
+                                                </TextField>
+                                            )}
+                                        /> */}
+                                        <TextField
+                                            {...field}
+                                            label="Mobile No."
+                                            className="w-full"
+                                            error={!!errors.mobile_no}
+                                            helperText={errors.mobile_no?.message}
+                                        />
+                                    </div>
                                 )}
                             />
                         </Stack>

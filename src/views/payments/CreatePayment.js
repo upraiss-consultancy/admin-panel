@@ -132,9 +132,10 @@ const PaymentForm = ({ driverData, toggleDrawer }) => {
                   error={!!errors?.paymentMethod}
                   helperText={errors?.paymentMethod?.message}
                 >
-                  <MenuItem value="Cash">Cash</MenuItem>
-                  <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
-                  <MenuItem value="Cheque">Cheque</MenuItem>
+                  <MenuItem value="cash">Cash</MenuItem>
+                  <MenuItem value="bank transfer">Bank Transfer</MenuItem>
+                  <MenuItem value="upi">Upi</MenuItem>
+                  <MenuItem value="cheque">Cheque</MenuItem>
                 </TextField>
               )}
             />

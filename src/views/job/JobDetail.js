@@ -160,7 +160,7 @@ function renderCandidateCards(candidates, searchParams, navigate) {
   const onReject = async (id) => {
     const response = await toggleShortlistStatus(JOB_ACTION, {
       jobId: id,
-      type: 'unselected',
+      type: 'not shortlisted',
       remark: "string"
     });
     console.log(response , "response")
