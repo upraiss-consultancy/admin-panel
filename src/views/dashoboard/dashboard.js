@@ -369,7 +369,7 @@ function Dashboard() {
     return (
         <>
             <Paper className=" py-5 px-5">
-                <Box className=" flex justify-between items-start mb-4">
+                <Box className=" flex justify-between flex-col md:flex-row items-start mb-4">
 
                     <Typography variant="h4" component="h3" className=" !mb-2">
                         Dashboard
@@ -405,7 +405,7 @@ function Dashboard() {
                 </Box>
                 <Grid container spacing={2}>
 
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
 
                         <Stack direction={'column'} gap={5} className=" mb-5">
                             <RideCard title="Total Rides" count={rideCount?.totalRide[0]?.totalRide || 0} status="total" />
@@ -418,7 +418,7 @@ function Dashboard() {
                         </Box>
 
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item  xs={12} md={6}>
                         <Paper className=" p-5">
                             <DriverStatus driverData={drivers} />
                             <Divider />
@@ -427,7 +427,7 @@ function Dashboard() {
                             </Box>
                         </Paper>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
 
                         <RecentActivity notification={notification} />
 

@@ -212,7 +212,7 @@ export default function FullLayout() {
             </Popover>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" open={open} className="absolute lg:relative h-[100vh]">
           <Toolbar
             sx={{
               display: "flex",
@@ -246,7 +246,7 @@ export default function FullLayout() {
         >
           <Toolbar />
           {/* <Container  sx={{ mt: 4, mb: 4 , ml: 0, mr: 0 , width: '100%'}}> */}
-          <Box className=" py-10 px-10">
+          <Box className="ml-10 lg:ml-0 py-10 px-10">
             <Outlet />
           </Box>
           {/* </Container> */}

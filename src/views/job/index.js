@@ -1,4 +1,4 @@
-import { Paper, Box, Typography, TextField, IconButton, Button, Select, MenuItem, FormControl, InputLabel, TablePagination } from "@mui/material";
+import { Paper, Box, Typography, TextField, IconButton, Button, Select, MenuItem, FormControl, InputLabel, TablePagination, Grid } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import JobTable from "./JobTable";
@@ -57,8 +57,7 @@ export const Job = () => {
 
                 {
                     open ? <JobForm setOpen={setOpen} updateJobData={updateJobData} fetchJobs={fetchJobs}/> : <Box>
-
-                        <Box className="flex my-2 mt-2 justify-between px-4">
+                        <Box className="flex my-2 mt-2 justify-between px-4 flex-col gap-4 sm:flex-row sm:flex-wrap">
                             <Typography variant="h6" component="div">
                                 All Jobs
                             </Typography>
@@ -103,7 +102,13 @@ export const Job = () => {
                             >
                                 Create Job
                             </Button>
+                            
                         </Box>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6} sm={4} md={3}>
+
+                            </Grid>
+                        </Grid>
                         <JobTable jobs={jobData} handleUpdate={handleUpdate} fetchJobs={fetchJobs} />
                         <TablePagination
                             component="div"

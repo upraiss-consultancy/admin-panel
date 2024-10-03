@@ -834,7 +834,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* From Date */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="From"
@@ -856,7 +856,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* To Date */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="To"
@@ -878,7 +878,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* State Dropdown */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <FormControl fullWidth>
               <InputLabel>State</InputLabel>
               <Select label="State">
@@ -899,7 +899,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* City Dropdown */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <FormControl fullWidth>
               <InputLabel>City</InputLabel>
               <Select label="City">
@@ -919,7 +919,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* Booking Type Dropdown */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <FormControl fullWidth>
               <InputLabel>Booking Type</InputLabel>
               <Select
@@ -937,7 +937,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* Way Type Dropdown */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <FormControl fullWidth>
               <InputLabel>Way Type</InputLabel>
               <Select
@@ -955,7 +955,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           </Grid>
 
           {/* Status Dropdown */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -974,7 +974,7 @@ console.log(watch('total_price') , 'Amrat Garg')
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={6} sm={4} md={3}>
             <FormControl fullWidth>
               <InputLabel>Payment Status</InputLabel>
               <Select
