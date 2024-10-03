@@ -62,7 +62,7 @@ const TransactionHistoryList = () => {
 
     return (
         <Paper style={{ padding: 16 }}>
-            <Box className="flex justify-between items-center">
+            <Box className="flex justify-between items-start md:items-center flex-wrap gap-4 flex-col md:flex-row">
                 <Typography variant="h6" gutterBottom>
                     Transaction History
                 </Typography>
@@ -80,9 +80,10 @@ const TransactionHistoryList = () => {
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                sx={{ width: 150, '& .MuiInputBase-root': { height: 40 } }}
+                                sx={{  '& .MuiInputBase-root': { height: 40 } }}
                             />
                         )}
+                        
                     />
                 </LocalizationProvider>
 
@@ -100,7 +101,7 @@ const TransactionHistoryList = () => {
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                sx={{ width: 150, '& .MuiInputBase-root': { height: 40 } }}
+                                sx={{  '& .MuiInputBase-root': { height: 40 } }}
                             />
                         )}
                     />

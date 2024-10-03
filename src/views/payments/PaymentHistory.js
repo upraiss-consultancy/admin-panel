@@ -133,29 +133,28 @@ const TransactionTable = ({ transactionData }) => {
         <>
 
             <Paper className="!pt-2 !pr-2">
-                <Box className="flex gap-2 items-center  justify-between">
-                    {/* <IconButton >
-                    <KeyboardBackspaceIcon />
-                </IconButton> */}
-                    <Typography variant="h6" component="div" className=' pl-2'>
-                        Payment Request
-                    </Typography>
-                    <TextField placeholder="Search Payment..." sx={{
-                        '& .MuiInputBase-root': {
-                            height: 40,  // Set the height you need
-                        },
-                    }} InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={() => {
-                                    handleSearch()
-                                }}>
-                                    <SearchIcon />
-                                </IconButton>
-                            </InputAdornment>
+                <Box className="flex gap-2 md:items-center flex-col  items-end  md:flex-row  md:justify-between flex-wrap ">
+                    <Box className="flex flex-1 w-full justify-between">
+                        <Typography variant="h6" component="div" className=' pl-2'>
+                            Payment Request
+                        </Typography>
+                        <TextField placeholder="Search Payment..." sx={{
+                            '& .MuiInputBase-root': {
+                                height: 40,
+                            },
+                        }} InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => {
+                                        handleSearch()
+                                    }}>
+                                        <SearchIcon />
+                                    </IconButton>
+                                </InputAdornment>
 
-                        )
-                    }} onChange={(e) => setSearchTerm(e.target.value)} />
+                            )
+                        }} onChange={(e) => setSearchTerm(e.target.value)} />
+                    </Box>
                     <Button
                         onClick={handleClickOpen}
                         variant="contained"
