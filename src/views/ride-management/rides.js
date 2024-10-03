@@ -169,7 +169,7 @@ function AllRides() {
 
   const pickupState = watch("pickup_state");
   const dropOffState = watch("return_state");
-console.log(watch('total_price') , 'Amrat Garg')
+  console.log(watch('total_price'), 'Amrat Garg')
   useEffect(() => {
     const stateData = State.getStatesOfCountry("IN");
     setDropOffStates(stateData);
@@ -259,7 +259,7 @@ console.log(watch('total_price') , 'Amrat Garg')
     };
     const response = await createRide(CREATE_BOOKING, transformedData);
     if (response?.message) {
-      
+
       if (data?._id === null) {
         // setISLoading(false);
         setBookingID(response?.bookingId);
@@ -388,7 +388,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           driver_amount: Number(response?.data[0]["driver_amount"]),
           gst: Number(response?.data[0]["gst"]),
           total_price: Number(response?.data[0]["total_price"]),
-          
+
         });
       }
     }
@@ -450,12 +450,12 @@ console.log(watch('total_price') , 'Amrat Garg')
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        console.log(response?.data?.responseData , 'responseData')
-        if(response?.data?.responseData?.length > 0) {
+        console.log(response?.data?.responseData, 'responseData')
+        if (response?.data?.responseData?.length > 0) {
 
           setStep(1);
         } else {
-          showToast('No Package Found' , 'error')
+          showToast('No Package Found', 'error')
         }
       }
     } else if (
@@ -488,7 +488,7 @@ console.log(watch('total_price') , 'Amrat Garg')
         });
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
-          console.log(response?.data?.responseData[0]?.travelling_charge , 'BBBB')
+          console.log(response?.data?.responseData[0]?.travelling_charge, 'BBBB')
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
           const TravelAllowance =
             response?.data?.responseData[0]?.travelling_charge;
@@ -506,18 +506,18 @@ console.log(watch('total_price') , 'Amrat Garg')
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        console.log(response?.data?.responseData , 'responseData')
-        if(response?.data?.responseData?.length > 0) {
+        console.log(response?.data?.responseData, 'responseData')
+        if (response?.data?.responseData?.length > 0) {
           setStep(1);
         } else {
-          showToast('No Package Found' , 'error')
+          showToast('No Package Found', 'error')
         }
       }
     } else if (
       watch("way_type") === "One Way" &&
       watch("booking_type") === "Outstation"
     ) {
-  
+
       const resultValue = await trigger(
         step === 0 && [
           "pass_name",
@@ -535,7 +535,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           "car_type",
         ]
       );
-   
+
       if (resultValue) {
         const response = await getPackages(`${GET_ALL_PACKAGES}`, {
 
@@ -548,7 +548,7 @@ console.log(watch('total_price') , 'Amrat Garg')
           dropoff_state: return_state,
           km: distance
         });
-        console.log(response , ' KANHAIAya' , response?.data?.responseData[0]?.travelling_charge)
+        console.log(response, ' KANHAIAya', response?.data?.responseData[0]?.travelling_charge)
         if (response?.data?.responseCode === 200) {
           setDisabled(false);
           const TotalPriceOfPackage = response?.data?.responseData[0]?.total;
@@ -571,11 +571,11 @@ console.log(watch('total_price') , 'Amrat Garg')
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        if(response?.data?.responseData?.length > 0) {
+        if (response?.data?.responseData?.length > 0) {
 
           setStep(1);
         } else {
-          showToast('No Package Found' , 'error')
+          showToast('No Package Found', 'error')
         }
       }
     } else if (
@@ -624,10 +624,10 @@ console.log(watch('total_price') , 'Amrat Garg')
           increment_percentage: 0,
           decrement_percentage: 0,
         });
-        if(response?.data?.responseData?.length > 0) {
+        if (response?.data?.responseData?.length > 0) {
           setStep(1);
         } else {
-          showToast('No Package Found' , 'error')
+          showToast('No Package Found', 'error')
         }
       }
     }
@@ -790,412 +790,418 @@ console.log(watch('total_price') , 'Amrat Garg')
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Box className="flex my-2 justify-between px-4  gap-4">
-          <Typography variant="h6" component="div">
-            Ride Bookings
-          </Typography>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: "#DD781E", height: 40 }}
-            onClick={() => setOpen(true)}
-          >
-            Create Ride
-          </Button>
-        </Box>
-        <Grid
-          container
-          spacing={2}
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ flexWrap: "wrap" }}
-          className=" !px-4 !my-4"
-        >
-          {/* Search Field */}
-          <Grid item xs={12} sm={4} md={3}>
-            <TextField
-              placeholder="Search Ride..."
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() =>
-                        setAllParams((prevState) => ({ ...prevState, search }))
-                      }
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </Grid>
+      <Box>
 
-          {/* From Date */}
-          <Grid item xs={6} sm={4} md={3}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="From"
-                onChange={(value) =>
-                  setAllParams({
-                    ...allParams,
-                    startDate: dayjs(value).format("YYYY-MM-DD"),
-                  })
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    sx={{ "& .MuiInputBase-root": { height: 40 } }} // Adjust height
-                  />
-                )}
-              />
-            </LocalizationProvider>
-          </Grid>
-
-          {/* To Date */}
-          <Grid item xs={6} sm={4} md={3}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="To"
-                onChange={(value) =>
-                  setAllParams({
-                    ...allParams,
-                    endDate: dayjs(value).format("YYYY-MM-DD"),
-                  })
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    sx={{ "& .MuiInputBase-root": { height: 40 } }} // Adjust height
-                  />
-                )}
-              />
-            </LocalizationProvider>
-          </Grid>
-
-          {/* State Dropdown */}
-          <Grid item xs={6} sm={4} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>State</InputLabel>
-              <Select label="State">
-                {dropOffStates.map((state) => (
-                  <MenuItem
-                    key={state.name}
-                    value={state.isoCode}
-                    onClick={(e) => {
-                      setAllParams({ ...allParams, state: state.name });
-                      handleCity(state.isoCode);
-                    }}
-                  >
-                    {state.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* City Dropdown */}
-          <Grid item xs={6} sm={4} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>City</InputLabel>
-              <Select label="City">
-                {dropOffCity.map((city) => (
-                  <MenuItem
-                    key={city.name}
-                    value={city.name}
-                    onClick={(e) => {
-                      setAllParams({ ...allParams, city: city.name });
-                    }}
-                  >
-                    {city.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Booking Type Dropdown */}
-          <Grid item xs={6} sm={4} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Booking Type</InputLabel>
-              <Select
-                label="Booking Type"
-                value={allParams.booking_type || "All"}
-                onChange={(e) =>
-                  setAllParams({ ...allParams, booking_type: e.target.value })
-                }
-              >
-                <MenuItem value={"All"}>All</MenuItem>
-                <MenuItem value={"Local"}>Local</MenuItem>
-                <MenuItem value={"Outstation"}>Outstation</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Way Type Dropdown */}
-          <Grid item xs={6} sm={4} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Way Type</InputLabel>
-              <Select
-                label="Way Type"
-                value={allParams.way_type || "All"}
-                onChange={(e) =>
-                  setAllParams({ ...allParams, way_type: e.target.value })
-                }
-              >
-                <MenuItem value={"All"}>All</MenuItem>
-                <MenuItem value={"One Way"}>One Way</MenuItem>
-                <MenuItem value={"Round Trip"}>Round Trip</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Status Dropdown */}
-          <Grid item xs={6} sm={4} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select
-                label="Status"
-                value={allParams.status || "All"}
-                onChange={(e) =>
-                  setAllParams({ ...allParams, status: e.target.value })
-                }
-              >
-                <MenuItem value={"All"}>All</MenuItem>
-                <MenuItem value={"complete"}>Complete</MenuItem>
-                <MenuItem value={"interested"}>Interested</MenuItem>
-                <MenuItem value={"approved"}>Approved</MenuItem>
-                <MenuItem value={"pending"}>Pending</MenuItem>
-                <MenuItem value={"cancel"}>Cancel</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6} sm={4} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Payment Status</InputLabel>
-              <Select
-                label="Booking Type"
-                value={allParams.payment_status}
-                onChange={(e) =>
-                  setAllParams({ ...allParams, payment_status: e.target.value })
-                }
-              >
-                <MenuItem value={"Recived"}>Received</MenuItem>
-                <MenuItem value={"Partially Paid"}>Partially Received</MenuItem>
-                <MenuItem value={"Not Recived"}>Not Received</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>S.No.</TableCell>
-              <TableCell>Passenger Name</TableCell>
-              <TableCell>Passenger Mobile No.</TableCell>
-              <TableCell>Passenger Whatsapp No.</TableCell>
-              <TableCell>Booking Type</TableCell>
-              <TableCell>Way Type</TableCell>
-              <TableCell className="!text-center">Pick-up</TableCell>
-              <TableCell className="!text-center">Pick-up Date</TableCell>
-              <TableCell className="!text-center">Pick-up Time</TableCell>
-              <TableCell className="!text-center">Drop-off</TableCell>
-              <TableCell className="!text-center">Drop-off Date</TableCell>
-              <TableCell className="!text-center">Interested Driver</TableCell>
-              <TableCell className="!text-center">
-                Assigned Driver Name
-              </TableCell>
-              <TableCell className="!text-center">
-                Assigned Driver Number
-              </TableCell>
-              <TableCell className="!text-center">Fare</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          {allRides?.length > 0 ? (
-            <TableBody>
-              {allRides?.map((data, index) => {
-                return (
-                  <TableRow
-                    onClick={() => handleViewRideDetail(data?._id, data)}
-                  >
-                    {console.log(data, "data123123", index)}
-                    <TableCell>{index + 1}</TableCell>
-
-                    <TableCell>{data?.pass_name}</TableCell>
-                    <TableCell>{data?.pass_mobile_no}</TableCell>
-                    <TableCell>{data?.pass_whatsapp_no}</TableCell>
-                    <TableCell>{data?.booking_type}</TableCell>
-                    <TableCell>{data?.way_type}</TableCell>
-                    <TableCell className="!text-center">
-                      {data?.pickup_address +
-                        " " +
-                        data?.pickup_city +
-                        ", " +
-                        data?.pickup_pin}
-                    </TableCell>
-                    <TableCell>
-                      {date.toISOString(data?.pickup_date).split("T")[0]}
-                    </TableCell>
-                    <TableCell>
-                      {dayjs(data?.pickup_time).utc().format("HH:mm:ss")}
-                    </TableCell>
-                    <TableCell>
-                      {data?.return_address !== undefined
-                        ? data?.return_address +
-                        " " +
-                        data?.return_city +
-                        ", " +
-                        data?.return_pin
-                        : "N.A."}
-                    </TableCell>
-                    <TableCell>
-                      {data?.return_date
-                        ? date.toISOString(data?.return_date).split("T")[0]
-                        : "N.A."}
-                    </TableCell>
-                    <TableCell className="!text-center">
-                      {data?.request_count > 0 ? (
-                        <Button
-                          endIcon={<VisibilityIcon />}
-                          onClick={(e) => {
-                            handleViewRideDetail(data?._id, data);
-                            e.stopPropagation();
-                          }}
-                        >
-                          {data?.request_count}
-                        </Button>
-                      ) : (
-                        <Button endIcon={<VisibilityIcon />} disabled={true}>
-                          0
-                        </Button>
-                      )}
-                    </TableCell>
-                    <TableCell className="!text-center">
-                      {data?.user?.full_name
-                        ? data?.user?.full_name
-                        : "Pending"}
-                    </TableCell>
-                    <TableCell className="!text-center">
-                      {data?.user?.full_name
-                        ? data?.user?.mobile_no
-                        : "Pending"}
-                    </TableCell>
-                    <TableCell className="!text-center">
-                      {data?.fare[0]?.amount
-                        ? parseFloat(data?.fare[0]?.amount).toFixed(2)
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell
-                      className={
-                        data?.booking_status === "pending"
-                          ? " !text-orange-400 capitalize"
-                          : data?.booking_status === "approved"
-                            ? "!text-green-500 "
-                            : data?.booking_status === "cancel"
-                              ? "!text-red-600 capitalize"
-                              : ""
-                      }
-                    >
-                      {data?.booking_status === "approved"
-                        ? "Assigned"
-                        : data?.booking_status}
-                    </TableCell>
-                    {/* {console.log(data , "DATA HAIN KYA ??")} */}
-                    <TableCell>
-                      <Box>
-                        <IconButton
-                          onClick={(e) => {
-                            handleClick(e);
-                            e.stopPropagation();
-                            setBookingID(data?._id);
-                          }}
-                        >
-                          <FaEllipsisVertical />
-                        </IconButton>
-                        <Popover
-                          open={openPopover}
-                          onClose={handleClose}
-                          anchorEl={anchorEl}
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                          }}
-                        >
-                          <Box className=" flex flex-col">
-                            <Button
-                              className="!px-4"
-                              onClick={(e) => {
-                                handleUpdateRide(data);
-                                e.stopPropagation();
-                              }}
-                            >
-                              Update Ride
-                            </Button>
-                            <Button
-                              className="!px-4"
-                              onClick={(e) => {
-                                hanldeDeleteRide(data?._id);
-                                e.stopPropagation();
-                              }}
-                            >
-                              Delete Ride
-                            </Button>
-                            <Button
-                              className="!px-4"
-                              onClick={(e) => {
-                                setIsCancel(true);
-                                handleClose();
-                                e.stopPropagation();
-                              }}
-                            >
-                              Cancel Ride
-                            </Button>
-                            <Button
-                              className="!px-4"
-                              onClick={async (e) => {
-                                handleNavigate(data?._id);
-                                e.stopPropagation();
-                              }}
-                            >
-                              Assign Ride
-                            </Button>
-                          </Box>
-                        </Popover>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          ) : (
-            <Typography className=" text-nowrap text-center">
-              No Data Found
+        <TableContainer component={Paper} className=" !w-[100vw-40px] !overflow-scroll no-scrollbar">
+          <Box className="flex my-2 justify-between px-4  gap-4">
+            <Typography variant="h6" component="div">
+              Ride Bookings
             </Typography>
-          )}
-        </Table>
-        <Stack
-          spacing={2}
-          className="!py-4 !w-full"
-          direction={"row"}
-          justifyContent={"center"}
-        >
-          <Box>
-            <Pagination
-              count={paginationData[0]?.total_page}
-              variant="outlined"
-              shape="rounded"
-              onChange={handlePagination}
-            />
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#DD781E", height: 40 }}
+              onClick={() => setOpen(true)}
+            >
+              Create Ride
+            </Button>
           </Box>
-        </Stack>
-      </TableContainer>
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ flexWrap: "wrap" }}
+            className=" !px-4 !my-4"
+          >
+            {/* Search Field */}
+            <Grid item xs={12} sm={4} md={3}>
+              <TextField
+                placeholder="Search Ride..."
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() =>
+                          setAllParams((prevState) => ({ ...prevState, search }))
+                        }
+                      >
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </Grid>
+
+            {/* From Date */}
+            <Grid item xs={6} sm={4} md={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="From"
+                  onChange={(value) =>
+                    setAllParams({
+                      ...allParams,
+                      startDate: dayjs(value).format("YYYY-MM-DD"),
+                    })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      sx={{ "& .MuiInputBase-root": { height: 40 } }} // Adjust height
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid>
+
+            {/* To Date */}
+            <Grid item xs={6} sm={4} md={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="To"
+                  onChange={(value) =>
+                    setAllParams({
+                      ...allParams,
+                      endDate: dayjs(value).format("YYYY-MM-DD"),
+                    })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      sx={{ "& .MuiInputBase-root": { height: 40 } }} // Adjust height
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid>
+
+            {/* State Dropdown */}
+            <Grid item xs={6} sm={4} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>State</InputLabel>
+                <Select label="State">
+                  {dropOffStates.map((state) => (
+                    <MenuItem
+                      key={state.name}
+                      value={state.isoCode}
+                      onClick={(e) => {
+                        setAllParams({ ...allParams, state: state.name });
+                        handleCity(state.isoCode);
+                      }}
+                    >
+                      {state.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* City Dropdown */}
+            <Grid item xs={6} sm={4} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>City</InputLabel>
+                <Select label="City">
+                  {dropOffCity.map((city) => (
+                    <MenuItem
+                      key={city.name}
+                      value={city.name}
+                      onClick={(e) => {
+                        setAllParams({ ...allParams, city: city.name });
+                      }}
+                    >
+                      {city.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Booking Type Dropdown */}
+            <Grid item xs={6} sm={4} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Booking Type</InputLabel>
+                <Select
+                  label="Booking Type"
+                  value={allParams.booking_type || "All"}
+                  onChange={(e) =>
+                    setAllParams({ ...allParams, booking_type: e.target.value })
+                  }
+                >
+                  <MenuItem value={"All"}>All</MenuItem>
+                  <MenuItem value={"Local"}>Local</MenuItem>
+                  <MenuItem value={"Outstation"}>Outstation</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Way Type Dropdown */}
+            <Grid item xs={6} sm={4} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Way Type</InputLabel>
+                <Select
+                  label="Way Type"
+                  value={allParams.way_type || "All"}
+                  onChange={(e) =>
+                    setAllParams({ ...allParams, way_type: e.target.value })
+                  }
+                >
+                  <MenuItem value={"All"}>All</MenuItem>
+                  <MenuItem value={"One Way"}>One Way</MenuItem>
+                  <MenuItem value={"Round Trip"}>Round Trip</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Status Dropdown */}
+            <Grid item xs={6} sm={4} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  label="Status"
+                  value={allParams.status || "All"}
+                  onChange={(e) =>
+                    setAllParams({ ...allParams, status: e.target.value })
+                  }
+                >
+                  <MenuItem value={"All"}>All</MenuItem>
+                  <MenuItem value={"complete"}>Complete</MenuItem>
+                  <MenuItem value={"interested"}>Interested</MenuItem>
+                  <MenuItem value={"approved"}>Approved</MenuItem>
+                  <MenuItem value={"pending"}>Pending</MenuItem>
+                  <MenuItem value={"cancel"}>Cancel</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} sm={4} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Payment Status</InputLabel>
+                <Select
+                  label="Booking Type"
+                  value={allParams.payment_status}
+                  onChange={(e) =>
+                    setAllParams({ ...allParams, payment_status: e.target.value })
+                  }
+                >
+                  <MenuItem value={"Recived"}>Received</MenuItem>
+                  <MenuItem value={"Partially Paid"}>Partially Received</MenuItem>
+                  <MenuItem value={"Not Recived"}>Not Received</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Box className=" w-full overflow-x-scroll no-scrollbar">
+
+            <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader={true} >
+              <TableHead>
+                <TableRow>
+                  <TableCell>S.No.</TableCell>
+                  <TableCell>Passenger Name</TableCell>
+                  <TableCell>Passenger Mobile No.</TableCell>
+                  <TableCell>Passenger Whatsapp No.</TableCell>
+                  <TableCell>Booking Type</TableCell>
+                  <TableCell>Way Type</TableCell>
+                  <TableCell className="!text-center">Pick-up</TableCell>
+                  <TableCell className="!text-center">Pick-up Date</TableCell>
+                  <TableCell className="!text-center">Pick-up Time</TableCell>
+                  <TableCell className="!text-center">Drop-off</TableCell>
+                  <TableCell className="!text-center">Drop-off Date</TableCell>
+                  <TableCell className="!text-center">Interested Driver</TableCell>
+                  <TableCell className="!text-center">
+                    Assigned Driver Name
+                  </TableCell>
+                  <TableCell className="!text-center">
+                    Assigned Driver Number
+                  </TableCell>
+                  <TableCell className="!text-center">Fare</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              {allRides?.length > 0 ? (
+                <TableBody>
+                  {allRides?.map((data, index) => {
+                    return (
+                      <TableRow
+                        onClick={() => handleViewRideDetail(data?._id, data)}
+                      >
+                        {console.log(data, "data123123", index)}
+                        <TableCell>{index + 1}</TableCell>
+
+                        <TableCell>{data?.pass_name}</TableCell>
+                        <TableCell>{data?.pass_mobile_no}</TableCell>
+                        <TableCell>{data?.pass_whatsapp_no}</TableCell>
+                        <TableCell>{data?.booking_type}</TableCell>
+                        <TableCell>{data?.way_type}</TableCell>
+                        <TableCell className="!text-center">
+                          {data?.pickup_address +
+                            " " +
+                            data?.pickup_city +
+                            ", " +
+                            data?.pickup_pin}
+                        </TableCell>
+                        <TableCell>
+                          {date.toISOString(data?.pickup_date).split("T")[0]}
+                        </TableCell>
+                        <TableCell>
+                          {dayjs(data?.pickup_time).utc().format("HH:mm:ss")}
+                        </TableCell>
+                        <TableCell>
+                          {data?.return_address !== undefined
+                            ? data?.return_address +
+                            " " +
+                            data?.return_city +
+                            ", " +
+                            data?.return_pin
+                            : "N.A."}
+                        </TableCell>
+                        <TableCell>
+                          {data?.return_date
+                            ? date.toISOString(data?.return_date).split("T")[0]
+                            : "N.A."}
+                        </TableCell>
+                        <TableCell className="!text-center">
+                          {data?.request_count > 0 ? (
+                            <Button
+                              endIcon={<VisibilityIcon />}
+                              onClick={(e) => {
+                                handleViewRideDetail(data?._id, data);
+                                e.stopPropagation();
+                              }}
+                            >
+                              {data?.request_count}
+                            </Button>
+                          ) : (
+                            <Button endIcon={<VisibilityIcon />} disabled={true}>
+                              0
+                            </Button>
+                          )}
+                        </TableCell>
+                        <TableCell className="!text-center">
+                          {data?.user?.full_name
+                            ? data?.user?.full_name
+                            : "Pending"}
+                        </TableCell>
+                        <TableCell className="!text-center">
+                          {data?.user?.full_name
+                            ? data?.user?.mobile_no
+                            : "Pending"}
+                        </TableCell>
+                        <TableCell className="!text-center">
+                          {data?.fare[0]?.amount
+                            ? parseFloat(data?.fare[0]?.amount).toFixed(2)
+                            : "N/A"}
+                        </TableCell>
+                        <TableCell
+                          className={
+                            data?.booking_status === "pending"
+                              ? " !text-orange-400 capitalize"
+                              : data?.booking_status === "approved"
+                                ? "!text-green-500 "
+                                : data?.booking_status === "cancel"
+                                  ? "!text-red-600 capitalize"
+                                  : ""
+                          }
+                        >
+                          {data?.booking_status === "approved"
+                            ? "Assigned"
+                            : data?.booking_status}
+                        </TableCell>
+                        {/* {console.log(data , "DATA HAIN KYA ??")} */}
+                        <TableCell>
+                          <Box>
+                            <IconButton
+                              onClick={(e) => {
+                                handleClick(e);
+                                e.stopPropagation();
+                                setBookingID(data?._id);
+                              }}
+                            >
+                              <FaEllipsisVertical />
+                            </IconButton>
+                            <Popover
+                              open={openPopover}
+                              onClose={handleClose}
+                              anchorEl={anchorEl}
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "left",
+                              }}
+                            >
+                              <Box className=" flex flex-col">
+                                <Button
+                                  className="!px-4"
+                                  onClick={(e) => {
+                                    handleUpdateRide(data);
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Update Ride
+                                </Button>
+                                <Button
+                                  className="!px-4"
+                                  onClick={(e) => {
+                                    hanldeDeleteRide(data?._id);
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Delete Ride
+                                </Button>
+                                <Button
+                                  className="!px-4"
+                                  onClick={(e) => {
+                                    setIsCancel(true);
+                                    handleClose();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Cancel Ride
+                                </Button>
+                                <Button
+                                  className="!px-4"
+                                  onClick={async (e) => {
+                                    handleNavigate(data?._id);
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Assign Ride
+                                </Button>
+                              </Box>
+                            </Popover>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              ) : (
+                <Typography className=" text-nowrap text-center">
+                  No Data Found
+                </Typography>
+              )}
+            </Table>
+          </Box>
+          <Stack
+            spacing={2}
+            className="!py-4 !w-full"
+            direction={"row"}
+            justifyContent={"center"}
+          >
+            <Box>
+              <Pagination
+                count={paginationData[0]?.total_page}
+                variant="outlined"
+                shape="rounded"
+                onChange={handlePagination}
+              />
+            </Box>
+          </Stack>
+
+        </TableContainer>
+      </Box>
       <Box>
         <Drawer open={open} anchor={"right"}>
           <Box className="!pt-20 !pb-4 px-5">
@@ -1709,16 +1715,16 @@ console.log(watch('total_price') , 'Amrat Garg')
                           control={control}
                           name="drop_area"
                           render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Drop-Off Area"
-                          className="w-full"
-                          error={!!errors.drop_area}
-                          helperText={errors.drop_area?.message}
-                          InputLabelProps={{ shrink: true }}
+                            <TextField
+                              {...field}
+                              label="Drop-Off Area"
+                              className="w-full"
+                              error={!!errors.drop_area}
+                              helperText={errors.drop_area?.message}
+                              InputLabelProps={{ shrink: true }}
+                            />
+                          )}
                         />
-                      )}
-                        /> 
                       </Stack>
                     </>
                   )}
