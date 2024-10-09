@@ -40,19 +40,14 @@ const AnimatedNumber = ({ number }) => {
     return <animated.div>{props.number.to((n) => n.toFixed(0))}</animated.div>;
 };
 
-const FinancialSummary = () => {
+const FinancialSummary = ({ rideCount }) => {
     const chartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        labels: ['Complete Rides', 'Cancel Rides', 'Pending Rides'],
         datasets: [
             {
-                label: 'Revenue',
-                data: [12000, 15000, 8000, 20000, 18000, 22000],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            },
-            {
-                label: 'Expenses',
-                data: [8000, 7000, 6000, 10000, 12000, 15000],
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                label: 'Number of Rides',
+                data: [17, 1, 20],
+                backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)'],
             },
         ],
     };
@@ -66,7 +61,7 @@ const FinancialSummary = () => {
             },
         },
     };
-
+    console.log(rideCount, 'HKDHKDHKDH')
     return (
         <Box>
             <Typography variant="h5" mb={2}>
@@ -75,25 +70,25 @@ const FinancialSummary = () => {
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <Paper elevation={3} sx={{ p: 3 }}>
-                        <Typography variant="subtitle1">Total Revenue</Typography>
+                        <Typography variant="subtitle1">Total Revenue (Completed Rides)</Typography>
                         <Typography variant="h4">
-                            <AnimatedNumber number={87000} />
+                            <AnimatedNumber number={rideCount?.completeRide[0]?.totalAmount} />
                         </Typography>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <Paper elevation={3} sx={{ p: 3 }}>
-                        <Typography variant="subtitle1">Total Expenses</Typography>
+                        <Typography variant="subtitle1">Paid Amount</Typography>
                         <Typography variant="h4">
-                            <AnimatedNumber number={60000} />
+                            <AnimatedNumber number={rideCount?.completeRide[0]?.paidAmount} />
                         </Typography>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <Paper elevation={3} sx={{ p: 3 }}>
-                        <Typography variant="subtitle1">Net Profit</Typography>
+                        <Typography variant="subtitle1">Pending Amount</Typography>
                         <Typography variant="h4" color="success.main">
-                            <AnimatedNumber number={27000} />
+                            <AnimatedNumber number={rideCount?.completeRide[0]?.pendingAmount} />
                         </Typography>
                     </Paper>
                 </Grid>
@@ -177,7 +172,7 @@ const DriverStatus = ({ driverData }) => {
                 textColor="primary"
                 fullWidth
             >
-                <Tab label="Active Driver" style={tabStyles(tabValue === 0)} className=" flex-1 w-full" fullWidth/>
+                <Tab label="Active Driver" style={tabStyles(tabValue === 0)} className=" flex-1 w-full" fullWidth />
 
             </Tabs>
 
@@ -418,12 +413,12 @@ function Dashboard() {
                         </Box>
 
                     </Grid>
-                    <Grid item  xs={12} md={6}>
+                    <Grid item xs={12} md={6}>
                         <Paper className=" p-5">
                             <DriverStatus driverData={drivers} />
                             <Divider />
                             <Box className=" mt-4">
-                                <FinancialSummary />
+                                <FinancialSummary rideCount={rideCount} />
                             </Box>
                         </Paper>
                     </Grid>
