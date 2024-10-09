@@ -72,7 +72,7 @@ const FinancialSummary = ({ rideCount }) => {
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <Paper elevation={3} sx={{ p: 3 }}>
-                        <Typography variant="subtitle1">Completed Rides</Typography>
+                        <Typography variant="subtitle1">Total Amount</Typography>
                         <Typography variant="h4">
                             <AnimatedNumber number={rideCount?.completeRide[0]?.totalAmount} />
                         </Typography>
