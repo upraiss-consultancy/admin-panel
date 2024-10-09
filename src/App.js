@@ -19,8 +19,8 @@ function App() {
   useEffect(() => {
     generateToken()
     onMessage(messaging, (payload) => {
+      console.log(messaging , 'Payload' , payload)
       showToast(payload.notification.body , 'success');
-      console.log(payload , "payload")
     })
   }, [])
   return (

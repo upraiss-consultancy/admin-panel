@@ -1467,6 +1467,7 @@ function AllRides() {
                             >
                               <MenuItem value={"Delhi"}>Delhi</MenuItem>
                               <MenuItem value={"Noida"}>Noida</MenuItem>
+                              <MenuItem value={"Noida"}>Greater Noida</MenuItem>
                               <MenuItem value={"Gurgaon"}>Gurgaon</MenuItem>
                               <MenuItem value={"Ghaziabad"}>Ghaziabad</MenuItem>
                               <MenuItem value={"Faridabad"}>Faridabad</MenuItem>

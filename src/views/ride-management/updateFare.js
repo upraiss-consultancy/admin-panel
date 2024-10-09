@@ -56,12 +56,13 @@ const PaymentFormDrawer = ({ open, setOpen, bookingId, fareData }) => {
             bookingId: bookingId
         }
         const response = await UpdateFare(UPDATE_FARE, transformedData)
+
         if (response?.responseCode === 200) {
             showToast(response?.message, 'success')
             reset()
             setOpen(false);
         } else {
-            showToast('Something went wrong', 'error');
+            showToast(response?.message, 'error');
         }
     };
     const handleChange = (value) => {

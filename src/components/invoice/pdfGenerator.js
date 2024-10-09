@@ -57,12 +57,12 @@ const today = new Date();
 const day = today.getDate();
 
 // Get the current month (Months are zero-based, so we add 1)
-const month = today.getMonth() + 1; 
+const month = today.getMonth() + 1;
 
 // Get the current year
 const year = today.getFullYear();
 const Invoice = React.forwardRef(({ data, billToData }, ref) => {
-  
+
   return (
     <>
       <Grid container justifyContent="center" maxWidth={'842px'}>
@@ -81,7 +81,7 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                   DRIVEASSIST TECHNOLOGIES INDIA PRIVATE LIMITED
                 </Typography>
                 <Typography variant="body2">
-                  4436/1, NA, Gurugram, Haryana - 122003 | GSTIN: 07AAICXXXXXX1Z
+                  4436/1, NA, Gurugram, Haryana - 122003 | GSTIN: 07AALCB2503R1ZD
                 </Typography>
               </Grid>
               {
@@ -117,7 +117,7 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                         S.No
                       </Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography variant="body2" fontWeight="bold">
                         Item Description
                       </Typography>
@@ -137,9 +137,9 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                         Rate
                       </Typography>
                     </Grid>
-                    <Grid item xs={1}>
+                    <Grid item xs={2}>
                       <Typography variant="body2" fontWeight="bold">
-                        GST
+                        ₹ GST
                       </Typography>
                     </Grid>
                     <Grid item xs={2}>
@@ -158,7 +158,7 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                     <Grid item xs={1}>
                       <Typography variant="body2">1</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography variant="body2">Driver Charges</Typography>
                     </Grid>
                     <Grid item xs={1}>
@@ -170,7 +170,7 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                     <Grid item xs={1}>
                       <Typography variant="body2">₹ {data?.fare[0]?.driver_amount}</Typography>
                     </Grid>
-                    <Grid item xs={1}>
+                    <Grid item xs={2}>
                       <Typography variant="body2">₹ 0</Typography>
                     </Grid>
                     <Grid item xs={2}>
@@ -186,7 +186,7 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                     <Grid item xs={1}>
                       <Typography variant="body2">2</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography variant="body2">Driver Travel Allowance</Typography>
                     </Grid>
                     <Grid item xs={1}>
@@ -200,7 +200,7 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                         data?.fare[0]?.travel_allowance
                       }</Typography>
                     </Grid>
-                    <Grid item xs={1}>
+                    <Grid item xs={2}>
                       <Typography variant="body2">₹ 0</Typography>
                     </Grid>
                     <Grid item xs={2}>
@@ -216,9 +216,9 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                 <Box borderBottom={1} p={1}>
                   <Grid container>
                     <Grid item xs={1}>
-                      <Typography variant="body2">2</Typography>
+                      <Typography variant="body2">3</Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography variant="body2">Platform Fee</Typography>
                     </Grid>
                     <Grid item xs={1}>
@@ -232,10 +232,10 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                         data?.fare[0]?.company_amount
                       }</Typography>
                     </Grid>
-                    <Grid item xs={1}>
+                    <Grid item xs={2}>
                       <Typography variant="body2">₹ {
                         data?.fare[0]?.gst
-                      }</Typography>
+                      } GST@(18%)</Typography>
                     </Grid>
                     <Grid item xs={2}>
                       <Typography variant="body2">₹ {
@@ -245,7 +245,39 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                   </Grid>
                 </Box>
               </Grid>
-
+              <Grid item xs={12}>
+                <Box borderBottom={1} p={1}>
+                  <Grid container>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">3</Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography variant="body2">Night Charges</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">996423</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">1</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.company_amount
+                      }</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.gst
+                      } GST@(18%)</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography variant="body2">₹ {
+                        data?.fare[0]?.company_amount + data?.fare[0]?.gst
+                      }</Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
               {/* Total Amount */}
               <Grid item xs={6} textAlign="left">
                 <Typography variant="h6" fontWeight="bold">
@@ -260,12 +292,12 @@ const Invoice = React.forwardRef(({ data, billToData }, ref) => {
                 </Typography>
               </Grid>
               <Grid item xs={6} textAlign="right">
-                <Typography variant="body2">Total Amount: ₹{data?.fare[0]?.amount
-                }</Typography>
-                {/* <Typography variant="body2">GST: ₹{data?.fare[0]?.gst}</Typography>
                 <Typography variant="h6" fontWeight="bold">
-                  Total Amount: ₹1,680.00
-                </Typography> */}
+                  Sub Total: ₹{data?.fare[0]?.company_amount + data?.fare[0]?.travel_allowance + data?.fare[0]?.driver_amount}
+                </Typography>
+                <Typography variant="body2">GST: ₹{data?.fare[0]?.gst}</Typography>
+                <Typography variant="body2">Total Amount: ₹{data?.fare[0]?.company_amount + data?.fare[0]?.travel_allowance + data?.fare[0]?.driver_amount + data?.fare[0]?.gst
+                }</Typography>
                 <Typography variant="body2">
                   Amount in Words: {numberToWords(data?.fare[0]?.amount)}
                 </Typography>

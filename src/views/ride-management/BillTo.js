@@ -9,8 +9,7 @@ const validationSchema = yup.object({
     name: yup.string().required('Name is required'),
     address: yup.string().required('Address is required'),
     gstNo: yup
-        .string()
-        .required('GST No is required') ,
+        .string(),
 });
 const BillToPopup = ({ rowData }) => {
     const [open, setOpen] = useState(false);
@@ -95,7 +94,6 @@ const BillToPopup = ({ rowData }) => {
                                     label="GST No"
                                     fullWidth
                                     variant="outlined"
-                                    required
                                     error={!!errors.gstNo}
                                     helperText={errors.gstNo ? errors.gstNo.message : ''}
                                 />

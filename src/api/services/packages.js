@@ -27,7 +27,7 @@ export const getAllPackageList = async (
     endpoint,
     params
 ) => {
-    const response = await api.get(
+    const response = await api.post(
         `${CONFIG_KEYS.API_BASE_URL}/${endpoint}`,
         params
     );

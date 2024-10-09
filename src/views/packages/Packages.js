@@ -1,4 +1,4 @@
-import { Button, Typography, IconButton, Stack, TableContainer, Paper, Box, Slide, TextField, InputAdornment, TableCell, MenuItem, TableRow, Pagination, Popover, Select, Table, TableHead, TableBody, FormControl, InputLabel, Alert, Snackbar } from "@mui/material";
+import { Button, Typography, IconButton, Stack, TableContainer, Paper, Box, Slide, TextField, InputAdornment, TableCell, MenuItem, TableRow, Pagination, Popover, Select, Table, TableHead, TableBody, FormControl, InputLabel, Alert, Snackbar, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import END_POINTS from "../../constants/endpoints";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -31,6 +31,9 @@ function Packages() {
         limit: 10,
         page: 1,
         search: "",
+        booking_type: "",
+        pickup_city: "",
+        trip_type: ""
 
     });
     const [paginationData, setPaginationData] = useState([])
@@ -77,7 +80,7 @@ function Packages() {
     TotalAmount = Number(TotalBasic) + Number(watch('company_charge')) + (Number(watch('company_charge')) * Number(watch('gst')) / 100);
     const fetchPackages = async (paramsData) => {
         const response = await getAllPackageList(GET_ALL_PACKAGE_LIST, {
-            params: {
+            data: {
                 ...paramsData,
             }
         });
@@ -96,7 +99,7 @@ function Packages() {
         fetchPackages(params);
         const stateData = State.getStatesOfCountry('IN');
         setStates(stateData);
-    }, []);
+    }, [params]);
 
     useEffect(() => {
         if (pickupState) {
@@ -225,6 +228,9 @@ function Packages() {
                     <Typography variant="h6" component="div">
                         All Packages
                     </Typography>
+
+
+
                     <TextField placeholder="Search Packages..." sx={{
                         '& .MuiInputBase-root': {
                             height: 40,  // Set the height you need
@@ -251,11 +257,65 @@ function Packages() {
                         Create Package
                     </Button> */}
                 </Box>
+                <Grid container spacing={2} padding={2}>
+                    <Grid item xs={12} sm={4} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel>Booking Type</InputLabel>
+                            <Select
+                                label="Booking Type"
+                                value={params.booking_type || "All"}
+                                onChange={(e) =>
+                                    setAllParams({ ...params, booking_type: e.target.value })
+                                }
+                            >
+                                <MenuItem value={"All"}>All</MenuItem>
+                                <MenuItem value={"Local"}>Local</MenuItem>
+                                <MenuItem value={"Outstation"}>Outstation</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel>Way Type</InputLabel>
+                            <Select
+                                label="Way Type"
+                                value={params.way_type || "All"}
+                                onChange={(e) =>
+
+                                    setAllParams({ ...params, way_type: e.target.value })
+                                }
+                            >
+                                <MenuItem value={"All"}>All</MenuItem>
+                                <MenuItem value={"One Way"}>One Way</MenuItem>
+                                <MenuItem value={"Round Trip"}>Round Trip</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel>City</InputLabel>
+                            <Select
+                                label="City"
+                                value={params.pickup_city}
+                                onChange={(e) =>
+                                    setAllParams({ ...params, pickup_city: e.target.value })
+                                }
+                            >
+                                <MenuItem value={"Delhi"}>Delhi</MenuItem>
+                                <MenuItem value={"Noida"}>Noida</MenuItem>
+                                <MenuItem value={"Gurgaon"}>Gurgaon</MenuItem>
+                                <MenuItem value={"Ghaziabad"}>Ghaziabad</MenuItem>
+                                <MenuItem value={"Faridabad"}>Faridabad</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell>S.No.</TableCell>
-                            <TableCell>Package Name</TableCell>
+                            {/* <TableCell>Package Name</TableCell> */}
                             <TableCell>Booking Type</TableCell>
                             <TableCell>Car Type</TableCell>
                             <TableCell>Way Type</TableCell>
@@ -279,9 +339,9 @@ function Packages() {
                                     <TableCell>
                                         {index + 1
                                         }</TableCell>
-                                    <TableCell>
+                                    {/* <TableCell>
                                         {data?.package_name}
-                                    </TableCell>
+                                    </TableCell> */}
                                     <TableCell className="text-nowrap">
                                         {
                                             data?.booking_type
@@ -418,7 +478,6 @@ function Packages() {
                                         <Select {...field} className="!w-full" labelId="demo-simple-select-helper-label"
                                             id="demo-simple-select-helper"
                                             label="Booking Type"
-
                                         >
                                             <MenuItem value="Local">Local</MenuItem>
                                             <MenuItem value="Outstation">Out Station</MenuItem>
@@ -503,7 +562,7 @@ function Packages() {
                         }
 
                         {
-                            tripType !== "Round Trip"  && (
+                            tripType !== "Round Trip" && (
                                 <Stack direction={"row"} gap={2} className="!mb-4">
                                     <Controller
                                         control={control}
