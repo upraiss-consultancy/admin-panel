@@ -1,5 +1,6 @@
 import api from "../middlewares/protected-interceptor";
 import CONFIG_KEYS from "../../config";
+import showToast from "../../utils/toast";
 export const getAllRides = async (endpoint, params) => {
   try {
     const response = await api.get(`${CONFIG_KEYS.API_BASE_URL}/${endpoint}`, params);
@@ -154,6 +155,8 @@ export const UpdateFare = async (endpoint, data) => {
       } = response;
       if (responseCode === 200) {
         return { responseData: responseData, message: message, responseCode: responseCode };
+      } else {
+        showToast(response?.data?.message , 'error')
       }
     }
   } catch (error) { }

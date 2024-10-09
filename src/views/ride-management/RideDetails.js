@@ -129,11 +129,11 @@ function RideDetailView() {
                     </Button>
                 </Box>
                 <Divider />
-                <Typography variant="body1" gutterBottom className='!mt-4'>
-                    <strong>Passeneger Name</strong> {state?.pass_name}
+                <Typography variant="body1" gutterBottom className='!mt-4 capitalize'>
+                    <strong>Name</strong> {state?.pass_name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    <strong>Passeneger Mobile No.</strong> {state?.pass_mobile_no}
+                    <strong>Mobile No.</strong> {state?.pass_mobile_no}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     <strong>Car Type:</strong> {state?.car_type}
