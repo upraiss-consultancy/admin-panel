@@ -41,12 +41,15 @@ const AnimatedNumber = ({ number }) => {
 };
 
 const FinancialSummary = ({ rideCount }) => {
+    console.log(rideCount,"rideCount")
     const chartData = {
         labels: ['Complete Rides', 'Cancel Rides', 'Pending Rides'],
         datasets: [
             {
-                label: 'Number of Rides',
-                data: [17, 1, 20],
+                label: 'Complete Rides', 
+                data: [rideCount?.completeRide[0]?.completeRide, rideCount?.
+                    cancelRide[0]?.cancelRide, rideCount?.pendingRide[0]?.pendingRide
+                ],
                 backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)'],
             },
         ],
@@ -61,7 +64,6 @@ const FinancialSummary = ({ rideCount }) => {
             },
         },
     };
-    console.log(rideCount, 'HKDHKDHKDH')
     return (
         <Box>
             <Typography variant="h5" mb={2}>
@@ -70,7 +72,7 @@ const FinancialSummary = ({ rideCount }) => {
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <Paper elevation={3} sx={{ p: 3 }}>
-                        <Typography variant="subtitle1">Total Revenue (Completed Rides)</Typography>
+                        <Typography variant="subtitle1">Completed Rides</Typography>
                         <Typography variant="h4">
                             <AnimatedNumber number={rideCount?.completeRide[0]?.totalAmount} />
                         </Typography>
