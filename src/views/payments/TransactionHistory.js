@@ -40,7 +40,7 @@ const TransactionHistoryList = () => {
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), page: 0 }));
+        setAllParams(prevState => ({ ...prevState, limit: parseInt(event.target.value, 10), page: 1 }));
     };
 
     const fetchTransactionHistory = async () => {

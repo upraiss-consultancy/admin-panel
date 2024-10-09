@@ -185,10 +185,10 @@ const TransactionTable = ({ transactionData }) => {
                                     {console.log(transaction, "transaction1212")}
                                     <TableCell>{transaction.user.full_name}</TableCell>
                                     <TableCell>{transaction.balance}</TableCell>
-                                    <TableCell>{transaction.transaction_type}</TableCell>
+                                    <TableCell className=' capitalize'>{transaction.transaction_type}</TableCell>
                                     <TableCell>{transaction.amount}</TableCell>
                                     <TableCell>{new Date(transaction.request_date).toLocaleString()}</TableCell>
-                                    <TableCell>{transaction.status}</TableCell>
+                                    <TableCell className=' capitalize'>{transaction.status}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="contained"

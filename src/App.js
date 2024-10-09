@@ -22,7 +22,7 @@ function App() {
       console.log(messaging , 'Payload' , payload)
       showToast(payload.notification.body , 'success');
     })
-  }, [])
+  }, [onMessage])
   return (
     <>
       {loading && <Loader />}
