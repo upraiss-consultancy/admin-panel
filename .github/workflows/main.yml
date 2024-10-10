@@ -17,11 +17,6 @@ jobs:
     #   run: |
     #       echo "REACT_APP_BASE_URL=https://node-production.chandanagold.biz/api/v1/" >> .env.development
 
-    - name: Install Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 18  # Change this to your Node.js version
-
     - name: Install dependencies
       run: npm i --legacy-peer-deps
 
